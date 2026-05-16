@@ -526,7 +526,7 @@ router.post('/', async (req, res) => {
     const { arrendamientoFechaInicio, arrendamientoRenta, arrendamientoDescrip, arrendatario_idArrendatario, propiedad_idPropiedad } = req.body;
 
     const arrendamientoExistente = await Arrendamiento.findOne({
-      where: { arrendatario_idArrendatario, arrendamientoValArrendador: 0 }
+      where: { arrendatario_idArrendatario }
     });
     if (arrendamientoExistente) {
       return res.status(400).json({ error: 'El arrendatario ya tiene un arrendamiento activo. No puede estar ligado a más de un arrendamiento al mismo tiempo.' });
