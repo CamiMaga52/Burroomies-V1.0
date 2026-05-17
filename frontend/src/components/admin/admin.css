@@ -874,8 +874,6 @@ textarea.admin-form-input {
   top: 0;
   z-index: 200;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  flex-wrap: wrap;
-  gap: 0.75rem;
 }
 
 .admin-nav-brand {
@@ -883,6 +881,7 @@ textarea.admin-form-input {
   align-items: center;
   gap: 10px;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .admin-nav-logo {
@@ -903,7 +902,6 @@ textarea.admin-form-input {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  flex-wrap: wrap;
 }
 
 .admin-nav-link {
@@ -919,8 +917,8 @@ textarea.admin-form-input {
   background: none;
   border: 1.5px solid transparent;
   cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
 }
 
 .admin-nav-link:hover {
@@ -947,14 +945,67 @@ textarea.admin-form-input {
   background: none;
   border: 1.5px solid #FECDD3;
   cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
   transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
 }
 
 .admin-nav-logout:hover {
   background: rgba(239, 68, 68, 0.06);
   border-color: #DC2626;
 }
+
+/* Pantallas medianas (901px - 1100px) - reducir tamaño de botones */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .admin-nav {
+    padding: 0 20px;
+  }
+  
+  .admin-nav-link {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .admin-nav-logout {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .admin-nav-title {
+    font-size: 0.9rem;
+  }
+  
+  .admin-nav-logo {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Pantallas pequeñas (menos de 900px) - menú hamburguesa */
+@media (max-width: 900px) {
+  .admin-nav {
+    flex-wrap: wrap;
+    padding: 10px 20px;
+    height: auto;
+  }
+  
+  .admin-nav-brand {
+    flex: 1;
+  }
+  
+  .admin-nav-title {
+    font-size: 0.9rem;
+  }
+  
+  .admin-nav-links {
+    display: none;
+  }
+  
+  .admin-nav-hamburger {
+    display: flex;
+    align-items: center;
+  }
+}
+
 
 /* ── Hamburger / Menú móvil admin ────────────────────── */
 .admin-nav-hamburger {
@@ -970,7 +1021,10 @@ textarea.admin-form-input {
   transition: background 0.2s;
   flex-shrink: 0;
 }
-.admin-nav-hamburger:hover { background: var(--purple-50); }
+
+.admin-nav-hamburger:hover {
+  background: var(--purple-50);
+}
 
 .admin-nav-mobile-menu {
   display: flex;
@@ -979,6 +1033,8 @@ textarea.admin-form-input {
   border-top: 1px solid var(--gray-100);
   background: var(--white);
   gap: 0.1rem;
+  width: 100%;
+  order: 3;
 }
 
 .admin-nav-mobile-link {
@@ -993,7 +1049,11 @@ textarea.admin-form-input {
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
-.admin-nav-mobile-link:hover { background: var(--purple-50); color: var(--purple-600); }
+
+.admin-nav-mobile-link:hover {
+  background: var(--purple-50);
+  color: var(--purple-600);
+}
 
 .admin-nav-mobile-btn {
   display: flex;
@@ -1012,13 +1072,30 @@ textarea.admin-form-input {
   text-align: left;
   transition: background 0.15s;
 }
-.admin-nav-mobile-btn:hover { background: #FEF2F2; }
 
-@media (max-width: 600px) {
-  .admin-nav { padding: 10px 16px; height: auto; }
-  .admin-nav-title { font-size: 0.9rem; }
-  .admin-nav-links { display: none; }
-  .admin-nav-hamburger { display: flex; align-items: center; }
+.admin-nav-mobile-btn:hover {
+  background: #FEF2F2;
+}
+
+@media (max-width: 900px) {
+  .admin-nav {
+    flex-wrap: wrap;
+    padding: 10px 20px;
+    height: auto;
+  }
+  
+  .admin-nav-title {
+    font-size: 0.9rem;
+  }
+  
+  .admin-nav-links {
+    display: none;
+  }
+  
+  .admin-nav-hamburger {
+    display: flex;
+    align-items: center;
+  }
 }
 
 /* ── FooterAdmin Dark ─────────────────────────────────────── */
@@ -1098,7 +1175,240 @@ textarea.admin-form-input {
   .admin-actions {
     flex-wrap: wrap;
   }
-  .admin-table-card {
-    overflow-x: auto;
+}
+
+/* ── Paginación ───────────────────────────────────────────── */
+.admin-pagination-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+
+.admin-items-per-page label {
+  font-weight: 500;
+}
+
+.admin-items-per-page select {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  background: var(--white);
+  cursor: pointer;
+  outline: none;
+}
+
+.admin-items-per-page select:focus {
+  border-color: var(--purple-400);
+}
+
+.admin-total-items {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-pagination-btn {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 38px;
+}
+
+.admin-pagination-btn:hover:not(:disabled) {
+  background: var(--purple-50);
+  border-color: var(--purple-200);
+  color: var(--purple-600);
+}
+
+.admin-pagination-btn.active {
+  background: var(--purple-600);
+  border-color: var(--purple-600);
+  color: var(--white);
+}
+
+.admin-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-pagination-dots {
+  padding: 0 0.25rem;
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+
+/* ── Ajustes para móvil ── */
+@media (max-width: 768px) {
+  .admin-pagination-top {
+    flex-direction: column;
+    align-items: flex-start;
   }
+  
+  .admin-pagination {
+    gap: 0.3rem;
+  }
+  
+  .admin-pagination-btn {
+    padding: 0.4rem 0.7rem;
+    min-width: 32px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Tabla responsiva sin scroll (mobile first) ── */
+@media (max-width: 1000px) {
+  .admin-table,
+  .admin-table thead,
+  .admin-table tbody,
+  .admin-table th,
+  .admin-table td,
+  .admin-table tr {
+    display: block;
+  }
+
+  .admin-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .admin-table tbody tr {
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: var(--white);
+  }
+
+  .admin-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 0.85rem;
+    text-align: left !important;
+  }
+
+  .admin-table td:last-child {
+    border-bottom: none;
+  }
+
+  .admin-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-dark);
+    width: 40%;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+  }
+
+  .admin-table td.center {
+    justify-content: space-between;
+  }
+
+  .admin-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .admin-table td {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  
+  .admin-table td::before {
+    width: 100%;
+  }
+  
+  .admin-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ── Ajustes específicos para tabla de arrendatarios ── */
+@media (min-width: 1001px) {
+  .admin-table {
+    table-layout: fixed;
+  }
+  
+  /* Ajustar anchos de columnas */
+  .admin-table th:nth-child(1) { width: 5%; }   /* ID */
+  .admin-table th:nth-child(2) { width: 10%; }  /* Username */
+  .admin-table th:nth-child(3) { width: 15%; }  /* Nombre Completo */
+  .admin-table th:nth-child(4) { width: 10%; }  /* Boleta */
+  .admin-table th:nth-child(5) { width: 18%; }  /* Correo */
+  .admin-table th:nth-child(6) { width: 15%; }  /* CURP */
+  .admin-table th:nth-child(7) { width: 10%; }  /* Verificado */
+  .admin-table th:nth-child(8) { width: 17%; }  /* Acciones */
+  
+  /* Permitir que el texto se rompa */
+  .admin-table td {
+    word-break: break-word;
+    white-space: normal;
+  }
+  
+  /* Botones más compactos en desktop */
+  .admin-actions {
+    gap: 0.25rem;
+  }
+  
+  .btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Para pantallas entre 1000px y 1200px */
+@media (min-width: 1001px) and (max-width: 1200px) {
+  .admin-table th,
+  .admin-table td {
+    padding: 0.6rem 0.5rem;
+  }
+  
+  .btn-action {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.65rem;
+  }
+  
+  .btn-action span {
+    display: none;
+  }
+  
+  .btn-view::before { content: "👁"; }
+  .btn-edit::before { content: "✏️"; }
+  .btn-delete::before { content: "🗑"; }
 }

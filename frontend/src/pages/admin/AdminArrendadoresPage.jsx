@@ -15,12 +15,17 @@ const AdminArrendadoresPage = () => {
   const [modalType, setModalType] = useState('')
   const [error, setError] = useState('')
   const [alerta, setAlerta] = useState({ open: false, mensaje: '' })
+  
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [itemsPorPagina, setItemsPorPagina] = useState(10)
+  const [totalItems, setTotalItems] = useState(0)
 
   const loadArrendadores = async () => {
     setLoading(true)
     try {
       const data = await getArrendadores(search)
-      console.log('Primer arrendador:', JSON.stringify(data[0], null, 2))
+      setTotalItems(data.length)
       setArrendadores(data)
     } catch (error) {
       console.error('Error cargando arrendadores:', error)
@@ -30,7 +35,26 @@ const AdminArrendadoresPage = () => {
     }
   }
 
-  useEffect(() => { loadArrendadores() }, [search])
+  useEffect(() => { 
+    loadArrendadores()
+    setPaginaActual(1)
+  }, [search])
+
+  // Calcular índices de paginación
+  const indexUltimoItem = paginaActual * itemsPorPagina
+  const indexPrimerItem = indexUltimoItem - itemsPorPagina
+  const arrendadoresActuales = arrendadores.slice(indexPrimerItem, indexUltimoItem)
+  const totalPaginas = Math.ceil(totalItems / itemsPorPagina)
+
+  const handlePaginaChange = (pagina) => {
+    setPaginaActual(pagina)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleItemsPorPaginaChange = (e) => {
+    setItemsPorPagina(parseInt(e.target.value))
+    setPaginaActual(1)
+  }
 
   const handleView = (a) => { setSelectedArrendador(a); setModalType('view'); setShowModal(true) }
   const handleEdit = (a) => { setSelectedArrendador(a); setModalType('edit'); setShowModal(true) }
@@ -70,6 +94,24 @@ const AdminArrendadoresPage = () => {
           />
         </div>
 
+        {/* Mostrar resultados por página */}
+        <div className="admin-pagination-top">
+          <div className="admin-items-per-page">
+            <label>Mostrar:</label>
+            <select value={itemsPorPagina} onChange={handleItemsPorPaginaChange}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span>registros</span>
+          </div>
+          <div className="admin-total-items">
+            Total: {totalItems} arrendadores
+          </div>
+        </div>
+
         {loading ? (
           <p className="admin-state">Cargando arrendadores...</p>
         ) : error ? (
@@ -77,7 +119,7 @@ const AdminArrendadoresPage = () => {
         ) : arrendadores.length === 0 ? (
           <p className="admin-state">No hay arrendadores registrados.</p>
         ) : (
-          <div className="admin-table-card" style={{ overflowX: 'auto' }}>
+          <div className="admin-table-card">
             <table className="admin-table">
               <thead>
                 <tr>
@@ -90,16 +132,16 @@ const AdminArrendadoresPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {arrendadores.map((a) => (
+                {arrendadoresActuales.map((a) => (
                   <tr key={a.idArrendador}>
-                    <td className="muted">{a.idArrendador}</td>
-                    <td style={{ fontWeight: 500 }}>
+                    <td data-label="ID" className="muted">{a.idArrendador}</td>
+                    <td data-label="Nombre Completo" style={{ fontWeight: 500 }}>
                       {a.usuario?.usuarioApePat} {a.usuario?.usuarioApeMat || ''} {a.usuario?.usuarioNom}
                     </td>
-                    <td>{a.arrendadorRFC || '-'}</td>
-                    <td>{a.usuario?.usuarioCorreo || '-'}</td>
-                    <td className="muted">{a.usuario?.usuarioCurp || '-'}</td>
-                    <td className="center">
+                    <td data-label="RFC">{a.arrendadorRFC || '-'}</td>
+                    <td data-label="Correo">{a.usuario?.usuarioCorreo || '-'}</td>
+                    <td data-label="CURP" className="muted">{a.usuario?.usuarioCurp || '-'}</td>
+                    <td data-label="Acciones" className="center">
                       <div className="admin-actions">
                         <button className="btn-action btn-view" onClick={() => handleView(a)}>👁 Ver</button>
                         <button className="btn-action btn-edit" onClick={() => handleEdit(a)}>✏️ Editar</button>
@@ -116,6 +158,63 @@ const AdminArrendadoresPage = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Paginación */}
+        {totalPaginas > 1 && (
+          <div className="admin-pagination">
+            <button
+              className="admin-pagination-btn"
+              onClick={() => handlePaginaChange(1)}
+              disabled={paginaActual === 1}
+            >
+              «
+            </button>
+            <button
+              className="admin-pagination-btn"
+              onClick={() => handlePaginaChange(paginaActual - 1)}
+              disabled={paginaActual === 1}
+            >
+              ‹
+            </button>
+            
+            {[...Array(totalPaginas)].map((_, i) => {
+              const pagina = i + 1
+              if (
+                pagina === 1 ||
+                pagina === totalPaginas ||
+                (pagina >= paginaActual - 2 && pagina <= paginaActual + 2)
+              ) {
+                return (
+                  <button
+                    key={pagina}
+                    className={`admin-pagination-btn ${paginaActual === pagina ? 'active' : ''}`}
+                    onClick={() => handlePaginaChange(pagina)}
+                  >
+                    {pagina}
+                  </button>
+                )
+              } else if (pagina === paginaActual - 3 || pagina === paginaActual + 3) {
+                return <span key={pagina} className="admin-pagination-dots">...</span>
+              }
+              return null
+            })}
+            
+            <button
+              className="admin-pagination-btn"
+              onClick={() => handlePaginaChange(paginaActual + 1)}
+              disabled={paginaActual === totalPaginas}
+            >
+              ›
+            </button>
+            <button
+              className="admin-pagination-btn"
+              onClick={() => handlePaginaChange(totalPaginas)}
+              disabled={paginaActual === totalPaginas}
+            >
+              »
+            </button>
           </div>
         )}
       </main>
@@ -223,6 +322,7 @@ const AdminArrendadoresPage = () => {
           </div>
         </div>
       )}
+      
       {alerta.open && (
         <div className="admin-modal-overlay" onClick={() => setAlerta({ open: false, mensaje: '' })}>
           <div className="admin-modal" style={{ maxWidth: '420px' }} onClick={e => e.stopPropagation()}>

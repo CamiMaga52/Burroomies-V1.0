@@ -14,11 +14,17 @@ const AdminPropiedadesPage = () => {
   const [modalType, setModalType] = useState('')
   const [error, setError] = useState('')
   const [alerta, setAlerta] = useState({ open: false, mensaje: '' })
+  
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1)
+  const [itemsPorPagina, setItemsPorPagina] = useState(10)
+  const [totalItems, setTotalItems] = useState(0)
 
   const loadPropiedades = async () => {
     setLoading(true)
     try {
       const data = await getPropiedades(search)
+      setTotalItems(data.length)
       setPropiedades(data)
     } catch (error) {
       console.error('Error cargando propiedades:', error)
@@ -28,17 +34,58 @@ const AdminPropiedadesPage = () => {
     }
   }
 
-  useEffect(() => { loadPropiedades() }, [search])
+  useEffect(() => { 
+    loadPropiedades()
+    setPaginaActual(1)
+  }, [search])
 
-  const handleView = (p) => { setSelectedPropiedad(p); setModalType('view'); setShowModal(true) }
-  const handleEdit = (p) => { setSelectedPropiedad(p); setModalType('edit'); setShowModal(true) }
-  const handleDelete = (p) => {
-    if (p.rentasActivas > 0) { setAlerta({ open: true, mensaje: `No se puede eliminar: esta propiedad tiene ${p.rentasActivas} renta(s) activa(s).` }); return }
-    setSelectedPropiedad(p); setModalType('delete'); setShowModal(true)
+  // Calcular índices de paginación
+  const indexUltimoItem = paginaActual * itemsPorPagina
+  const indexPrimerItem = indexUltimoItem - itemsPorPagina
+  const propiedadesActuales = propiedades.slice(indexPrimerItem, indexUltimoItem)
+  const totalPaginas = Math.ceil(totalItems / itemsPorPagina)
+
+  const handlePaginaChange = (pagina) => {
+    setPaginaActual(pagina)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  const handleItemsPorPaginaChange = (e) => {
+    setItemsPorPagina(parseInt(e.target.value))
+    setPaginaActual(1)
+  }
+
+  const handleView = (p) => { 
+    setSelectedPropiedad(p)
+    setModalType('view')
+    setShowModal(true) 
+  }
+  
+  const handleEdit = (p) => { 
+    setSelectedPropiedad(p)
+    setModalType('edit')
+    setShowModal(true) 
+  }
+  
+  const handleDelete = (p) => {
+    if (p.rentasActivas > 0) { 
+      setAlerta({ open: true, mensaje: `No se puede eliminar: esta propiedad tiene ${p.rentasActivas} renta(s) activa(s).` })
+      return 
+    }
+    setSelectedPropiedad(p)
+    setModalType('delete')
+    setShowModal(true)
+  }
+  
   const confirmDelete = async () => {
-    try { await deletePropiedad(selectedPropiedad.idPropiedad); setShowModal(false); loadPropiedades() }
-    catch (error) { setShowModal(false); setAlerta({ open: true, mensaje: error.response?.data?.error || 'Error al eliminar' }) }
+    try { 
+      await deletePropiedad(selectedPropiedad.idPropiedad)
+      setShowModal(false)
+      loadPropiedades()
+    } catch (error) { 
+      setShowModal(false)
+      setAlerta({ open: true, mensaje: error.response?.data?.error || 'Error al eliminar' })
+    }
   }
 
   const modalWidth = modalType === 'edit' ? '600px' : '520px'
@@ -69,6 +116,24 @@ const AdminPropiedadesPage = () => {
           />
         </div>
 
+        {/* Mostrar resultados por página */}
+        <div className="admin-pagination-top">
+          <div className="admin-items-per-page">
+            <label>Mostrar:</label>
+            <select value={itemsPorPagina} onChange={handleItemsPorPaginaChange}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span>registros</span>
+          </div>
+          <div className="admin-total-items">
+            Total: {totalItems} propiedades
+          </div>
+        </div>
+
         {loading ? (
           <p className="admin-state">Cargando propiedades...</p>
         ) : error ? (
@@ -76,54 +141,117 @@ const AdminPropiedadesPage = () => {
         ) : propiedades.length === 0 ? (
           <p className="admin-state">No hay propiedades registradas.</p>
         ) : (
-          <div className="admin-table-card" style={{ overflowX: 'auto' }}>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Título</th>
-                  <th>Arrendador</th>
-                  <th>Precio</th>
-                  <th>Tipo</th>
-                  <th className="center">Rentas Activas</th>
-                  <th className="center">Reseñas</th>
-                  <th className="center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {propiedades.map((p) => (
-                  <tr key={p.idPropiedad}>
-                    <td className="muted">{p.idPropiedad}</td>
-                    <td style={{ fontWeight: 500 }}>{p.propiedadTitulo}</td>
-                    <td>{p.arrendador?.usuario?.usuarioApePat} {p.arrendador?.usuario?.usuarioNom}</td>
-                    <td style={{ fontWeight: 600, color: 'var(--purple-600)' }}>${p.propiedadPrecio}</td>
-                    <td>
-                      <span className="admin-badge badge-info">{p.propiedadTipo}</span>
-                    </td>
-                    <td className="center">
-                      <span className={`admin-badge ${p.rentasActivas > 0 ? 'badge-danger' : 'badge-success'}`}>
-                        {p.rentasActivas}
-                      </span>
-                    </td>
-                    <td className="center muted">{p.reseñas}</td>
-                    <td className="center">
-                      <div className="admin-actions">
-                        <button className="btn-action btn-view" onClick={() => handleView(p)}>👁 Ver</button>
-                        <button className="btn-action btn-edit" onClick={() => handleEdit(p)}>✏️ Editar</button>
-                        <button
-                          className="btn-action btn-delete"
-                          onClick={() => handleDelete(p)}
-                          disabled={p.rentasActivas > 0}
-                        >
-                          🗑 Eliminar
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="admin-table-card">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Arrendador</th>
+                    <th>Precio</th>
+                    <th>Tipo</th>
+                    <th className="center">Rentas Activas</th>
+                    <th className="center">Reseñas</th>
+                    <th className="center">Acciones</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {propiedadesActuales.map((p) => (
+                    <tr key={p.idPropiedad}>
+                      <td data-label="ID" className="muted">{p.idPropiedad}</td>
+                      <td data-label="Título" style={{ fontWeight: 500 }}>{p.propiedadTitulo}</td>
+                      <td data-label="Arrendador">
+                        {p.arrendador?.usuario?.usuarioApePat} {p.arrendador?.usuario?.usuarioNom}
+                      </td>
+                      <td data-label="Precio" style={{ fontWeight: 600, color: 'var(--purple-600)' }}>
+                        ${p.propiedadPrecio}
+                      </td>
+                      <td data-label="Tipo">
+                        <span className="admin-badge badge-info">{p.propiedadTipo}</span>
+                      </td>
+                      <td data-label="Rentas Activas" className="center">
+                        <span className={`admin-badge ${p.rentasActivas > 0 ? 'badge-danger' : 'badge-success'}`}>
+                          {p.rentasActivas}
+                        </span>
+                      </td>
+                      <td data-label="Reseñas" className="center muted">{p.reseñas || 0}</td>
+                      <td data-label="Acciones" className="center">
+                        <div className="admin-actions">
+                          <button className="btn-action btn-view" onClick={() => handleView(p)}>👁 Ver</button>
+                          <button className="btn-action btn-edit" onClick={() => handleEdit(p)}>✏️ Editar</button>
+                          <button
+                            className="btn-action btn-delete"
+                            onClick={() => handleDelete(p)}
+                            disabled={p.rentasActivas > 0}
+                          >
+                            🗑 Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginación */}
+            {totalPaginas > 1 && (
+              <div className="admin-pagination">
+                <button
+                  className="admin-pagination-btn"
+                  onClick={() => handlePaginaChange(1)}
+                  disabled={paginaActual === 1}
+                >
+                  «
+                </button>
+                <button
+                  className="admin-pagination-btn"
+                  onClick={() => handlePaginaChange(paginaActual - 1)}
+                  disabled={paginaActual === 1}
+                >
+                  ‹
+                </button>
+                
+                {[...Array(totalPaginas)].map((_, i) => {
+                  const pagina = i + 1
+                  if (
+                    pagina === 1 ||
+                    pagina === totalPaginas ||
+                    (pagina >= paginaActual - 2 && pagina <= paginaActual + 2)
+                  ) {
+                    return (
+                      <button
+                        key={pagina}
+                        className={`admin-pagination-btn ${paginaActual === pagina ? 'active' : ''}`}
+                        onClick={() => handlePaginaChange(pagina)}
+                      >
+                        {pagina}
+                      </button>
+                    )
+                  } else if (pagina === paginaActual - 3 || pagina === paginaActual + 3) {
+                    return <span key={pagina} className="admin-pagination-dots">...</span>
+                  }
+                  return null
+                })}
+                
+                <button
+                  className="admin-pagination-btn"
+                  onClick={() => handlePaginaChange(paginaActual + 1)}
+                  disabled={paginaActual === totalPaginas}
+                >
+                  ›
+                </button>
+                <button
+                  className="admin-pagination-btn"
+                  onClick={() => handlePaginaChange(totalPaginas)}
+                  disabled={paginaActual === totalPaginas}
+                >
+                  »
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
 
@@ -246,6 +374,7 @@ const AdminPropiedadesPage = () => {
           </div>
         </div>
       )}
+      
       {alerta.open && (
         <div className="admin-modal-overlay" onClick={() => setAlerta({ open: false, mensaje: '' })}>
           <div className="admin-modal" style={{ maxWidth: '420px' }} onClick={e => e.stopPropagation()}>
