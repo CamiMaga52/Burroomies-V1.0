@@ -20,7 +20,7 @@ const NavbarAdmin = () => {
       flexWrap: 'wrap'
     }}>
       <Link to="/admin/inicio-sesion" style={{ color: 'white', textDecoration: 'none', fontSize: '1.5rem' }}>
-        👑 Admin Burroomies
+        👑 Admin RentIPN
       </Link>
       
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>

@@ -11,7 +11,7 @@ const NavbarInicio = () => {
       alignItems: 'center'
     }}>
       <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '1.5rem' }}>
-        🏠 Burroomies
+        🏠 RentIPN
       </Link>
       <div style={{ display: 'flex', gap: '1rem' }}>
         <Link to="/usuarios/inicio-sesion">

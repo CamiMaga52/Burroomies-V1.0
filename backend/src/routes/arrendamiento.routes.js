@@ -114,7 +114,7 @@ router.get('/:id/pdf', async (req, res) => {
     doc.fontSize(17).font('Helvetica-Bold').fillColor('#ffffff')
        .text('CONTRATO DE ARRENDAMIENTO', ML, 16, { align: 'center', width: ANCHO });
     doc.fontSize(8.5).font('Helvetica').fillColor('#a8c8e8')
-       .text('Burroomies  ·  Plataforma de Arrendamiento para Estudiantes del IPN', ML, 44, { align: 'center', width: ANCHO });
+       .text('RentIPN  ·  Plataforma de Arrendamiento para Estudiantes del IPN', ML, 44, { align: 'center', width: ANCHO });
 
     doc.fillColor(NEGRO);
     doc.moveDown(2.6);
@@ -187,11 +187,11 @@ router.get('/:id/pdf', async (req, res) => {
       },
       {
         titulo: 'SEGUNDA. — DURACIÓN',
-        texto: 'El presente contrato tendrá una duración indefinida a partir de la fecha de inicio establecida en la plataforma Burroomies. Cualquiera de las partes podrá darlo por terminado, requiriéndose la confirmación de ambas partes para su finalización definitiva.'
+        texto: 'El presente contrato tendrá una duración indefinida a partir de la fecha de inicio establecida en la plataforma RentIPN. Cualquiera de las partes podrá darlo por terminado, requiriéndose la confirmación de ambas partes para su finalización definitiva.'
       },
       {
         titulo: 'TERCERA. — RENTA Y FORMA DE PAGO',
-        texto: `La renta mensual acordada es de $${arrendamiento.arrendamientoRenta} MXN. El pago deberá realizarse de forma puntual conforme a los términos acordados entre las partes. Burroomies no interviene en las transacciones económicas entre arrendador y arrendatario.`
+        texto: `La renta mensual acordada es de $${arrendamiento.arrendamientoRenta} MXN. El pago deberá realizarse de forma puntual conforme a los términos acordados entre las partes. RentIPN no interviene en las transacciones económicas entre arrendador y arrendatario.`
       },
       {
         titulo: 'CUARTA. — DEPÓSITO EN GARANTÍA',
@@ -223,7 +223,7 @@ router.get('/:id/pdf', async (req, res) => {
       },
       {
         titulo: 'DÉCIMA PRIMERA. — TERMINACIÓN ANTICIPADA',
-        texto: 'Cualquiera de las partes podrá solicitar la terminación anticipada del contrato mediante la plataforma Burroomies, con un aviso mínimo de 15 días naturales. La terminación se formalizará una vez que ambas partes la confirmen en la plataforma.'
+        texto: 'Cualquiera de las partes podrá solicitar la terminación anticipada del contrato mediante la plataforma RentIPN, con un aviso mínimo de 15 días naturales. La terminación se formalizará una vez que ambas partes la confirmen en la plataforma.'
       },
       {
         titulo: 'DÉCIMA SEGUNDA. — RESPONSABILIDAD',
@@ -304,9 +304,9 @@ router.get('/:id/pdf', async (req, res) => {
     doc.moveDown(0.25);
     doc.fontSize(7.5).font('Helvetica-Oblique').fillColor(GRIS)
        .text(
-         'Este documento es generado automáticamente por la plataforma Burroomies y tiene carácter meramente INFORMATIVO. ' +
+         'Este documento es generado automáticamente por la plataforma RentIPN y tiene carácter meramente INFORMATIVO. ' +
          'NO constituye un documento legal vinculante ni reemplaza un contrato formal de arrendamiento ante las autoridades competentes. ' +
-         'Burroomies no se hace responsable de las negociaciones, acuerdos o disputas que surjan entre las partes. ' +
+         'RentIPN no se hace responsable de las negociaciones, acuerdos o disputas que surjan entre las partes. ' +
          'Se recomienda a ambas partes consultar con un profesional legal para la formalización de su relación contractual.',
          ML, doc.y, { align: 'justify', width: ANCHO }
        );
@@ -314,7 +314,7 @@ router.get('/:id/pdf', async (req, res) => {
     doc.moveDown(0.4);
     doc.fontSize(7).font('Helvetica').fillColor('#888888')
        .text(
-         `Documento generado el ${new Date().toLocaleDateString('es-MX')} a las ${new Date().toLocaleTimeString('es-MX')} - Burroomies © ${new Date().getFullYear()}`,
+         `Documento generado el ${new Date().toLocaleDateString('es-MX')} a las ${new Date().toLocaleTimeString('es-MX')} - RentIPN © ${new Date().getFullYear()}`,
          ML, doc.y, { align: 'center', width: ANCHO }
        );
 

@@ -16,7 +16,7 @@ const FooterInicio = () => {
       }}>
         <div style={{ marginBottom: '0.6rem', fontSize: '0.9rem', fontWeight: 600 }}>
           <Link to="/admin/inicio-sesion" style={{ color: 'white', textDecoration: 'none' }}>
-            Burroomies
+            RentIPN
           </Link>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.3rem 1.25rem' }}>

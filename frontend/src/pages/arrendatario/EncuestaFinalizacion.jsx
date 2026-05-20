@@ -51,7 +51,7 @@ const EncuestaFinalizacion = () => {
 
   const cargarArrendamiento = async () => {
     try {
-      const token = localStorage.getItem('token') || localStorage.getItem('burroomies_token')
+      const token = localStorage.getItem('token') || localStorage.getItem('RentIPN_token')
       const response = await fetch(`http://localhost:5000/api/arrendamientos/${idArrendamiento}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -93,7 +93,7 @@ const EncuestaFinalizacion = () => {
 
     try {
       setEnviando(true)
-      const token = localStorage.getItem('token') || localStorage.getItem('burroomies_token')
+      const token = localStorage.getItem('token') || localStorage.getItem('RentIPN_token')
 
       const datos = {
         resenaCalGen: calGeneral,

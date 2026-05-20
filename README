@@ -261,7 +261,7 @@ PORT=5000                                    # Puerto donde corre el servidor ba
 DB_HOST=localhost                            # Host de la base de datos MySQL
 DB_USER=root                                 # Usuario de MySQL
 DB_PASSWORD=tu_password                      # Contraseña del usuario de MySQL
-DB_NAME=dbBurroomies                         # Nombre de la base de datos
+DB_NAME=dbRentIPN                         # Nombre de la base de datos
 DB_PORT=3306                                 # Puerto de MySQL (default: 3306)
 
 # ============ JWT (Autenticación) ============
@@ -276,4 +276,4 @@ BREVO_EMAIL_SENDER=correo@dominio.com       # Correo remitente que verificaste e
 PDFCO_API_KEY=tu_api_key_pdfco               # API Key de PDF.co (la obtienes en el dashboard)
 
 # ============ CONTACTO (Correo del administrador) ============
-ADMIN_EMAIL=admin@burroomies.com             # Correo donde recibirás los mensajes del formulario de contacto
+ADMIN_EMAIL=admin@RentIPN.com             # Correo donde recibirás los mensajes del formulario de contacto

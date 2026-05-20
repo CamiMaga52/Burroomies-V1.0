@@ -18,7 +18,7 @@ const NavbarArrendador = () => {
       alignItems: 'center'
     }}>
       <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '1.5rem', fontWeight: 'bold' }}>
-        🏠 Burroomies
+        🏠 RentIPN
       </Link>
       
       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>

@@ -81,7 +81,7 @@ const MiArrendamiento = () => {
 
   const handleDescargarContrato = async () => {
     try {
-      const token = localStorage.getItem('token') || localStorage.getItem('burroomies_token')
+      const token = localStorage.getItem('token') || localStorage.getItem('RentIPN_token')
       
       // Hacer la petición como blob
       const response = await fetch(`http://localhost:5000/api/arrendamientos/${arrendamiento.idArrendamiento}/pdf`, {

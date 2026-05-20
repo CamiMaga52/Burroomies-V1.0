@@ -37,7 +37,7 @@ const NavbarArrendatario = () => {
             gap: '8px'
           }}
         >
-          🏠 Burroomies
+          🏠 RentIPN
         </NavLink>
 
         {/* Botón móvil */}

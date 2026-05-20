@@ -11,7 +11,7 @@ const NavbarRegistro = () => {
       alignItems: 'center'
     }}>
       <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '1.5rem' }}>
-        🏠 Burroomies
+        🏠 RentIPN
       </Link>
     </nav>
   )

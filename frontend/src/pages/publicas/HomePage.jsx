@@ -8,7 +8,7 @@ const HomePage = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
       <NavbarInicio />
       <main style={{ flex: 1, padding: '2rem', textAlign: 'center' }}>
-        <h1>Bienvenido a Burroomies</h1>
+        <h1>Bienvenido a RentIPN</h1>
         <p>Encuentra la vivienda perfecta para estudiantes del IPN</p>
       </main>
       <FooterInicio />

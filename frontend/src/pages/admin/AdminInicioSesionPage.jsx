@@ -54,7 +54,7 @@ const AdminInicioSesionPage = () => {
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
         }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ color: '#1a3a4a' }}>👑 Admin Burroomies</h1>
+            <h1 style={{ color: '#1a3a4a' }}> Admin RentIPN</h1>
             <p style={{ color: '#666' }}>Inicia sesión como administrador</p>
           </div>
 
@@ -122,7 +122,7 @@ const AdminInicioSesionPage = () => {
       </main>
 
       <footer style={{ backgroundColor: '#333', color: 'white', textAlign: 'center', padding: '1rem', marginTop: 'auto' }}>
-        Burroomies
+        RentIPN
       </footer>
     </div>
   )
