@@ -211,11 +211,11 @@ router.post('/login-admin', async (req, res) => {
     
     // Comparar contraseña con bcrypt
     const passwordValida = await bcrypt.compare(adminContra, admin.adminContra);
-    console.log('Contraseña ingresada:', adminContra)
+    {/*console.log('Contraseña ingresada:', adminContra)
     console.log('Hash en BD:', admin.adminContra)
     console.log('LENGTH hash:', admin.adminContra.length)
-    console.log('¿Válida?', passwordValida)
-
+    console.log('¿Válida?', passwordValida) */}
+    
     if (!passwordValida) {
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }

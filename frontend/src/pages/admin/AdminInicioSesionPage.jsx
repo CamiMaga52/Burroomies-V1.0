@@ -107,7 +107,7 @@ const AdminInicioSesionPage = () => {
               )}
 
               <button type="submit" className="login-btn" disabled={cargando}>
-                {cargando ? 'Iniciando sesión...' : 'Iniciar Sesión →'}
+                {cargando ? 'Iniciando sesión...' : 'Iniciar Sesión'}
               </button>
 
               <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
@@ -115,7 +115,7 @@ const AdminInicioSesionPage = () => {
                   onMouseEnter={e => e.currentTarget.style.color = 'var(--purple-600)'}
                   onMouseLeave={e => e.currentTarget.style.color = 'var(--text-light)'}
                 >
-                  ← Volver al inicio
+                  Volver al inicio
                 </Link>
               </div>
             </form>
