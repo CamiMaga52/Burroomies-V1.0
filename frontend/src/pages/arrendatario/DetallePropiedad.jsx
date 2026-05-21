@@ -55,7 +55,7 @@ const DetallePropiedad = () => {
       // Si no tiene fecha en localStorage, consultar al backend
       try {
         const userId = localStorage.getItem('userId')
-        const response = await fetch('http://localhost:5000/api/auth/estado-verificacion', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/estado-verificacion`, {
           headers: { 'x-user-id': userId }
         })
         const data = await response.json()
@@ -205,7 +205,7 @@ const DetallePropiedad = () => {
                 <>
                   <div style={{ height: '400px', backgroundColor: '#f0f0f0' }}>
                     <img
-                      src={`http://localhost:5000${propiedad.fotos[fotoActiva].fotosURL}`}
+                      src={propiedad.fotos[fotoActiva].fotosURL.startsWith('http') ? propiedad.fotos[fotoActiva].fotosURL : `http://localhost:5000${propiedad.fotos[fotoActiva].fotosURL}`}
                       alt={`Foto ${fotoActiva + 1}`}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerHTML = '<span style="font-size:60px">🏠</span>'; }}
@@ -216,7 +216,7 @@ const DetallePropiedad = () => {
                       {propiedad.fotos.map((foto, index) => (
                         <img
                           key={foto.idFotos}
-                          src={`http://localhost:5000${foto.fotosURL}`}
+                          src={foto.fotosURL.startsWith('http') ? foto.fotosURL : `http://localhost:5000${foto.fotosURL}`}
                           alt={`Miniatura ${index + 1}`}
                           onClick={() => setFotoActiva(index)}
                           style={{

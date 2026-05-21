@@ -402,7 +402,7 @@ const BuscarVivienda = () => {
                         {/* Imagen */}
                         <div style={{ width: '260px', minWidth: '260px', height: '190px', backgroundColor: '#e9ecef', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                           {propiedad.fotoPrincipal
-                            ? <img src={`http://localhost:5000${propiedad.fotoPrincipal}`} alt={propiedad.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ? <img src={propiedad.fotoPrincipal.startsWith('http') ? propiedad.fotoPrincipal : `http://localhost:5000${propiedad.fotoPrincipal}`} alt={propiedad.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             : <span style={{ fontSize: '50px', color: '#999' }}>🏠</span>
                           }
                           <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '5px' }}>

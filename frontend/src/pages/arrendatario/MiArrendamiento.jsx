@@ -40,7 +40,7 @@ const MiArrendamiento = () => {
         return
       }
 
-      const response = await fetch('http://localhost:5000/api/arrendamientos/mi-arrendamiento', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/arrendamientos/mi-arrendamiento`, {
         headers: { 
           'Content-Type': 'application/json',
           'x-user-id': userId,
@@ -84,7 +84,7 @@ const MiArrendamiento = () => {
       const token = localStorage.getItem('token') || localStorage.getItem('burroomies_token')
       
       // Hacer la petición como blob
-      const response = await fetch(`http://localhost:5000/api/arrendamientos/${arrendamiento.idArrendamiento}/pdf`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/arrendamientos/${arrendamiento.idArrendamiento}/pdf`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       
@@ -265,7 +265,7 @@ const MiArrendamiento = () => {
               }}>
                 {primeraFoto ? (
                   <img 
-                    src={`http://localhost:5000${primeraFoto}`}
+                    src={primeraFoto.startsWith('http') ? primeraFoto : `http://localhost:5000${primeraFoto}`}
                     alt={propiedad?.propiedadTitulo}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => { e.target.style.display = 'none'; }}
