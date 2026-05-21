@@ -108,7 +108,7 @@ const MisViviendas = () => {
                   <div className="arr-card-image">
                     {propiedad.fotos?.[0] ? (
                       <img
-                        src={`http://localhost:5000${propiedad.fotos[0].fotosURL}`}
+                        src={propiedad.fotos[0].fotosURL.startsWith('http') ? propiedad.fotos[0].fotosURL : `http://localhost:5000${propiedad.fotos[0].fotosURL}`}
                         alt={propiedad.propiedadTitulo}
                         onError={(e) => { e.target.style.display = 'none' }}
                       />
