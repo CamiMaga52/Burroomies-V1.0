@@ -32,7 +32,7 @@ const RenovarIdentidad = () => {
       fd.append('userId', userId)
       fd.append('constancia', constanciaFile)
 
-      const response = await fetch('http://localhost:5000/api/auth/renovar-identidad', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/renovar-identidad`, {
         method: 'POST',
         body: fd
       })

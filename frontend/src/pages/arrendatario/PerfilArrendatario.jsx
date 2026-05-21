@@ -50,7 +50,7 @@ const PerfilArrendatario = () => {
         return
       }
 
-      const response = await fetch(`http://localhost:5000/api/usuarios/perfil-arrendatario`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/perfil-arrendatario`, {
         headers: {
           'Content-Type': 'application/json',
           'x-user-id': userId,
@@ -124,7 +124,7 @@ const PerfilArrendatario = () => {
       const userId = localStorage.getItem('userId')
       const arrendatarioId = localStorage.getItem('arrendatarioId')
 
-      const response = await fetch(`http://localhost:5000/api/usuarios/actualizar-perfil-arrendatario`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/actualizar-perfil-arrendatario`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const PerfilArrendatario = () => {
         return
       }
 
-      const response = await fetch(`http://localhost:5000/api/usuarios/eliminar-cuenta-arrendatario`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/eliminar-cuenta-arrendatario`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
