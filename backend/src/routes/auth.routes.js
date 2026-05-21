@@ -11,6 +11,7 @@ const { extraerQRDePDF, validarConstancia, validarCURPDocumento } = require('../
 // Helper: fecha y hora actual en zona horaria de México
 const ahoraMX = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Mexico_City' }));
 
+
 // Validar si ya existe un campo (username, correo, curp, boleta)
 router.post('/validar-campo', async (req, res) => {
   const { campo, valor } = req.body;
@@ -170,7 +171,7 @@ router.post('/verificar-codigo', async (req, res) => {
     if (usuario.usuarioCorreoVerificado === 1) return res.status(400).json({ error: 'El correo ya está verificado' });
     const horasTranscurridas = (new Date() - new Date(usuario.usuarioCodigoFecha)) / (1000 * 60 * 60);
     if (usuario.usuarioCodigo !== codigo) return res.status(400).json({ error: 'Código incorrecto' });
-    if (horasTranscurridas > 24) return res.status(400).json({ error: 'El código ha expirado' });
+    if (horasTranscurridas > 12) return res.status(400).json({ error: 'El código ha expirado' });
     await usuario.update({ usuarioCorreoVerificado: 1, usuarioCodigo: null, usuarioCodigoFecha: null });
     res.json({ message: 'Correo verificado exitosamente' });
   } catch (error) {
@@ -314,7 +315,7 @@ router.post('/verificar-correo-login', async (req, res) => {
     if (usuario.usuarioCorreoVerificado === 1) return res.status(400).json({ error: 'El correo ya está verificado' });
     const horasTranscurridas = (new Date() - new Date(usuario.usuarioCodigoFecha)) / (1000 * 60 * 60);
     if (usuario.usuarioCodigo !== codigo) return res.status(400).json({ error: 'Código incorrecto' });
-    if (horasTranscurridas > 24) return res.status(400).json({ error: 'El código ha expirado' });
+    if (horasTranscurridas > 12) return res.status(400).json({ error: 'El código ha expirado' });
     await usuario.update({ usuarioCorreoVerificado: 1, usuarioCodigo: null, usuarioCodigoFecha: null });
 
     let arrendatarioVerificado = null;
@@ -702,9 +703,9 @@ router.post('/recuperar-password', async (req, res) => {
     // Generar código de 8 dígitos
     const codigo = Math.floor(10000000 + Math.random() * 90000000).toString();
 
-    // Expira en 15 minutos
+    // Expira en 12 horas
     const expiracion = new Date();
-    expiracion.setMinutes(expiracion.getMinutes() + 15);
+    expiracion.setHours(expiracion.getHours() + 12);
 
     // Guardar código
     await usuario.update({

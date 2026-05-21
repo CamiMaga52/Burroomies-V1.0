@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import SubirDocumento from '../ui/SubirDocumento'
 import LegalModal from '../ui/LegalModal'
 
+
 // ─── Estilos para la sección de términos ─────────────────────────────────────
 
 const terminosStyles = {
@@ -262,6 +263,13 @@ const RegistroArrendador = ({ volver }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const erroresFormato = validacionesFormato()
+      const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
+      const dominio = formData.correo.split('@')[1]?.toLowerCase()
+      if (!DOMINIOS.includes(dominio)) {
+        setErrors({ correo: 'El dominio del correo no está permitido' })
+        return
+      }
+
     if (Object.keys(erroresFormato).length > 0) { setErrors(erroresFormato); return }
 
     if (!curpFile) { setErrors({ ...errors, curpFile: 'Es obligatorio subir el documento CURP' }); return }
