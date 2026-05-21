@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import NavbarInicio from '../../components/common/NavbarInicio'
+import NavbarInicio from '../../components/common/NavbarSimple'
 import FooterInicio from '../../components/common/FooterInicio'
 
 const FaqPage = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import NavbarInicio from '../../components/common/NavbarInicio'
+import NavbarInicio from '../../components/common/NavbarSimple'
 import FooterRegistro from '../../components/common/FooterRegistro'
 import { getTerminosUso } from '../../services/legalContent'
 

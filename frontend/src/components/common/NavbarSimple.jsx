@@ -9,12 +9,18 @@ const NavbarSimple = () => {
         <img src={burroLogo} alt="Burroomies" />
         <span>RentIPN</span>
       </Link>
-      
+
       <div className="navbar-simple-right">
+        <Link to="/usuarios/inicio-sesion" className="navbar-simple-login">
+           Iniciar Sesión
+        </Link>
+      
         <Link to="/registro" className="navbar-simple-login">
            Registro
         </Link>
       </div>
+
+      
     </nav>
   )
 }
