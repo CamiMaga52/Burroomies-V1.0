@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import NavbarSimple from '../../components/common/NavbarRegistro'
+import NavbarInicio from '../../components/common/NavbarInicio'
 import FooterInicio from '../../components/common/FooterInicio'
 import { loginUsuario, reenviarCodigo } from '../../services/authService'
 import '../../styles/Login.css'
@@ -137,7 +137,7 @@ const UsuariosInicioSesionPage = () => {
 
   return (
     <div className="login-page">
-      <NavbarSimple />
+      <NavbarInicio />
       
       <div className="login-container">
         <div className="login-card">
