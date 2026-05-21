@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { Propiedad, Arrendamiento, Fotos, Resena, Direccion, Servicio, CP } = require('../models/associations');
-const { uploadFotos, comprimirYGuardar } = require('../middlewares/uploadFotos');
+const { uploadFotos, comprimirYGuardar, eliminarFotoCloudinary } = require('../middlewares/uploadFotos');
 const { Op } = require('sequelize');
-const fs = require('fs');
-const path = require('path');
 const busquedaController = require('../controllers/busqueda.controller');
 
 // Rutas de búsqueda para arrendatarios
@@ -453,10 +451,7 @@ router.put('/:id', uploadFotos.array('fotos', 10), comprimirYGuardar, async (req
       const fotosActuales = await Fotos.findAll({ where: { propiedad_idPropiedad: id } });
       for (const foto of fotosActuales) {
         if (!fotosMantener.includes(foto.idFotos)) {
-          const rutaArchivo = path.join(__dirname, '../../', foto.fotosURL);
-          if (fs.existsSync(rutaArchivo)) {
-            fs.unlinkSync(rutaArchivo);
-          }
+          await eliminarFotoCloudinary(foto.fotosURL);
           await foto.destroy();
         }
       }
@@ -522,14 +517,11 @@ router.delete('/:id', async (req, res) => {
       });
     }
 
-    // Eliminar fotos físicas
+    // Eliminar fotos de Cloudinary
     const fotos = await Fotos.findAll({ where: { propiedad_idPropiedad: id } });
-    fotos.forEach(foto => {
-      const rutaArchivo = path.join(__dirname, '../../', foto.fotosURL);
-      if (fs.existsSync(rutaArchivo)) {
-        fs.unlinkSync(rutaArchivo);
-      }
-    });
+    for (const foto of fotos) {
+      await eliminarFotoCloudinary(foto.fotosURL);
+    }
 
     // Eliminar servicios asociados
     const { ServicioHasPropiedad } = require('../models/associations');

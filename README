@@ -18,6 +18,9 @@ npm install pdfkit
 # Instalar dependencias de desarrollo
 npm install -D nodemon
 
+# Instalar dependencia para guardar las fotos en cloudinary
+npm install cloudinary
+
 # Crear estructura de carpetas
 mkdir src
 cd src

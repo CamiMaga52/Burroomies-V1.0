@@ -10,16 +10,16 @@ Archivos los buenos y definitivos:
 
 Todos los demas archivos que estan en la carpeta son las versiones anteriores de la base de datos.
 
-1. Debemos de crear la base de datos 'dbBurroomies' con el script de db_vivienda_upalm_schema.sql
+1. Debemos de crear la base de datos 'dbRentIPN' con el script de db_vivienda_upalm_schema.sql
 
 2. Una vez creada la base de datos el primer catalogo que vamos a necesitar cargar en la base es el de los codigos postales. Necesitan abrir una terminal (Windows + R y despues cmd). Una vez abierto van a ejecutar estos comandos:
 
-mysql -u root -p dbBurroomies
+mysql -u root -p dbRentIPN
 
 
 -- La ruta del INFILE necesitan cambiarla para donde esta ubicado su archivo del catalogo del los CP
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/CatalogoCodigosPostales.txt'
-INTO TABLE `dbBurroomies`.`CP`
+INTO TABLE `dbRentIPN`.`CP`
 CHARACTER SET latin1
 FIELDS TERMINATED BY '|'
 ENCLOSED BY ''

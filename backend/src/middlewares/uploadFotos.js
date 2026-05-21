@@ -1,18 +1,17 @@
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
 const sharp = require('sharp');
-const fs = require('fs');
 
-// Crear carpeta si no existe
-const uploadDir = path.join(__dirname, '../../uploads/fotos');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configurar Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Configurar almacenamiento
+// Usar memoria (no disco)
 const storage = multer.memoryStorage();
 
-// Filtrar solo imágenes
 const fileFilter = (req, file, cb) => {
   const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
   if (tiposPermitidos.includes(file.mimetype)) {
@@ -23,44 +22,52 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadFotos = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+  storage,
+  fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB máximo por foto
-    files: 10 // Máximo 10 archivos
+    fileSize: 5 * 1024 * 1024, // 5MB
+    files: 10
   }
 });
 
-// Middleware para comprimir y guardar imágenes
+// Subir a Cloudinary después de comprimir con sharp
 const comprimirYGuardar = async (req, res, next) => {
-  if (!req.files || req.files.length === 0) {
-    return next();
-  }
+  if (!req.files || req.files.length === 0) return next();
 
   try {
     const arrendadorId = req.body.arrendadorId || 'temp';
     const timestamp = Date.now();
-    const rutasGuardadas = [];
+    const urlsGuardadas = [];
 
     for (let i = 0; i < req.files.length; i++) {
       const file = req.files[i];
-      const nombreArchivo = `arrendador_${arrendadorId}_${timestamp}_${i + 1}.webp`;
-      const rutaCompleta = path.join(uploadDir, nombreArchivo);
 
-      // Comprimir y convertir a WebP (mucha compresión)
-      await sharp(file.buffer)
-        .resize(1200, 800, { // Redimensionar máximo 1200x800
-          fit: 'inside',
-          withoutEnlargement: true
-        })
-        .webp({ quality: 60 }) // Comprimir a 60% calidad
-        .toFile(rutaCompleta);
+      // Comprimir con sharp a WebP
+      const bufferComprimido = await sharp(file.buffer)
+        .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 60 })
+        .toBuffer();
 
-      rutasGuardadas.push(`/uploads/fotos/${nombreArchivo}`);
+      // Subir a Cloudinary
+      const resultado = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'rentipn/fotos',
+            public_id: `arrendador_${arrendadorId}_${timestamp}_${i + 1}`,
+            resource_type: 'image',
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(bufferComprimido);
+      });
+
+      urlsGuardadas.push(resultado.secure_url);
     }
 
-    // Guardar las rutas en el request para usarlas después
-    req.fotosRutas = rutasGuardadas;
+    req.fotosRutas = urlsGuardadas;
     next();
   } catch (error) {
     console.error('Error al procesar imágenes:', error);
@@ -68,4 +75,18 @@ const comprimirYGuardar = async (req, res, next) => {
   }
 };
 
-module.exports = { uploadFotos, comprimirYGuardar };
+// Eliminar foto de Cloudinary por URL
+const eliminarFotoCloudinary = async (url) => {
+  try {
+    // Extraer public_id desde la URL
+    const partes = url.split('/');
+    const archivo = partes[partes.length - 1].split('.')[0];
+    const carpeta = partes[partes.length - 2];
+    const publicId = `${carpeta}/${archivo}`;
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error('Error al eliminar foto de Cloudinary:', error);
+  }
+};
+
+module.exports = { uploadFotos, comprimirYGuardar, eliminarFotoCloudinary };
