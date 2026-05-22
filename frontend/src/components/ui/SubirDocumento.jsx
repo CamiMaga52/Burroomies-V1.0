@@ -34,7 +34,7 @@ const SubirDocumento = ({ tipo, onFileSelect, file, setFile, required, label }) 
         type="file"
         accept="application/pdf"
         onChange={handleFileChange}
-        required={required && !file}
+        required={false}
         style={{ display: 'block', marginTop: '0.5rem' }}
       />
 

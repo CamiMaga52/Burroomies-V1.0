@@ -93,7 +93,6 @@ const ModalContacto = ({ onClose }) => {
             📧 Correo Electrónico
           </div>
           <a 
-            href="mailto:rent.ipn.contacto@gmail.com" 
             style={{ 
               color: '#1A1633', 
               textDecoration: 'none', 
@@ -123,7 +122,7 @@ const ModalContacto = ({ onClose }) => {
             letterSpacing: '0.06em',
             marginBottom: '0.75rem',
           }}>
-            🌐 Redes Sociales
+             Redes Sociales
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -153,7 +152,7 @@ const ModalContacto = ({ onClose }) => {
                 e.currentTarget.style.color = '#4A4668';
               }}
             >
-              <span style={{ fontSize: '1.2rem' }}>📘</span> Facebook
+              <span style={{ fontSize: '1.2rem' }}></span> Facebook
             </a>
             
             {/* Instagram */}
@@ -182,7 +181,7 @@ const ModalContacto = ({ onClose }) => {
                 e.currentTarget.style.color = '#4A4668';
               }}
             >
-              <span style={{ fontSize: '1.2rem' }}>📷</span> Instagram
+              <span style={{ fontSize: '1.2rem' }}></span> Instagram
             </a>
             
             {/* Twitter / X */}
@@ -211,7 +210,7 @@ const ModalContacto = ({ onClose }) => {
                 e.currentTarget.style.color = '#4A4668';
               }}
             >
-              <span style={{ fontSize: '1.2rem' }}>🐦</span> Twitter / X
+              <span style={{ fontSize: '1.2rem' }}></span> Twitter / X
             </a>
           </div>
         </div>
