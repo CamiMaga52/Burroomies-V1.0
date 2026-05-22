@@ -208,7 +208,7 @@ router.get('/:id/pdf', async (req, res) => {
       },
       {
         titulo: 'SÉPTIMA. — SERVICIOS',
-        texto: 'Los servicios incluidos (agua, luz, gas, internet) son los acordados entre las partes. Servicios adicionales los paga el ARRENDATARIO.'
+        texto: 'Los servicios incluidos son los acordados entre las partes. RentIPN no se involucra en la gestión de servicios públicos ni pagos relacionados.'
       },
       {
         titulo: 'OCTAVA. — VISITAS',
@@ -220,14 +220,10 @@ router.get('/:id/pdf', async (req, res) => {
       },
       {
         titulo: 'DÉCIMA. — ACCESO DEL ARRENDADOR',
-        texto: 'El ARRENDADOR puede entrar al inmueble para revisión o reparación, avisando con 24 horas de anticipación, salvo emergencias.'
+        texto: 'El ARRENDADOR puede entrar al inmueble para revisión o reparación, avisando con anticipación.'
       },
       {
-        titulo: 'DÉCIMA PRIMERA. — TERMINACIÓN',
-        texto: 'Cualquiera de las partes puede terminar el contrato con 15 días de aviso a través de la plataforma.'
-      },
-      {
-        titulo: 'DÉCIMA SEGUNDA. — RESPONSABILIDAD',
+        titulo: 'DÉCIMA <PRIMERA>. — RESPONSABILIDAD',
         texto: 'El ARRENDATARIO responde por daños por mal uso. El ARRENDADOR entrega el inmueble en condiciones habitables.'
       }
     ];
