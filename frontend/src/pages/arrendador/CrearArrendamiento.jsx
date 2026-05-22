@@ -56,7 +56,7 @@ const CrearArrendamiento = () => {
       return
     }
     setArrendatarioSeleccionado(arrendatario)
-    setFormData({ ...formData, arrendatario_idArrendatario: arrendatario.idArrendatario })
+    setFormData(prev => ({ ...prev, arrendatario_idArrendatario: arrendatario.idArrendatario }))
     setResultadosBusqueda([]); setTerminoBusqueda(''); setError('')
   }
 
@@ -64,14 +64,14 @@ const CrearArrendamiento = () => {
     const idPropiedad = e.target.value
     const prop = propiedades.find(p => p.idPropiedad == idPropiedad)
     setPropiedadSeleccionada(prop || null)
-    setFormData(prev => ({ ...prev, propiedad_idPropiedad: idPropiedad, arrendamientoRenta: prop?.propiedadPrecio || prev.arrendamientoRenta }))
-    if (errors.propiedad_idPropiedad) setErrors({ ...errors, propiedad_idPropiedad: null })
+    setFormData(prev => ({ ...prev, propiedad_idPropiedad: idPropiedad, arrendamientoRenta: prop?.propiedadPrecio ?? prev.arrendamientoRenta }))
+    if (errors.propiedad_idPropiedad) setErrors(prev => ({ ...prev, propiedad_idPropiedad: null }))
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-    if (errors[name]) setErrors({ ...errors, [name]: null })
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
   }
 
   const validarFormulario = () => {
@@ -153,7 +153,7 @@ const CrearArrendamiento = () => {
                   <button
                     type="button"
                     className="arr-btn-danger arr-btn-sm"
-                    onClick={() => { setArrendatarioSeleccionado(null); setFormData({ ...formData, arrendatario_idArrendatario: '' }) }}
+                    onClick={() => { setArrendatarioSeleccionado(null); setFormData(prev => ({ ...prev, arrendatario_idArrendatario: '' })) }}
                   >
                     Cambiar
                   </button>

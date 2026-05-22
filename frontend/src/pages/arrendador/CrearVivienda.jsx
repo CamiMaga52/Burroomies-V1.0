@@ -41,7 +41,9 @@ const CrearVivienda = () => {
     try {
       const data = await getServiciosCatalogo()
       setServicios(data)
-    } catch { /* silenced */ }
+    } catch {
+      setError('No se pudieron cargar los servicios. Por favor recarga la página.')
+    }
   }
 
   const handleChange = (e) => {
@@ -70,15 +72,15 @@ const CrearVivienda = () => {
     setBuscandoCP(true)
     setCpValido(null)
     setError('')
-    setErrors({ ...errors, cp: null })
+    setErrors(prev => ({ ...prev, cp: null }))
     try {
       const data = await buscarCP(formData.cp)
-      setFormData({ ...formData, colonia: data.colonia, municipio: data.municipio, estado: data.estado })
+      setFormData(prev => ({ ...prev, colonia: data.colonia, municipio: data.municipio, estado: data.estado }))
       setCpValido(true)
     } catch {
       setCpValido(false)
       setError('CP no encontrado o no aceptado en el sistema')
-      setFormData({ ...formData, colonia: '', municipio: '', estado: '' })
+      setFormData(prev => ({ ...prev, colonia: '', municipio: '', estado: '' }))
     } finally { setBuscandoCP(false) }
   }
 
@@ -111,14 +113,19 @@ const CrearVivienda = () => {
     if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) <= 0) errs.propiedadPrecio = 'El precio debe ser mayor a 0'
     if (!formData.propiedadPrecioPor) errs.propiedadPrecioPor = 'Selecciona el tipo de precio'
     if (!formData.cp || formData.cp.length !== 5) errs.cp = 'El código postal debe tener 5 dígitos'
-    else if (cpValido === false) errs.cp = 'El CP no es válido'
+    else if (cpValido !== true) errs.cp = 'Debes buscar y validar el CP antes de continuar'
     if (!formData.direccionCalle || formData.direccionCalle.trim().length < 3) errs.direccionCalle = 'La calle es obligatoria (mínimo 3 caracteres)'
     if (!formData.direccionNumExt) errs.direccionNumExt = 'El número exterior es obligatorio'
     if (!formData.colonia) errs.colonia = 'Debes buscar un CP válido'
     if (fotos.length < 3) errs.fotos = 'Debes subir mínimo 3 fotos'
     if (fotos.length > 10) errs.fotos = 'Máximo 10 fotos permitidas'
-    const tieneBasico = (servicios.Basico || []).some(s => serviciosSeleccionados.includes(s.idServicio))
-    if (!tieneBasico) errs.servicios = 'Debes seleccionar al menos un servicio básico'
+    const basicosDisponibles = servicios.Basico || []
+    if (basicosDisponibles.length === 0) {
+      errs.servicios = 'Los servicios no cargaron correctamente. Por favor recarga la página.'
+    } else {
+      const tieneBasico = basicosDisponibles.some(s => serviciosSeleccionados.includes(s.idServicio))
+      if (!tieneBasico) errs.servicios = 'Debes seleccionar al menos un servicio básico'
+    }
     return errs
   }
 

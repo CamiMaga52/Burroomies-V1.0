@@ -44,7 +44,7 @@ const VerificarCorreoLogin = () => {
 
   useEffect(() => {
     if (tiempoReenvio <= 0) return
-    const timer = setTimeout(() => setTiempoReenvio(tiempoReenvio - 1), 1000)
+    const timer = setTimeout(() => setTiempoReenvio(prev => prev - 1), 1000)
     return () => clearTimeout(timer)
   }, [tiempoReenvio])
 
@@ -76,7 +76,7 @@ const handleVerificar = async (e) => {
           navigate('/arrendatario/buscar-vivienda')
           return
         }
-        navigate('/verificar-expiracion', { state: { userId } })
+        navigate('/arrendatario/verificacion-pendiente')
       }
     }, 1500)
   } catch (err) {

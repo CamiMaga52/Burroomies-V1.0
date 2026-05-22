@@ -53,7 +53,7 @@ const VerificacionPendiente = () => {
 
   const urgencia = getUrgencia()
   const porcentajeUsado = diasTranscurridos !== null ? Math.min((diasTranscurridos / 60) * 100, 100) : 0
-  const colorBarra = diasRestantes <= 10 ? '#c62828' : diasRestantes <= 20 ? '#e65100' : '#1a237e'
+  const colorBarra = diasRestantes === null ? '#1a237e' : diasRestantes <= 10 ? '#c62828' : diasRestantes <= 20 ? '#e65100' : '#1a237e'
 
   if (loading) {
     return (
