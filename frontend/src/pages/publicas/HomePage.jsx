@@ -420,8 +420,7 @@ function ZonasCercanas() {
             <p className="zonas-info-text">
               RentIPN restringe el registro de viviendas exclusivamente a los códigos postales 
               colindantes a la <strong>UPALM IPN</strong>. Esto garantiza que todas las propiedades 
-              publicadas se encuentren en zonas cercanas al campus, facilitando el traslado de los 
-              estudiantes y asegurando opciones de vivienda realmente accesibles.
+              publicadas se encuentren en zonas cercanas al campus.
             </p>
 
             {/* ── Leyenda de CPs ── */}
