@@ -74,7 +74,8 @@ const intentarBusqueda = async (queryParams, nivel) => {
 
   // Filtro de lugares mínimos (SIEMPRE se aplica)
   if (lugaresMin) {
-    whereConditions.lugaresDisponibles = { [Op.gte]: parseInt(lugaresMin) };
+    whereConditions.propiedadLugares = { [Op.gte]: parseInt(lugaresMin) };
+    whereConditions.propiedadEstatus = 'Disponible';
   }
 
   // Orden
@@ -238,7 +239,7 @@ const buscarPropiedades = async (req, res) => {
         id: propiedad.idPropiedad,
         titulo: propiedad.propiedadTitulo,
         tipo: propiedad.propiedadTipo,
-        lugares: propiedad.lugaresDisponibles,
+        lugares: propiedad.propiedadLugares,
         precio: propiedad.propiedadPrecio,
         precioPor: propiedad.propiedadPrecioPor,
         estatus: propiedad.propiedadEstatus,
