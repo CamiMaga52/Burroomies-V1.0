@@ -389,7 +389,7 @@ const RegistroEstudiante = ({ volver }) => {
     if (constanciaFile) fd.append('constancia', constanciaFile)
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-arrendador`, { method: 'POST', body: fd })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-estudiante`, {  method: 'POST',  body: fd })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Error al registrar')
       navigate('/verificar-correo', {
@@ -465,7 +465,7 @@ const RegistroEstudiante = ({ volver }) => {
             <button 
               type="button" 
               className="btn-regresar-sidebar"
-              onClick={() => navigate('/registro')}
+              onClick={() => navigate(-1)}
             >
               ← Regresar
             </button>

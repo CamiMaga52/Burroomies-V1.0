@@ -1,27 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 const SubirDocumento = ({ tipo, onFileSelect, file, setFile, required, label }) => {
-  const [errorArchivo, setErrorArchivo] = useState(null)
+  const [errorArchivo, setErrorArchivo] = useState(null);
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0]
-    setErrorArchivo(null)
+    const selectedFile = e.target.files[0];
+    setErrorArchivo(null);
 
-    if (!selectedFile) return
+    if (!selectedFile) return;
 
+    // Validar que sea PDF
     if (selectedFile.type !== 'application/pdf') {
-      setErrorArchivo('Solo se permiten archivos PDF.')
-      return
+      setErrorArchivo('Solo se permiten archivos PDF.');
+      e.target.value = '';
+      return;
     }
 
+    // Validar que no exceda 2MB
     if (selectedFile.size > 2 * 1024 * 1024) {
-      setErrorArchivo('El archivo no debe superar 2 MB.')
-      return
+      setErrorArchivo('El archivo no debe superar 2 MB.');
+      e.target.value = '';
+      return;
     }
 
-    setFile(selectedFile)
-    onFileSelect(selectedFile)
-  }
+    setFile(selectedFile);
+    onFileSelect(selectedFile);
+  };
 
   return (
     <div style={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '5px' }}>
@@ -34,7 +38,7 @@ const SubirDocumento = ({ tipo, onFileSelect, file, setFile, required, label }) 
         type="file"
         accept="application/pdf"
         onChange={handleFileChange}
-        required={false}
+        required={required && !file}
         style={{ display: 'block', marginTop: '0.5rem' }}
       />
 
@@ -50,11 +54,11 @@ const SubirDocumento = ({ tipo, onFileSelect, file, setFile, required, label }) 
 
       {!errorArchivo && file && (
         <div style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'green' }}>
-           Archivo seleccionado: {file.name}
+          ✅ Archivo seleccionado: {file.name}
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SubirDocumento
+export default SubirDocumento;
