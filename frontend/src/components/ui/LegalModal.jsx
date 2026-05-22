@@ -152,15 +152,6 @@ const LegalModal = ({ tipo, rol = 'estudiante', onCerrar }) => {
 
         {/* Pie — enlace a página completa + botón cerrar */}
         <div style={estilos.footer}>
-          <a
-          href={rutaCompleta}
-            style={estilos.enlaceCompleto}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onCerrar}
-          >
-            Ver versión completa ↗
-          </a>
           <button style={estilos.btnCerrar} onClick={onCerrar}>Entendido</button>
         </div>
 

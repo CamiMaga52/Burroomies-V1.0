@@ -189,7 +189,7 @@ router.post('/actualizar-correo', async (req, res) => {
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     const nuevoCodigo = Math.floor(10000000 + Math.random() * 90000000).toString();
     await usuario.update({ usuarioCorreo: nuevoCorreo, usuarioCodigo: nuevoCodigo, usuarioCodigoFecha: new Date(), usuarioCorreoVerificado: 0 });
-    res.json({ message: 'Correo actualizado. Se ha enviado un nuevo código' });
+    res.json({ message: 'Correo actualizado. Presione el boton de reenviar código para verificar el nuevo correo.' });
   } catch (error) {
     res.status(500).json({ error: 'Error al actualizar el correo' });
   }

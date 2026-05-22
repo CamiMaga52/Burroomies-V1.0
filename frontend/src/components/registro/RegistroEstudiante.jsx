@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { getUnidadesAcademicas, getCarrerasByUnidad } from '../../services/catalogosService'
-import { validarCampo, registrarEstudiante } from '../../services/authService'
-import { useNavigate, Link } from 'react-router-dom'
-import SubirDocumento from '../ui/SubirDocumento'
-import LegalModal from '../ui/LegalModal'
-import burroLogo from '../../assets/burro.png'
-import '../../styles/Registro.css'
-
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { getUnidadesAcademicas, getCarrerasByUnidad } from '../../services/catalogosService';
+import { validarCampo, registrarEstudiante } from '../../services/authService';
+import { useNavigate, Link } from 'react-router-dom';
+import SubirDocumento from '../ui/SubirDocumento';
+import LegalModal from '../ui/LegalModal';
+import Toast from '../ui/Toast';
+import burroLogo from '../../assets/burro.png';
+import '../../styles/Registro.css';
 
 // ─── Estilos del toggle "postergar" ─────────────────────────────────────────
 
@@ -78,14 +78,14 @@ const toggleStyles = {
     flexShrink: 0,
     letterSpacing: '0.04em',
   })
-}
+};
 
 // ─── Toggle de postergar verificación ────────────────────────────────────────
 
 const PostergarToggle = ({ activo, onChange, deshabilitado }) => {
   const handleClick = () => {
-    if (!deshabilitado) onChange(!activo)
-  }
+    if (!deshabilitado) onChange(!activo);
+  };
 
   return (
     <div
@@ -99,14 +99,12 @@ const PostergarToggle = ({ activo, onChange, deshabilitado }) => {
       aria-checked={activo}
       aria-disabled={deshabilitado}
       tabIndex={deshabilitado ? -1 : 0}
-      onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') handleClick() }}
+      onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') handleClick(); }}
     >
-      {/* Track del toggle */}
       <div style={toggleStyles.track(activo)}>
         <div style={toggleStyles.thumb(activo)} />
       </div>
 
-      {/* Textos */}
       <div style={toggleStyles.textos}>
         <span style={toggleStyles.label}>Verificar mi identidad después</span>
         <span style={toggleStyles.descripcion}>
@@ -118,13 +116,12 @@ const PostergarToggle = ({ activo, onChange, deshabilitado }) => {
         </span>
       </div>
 
-      {/* Badge de estado */}
       <span style={toggleStyles.badge(activo)}>
         {activo ? 'ACTIVO' : 'INACTIVO'}
       </span>
     </div>
-  )
-}
+  );
+};
 
 // ─── Estilos para la sección de términos ─────────────────────────────────────
 
@@ -159,22 +156,23 @@ const terminosStyles = {
     fontSize: 'inherit',
     fontFamily: 'inherit',
   }
-}
+};
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
 const RegistroEstudiante = ({ volver }) => {
-  const navigate = useNavigate()
-  const [unidades, setUnidades] = useState([])
-  const [carreras, setCarreras] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [enviando, setEnviando] = useState(false)
-  const [constanciaFile, setConstanciaFile] = useState(null)
-  const [postergarSeleccionado, setPostergarSeleccionado] = useState(false)
+  const navigate = useNavigate();
+  const [unidades, setUnidades] = useState([]);
+  const [carreras, setCarreras] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [constanciaFile, setConstanciaFile] = useState(null);
+  const [postergarSeleccionado, setPostergarSeleccionado] = useState(false);
+  const [toast, setToast] = useState(null);
 
   // Modal legal: null | 'privacidad' | 'terminos'
-  const [modalLegal, setModalLegal] = useState(null)
-  const [mostrarPassword, setMostrarPassword] = useState(false)
+  const [modalLegal, setModalLegal] = useState(null);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     username: '',
@@ -191,22 +189,20 @@ const RegistroEstudiante = ({ volver }) => {
     password: '',
     confirmPassword: '',
     aceptaTerminos: false,
-  })
+  });
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
-  // Estado de verificación en tiempo real por campo
-  // null = sin verificar | 'checking' = consultando | 'ok' = disponible | 'taken' = ya existe
   const [unicidad, setUnicidad] = useState({
     username: null, correo: null, curp: null, boleta: null
-  })
-  const debounceTimers = useRef({})
+  });
+  const debounceTimers = useRef({});
 
   // Si sube constancia, desactivar el toggle de postergar
   const handleConstanciaSelect = (file) => {
-    setConstanciaFile(file)
-    if (file) setPostergarSeleccionado(false)
-  }
+    setConstanciaFile(file);
+    if (file) setPostergarSeleccionado(false);
+  };
 
   // ── Verificación en tiempo real ────────────────────────────────────────────
   const CAMPOS_UNICOS = {
@@ -214,124 +210,121 @@ const RegistroEstudiante = ({ volver }) => {
     correo:   { minLen: 5, regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
     curp:     { minLen: 18, regex: /^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/ },
     boleta:   { minLen: 10, regex: /^[0-9]{10}$/ },
-  }
+  };
 
   const verificarCampoEnTiempoReal = useCallback((campo, valor) => {
-    const regla = CAMPOS_UNICOS[campo]
-    if (!regla) return
+    const regla = CAMPOS_UNICOS[campo];
+    if (!regla) return;
 
-    // Limpiar timer anterior
-    if (debounceTimers.current[campo]) clearTimeout(debounceTimers.current[campo])
+    if (debounceTimers.current[campo]) clearTimeout(debounceTimers.current[campo]);
 
-    // Si el valor no cumple el formato mínimo, resetear sin consultar
     if (!valor || valor.length < regla.minLen || !regla.regex.test(valor)) {
-      setUnicidad(prev => ({ ...prev, [campo]: null }))
-      return
+      setUnicidad(prev => ({ ...prev, [campo]: null }));
+      return;
     }
 
-    setUnicidad(prev => ({ ...prev, [campo]: 'checking' }))
+    setUnicidad(prev => ({ ...prev, [campo]: 'checking' }));
 
     debounceTimers.current[campo] = setTimeout(async () => {
       try {
-        const r = await validarCampo(campo, valor)
-        setUnicidad(prev => ({ ...prev, [campo]: r.existe ? 'taken' : 'ok' }))
+        const r = await validarCampo(campo, valor);
+        setUnicidad(prev => ({ ...prev, [campo]: r.existe ? 'taken' : 'ok' }));
       } catch {
-        setUnicidad(prev => ({ ...prev, [campo]: null }))
+        setUnicidad(prev => ({ ...prev, [campo]: null }));
       }
-    }, 600)
-  }, [])
+    }, 600);
+  }, []);
 
   // ── Restricciones ──────────────────────────────────────────────────────────
   const calcularEdad = (fechaNacimiento) => {
-    const hoy = new Date()
-    const nacimiento = new Date(fechaNacimiento)
-    let edad = hoy.getFullYear() - nacimiento.getFullYear()
-    const mes = hoy.getMonth() - nacimiento.getMonth()
-    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) edad--
-    return edad
-  }
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+    return edad;
+  };
 
-  const restringirUsername    = (v) => v.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20)
-  const restringirNombre      = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 50)
-  const restringirTelefono    = (v) => v.replace(/[^0-9]/g, '').slice(0, 10)
-  const restringirCURP        = (v) => v.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 18)
-  const restringirBoleta      = (v) => v.replace(/[^0-9]/g, '').slice(0, 10)
-  const restringirCorreo      = (v) => v.replace(/[^a-zA-Z0-9@._-]/g, '').slice(0, 60)
+  const restringirUsername    = (v) => v.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20);
+  const restringirNombre      = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 50);
+  const restringirTelefono    = (v) => v.replace(/[^0-9]/g, '').slice(0, 10);
+  const restringirCURP        = (v) => v.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 18);
+  const restringirBoleta      = (v) => v.replace(/[^0-9]/g, '').slice(0, 10);
+  const restringirCorreo      = (v) => v.replace(/[^a-zA-Z0-9@._-]/g, '').slice(0, 60);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    let v = value
+    const { name, value } = e.target;
+    let v = value;
     switch (name) {
-      case 'username':                               v = restringirUsername(value); break
+      case 'username':                               v = restringirUsername(value); break;
       case 'nombres':
       case 'apellidoPaterno':
-      case 'apellidoMaterno':                        v = restringirNombre(value); break
-      case 'telefono':                               v = restringirTelefono(value); break
-      case 'curp':                                   v = restringirCURP(value); break
-      case 'boleta':                                 v = restringirBoleta(value); break
-      case 'correo':                                 v = restringirCorreo(value); break
-      default: break
+      case 'apellidoMaterno':                        v = restringirNombre(value); break;
+      case 'telefono':                               v = restringirTelefono(value); break;
+      case 'curp':                                   v = restringirCURP(value); break;
+      case 'boleta':                                 v = restringirBoleta(value); break;
+      case 'correo':                                 v = restringirCorreo(value); break;
+      default: break;
     }
-    setFormData({ ...formData, [name]: v })
-    if (errors[name]) setErrors({ ...errors, [name]: null })
-    // Verificar unicidad en tiempo real para campos únicos
-    if (name in CAMPOS_UNICOS) verificarCampoEnTiempoReal(name, v)
-  }
+    setFormData({ ...formData, [name]: v });
+    if (errors[name]) setErrors({ ...errors, [name]: null });
+    if (name in CAMPOS_UNICOS) verificarCampoEnTiempoReal(name, v);
+  };
 
   const handleCheckbox = (e) => {
-    setFormData({ ...formData, aceptaTerminos: e.target.checked })
-    if (errors.aceptaTerminos) setErrors({ ...errors, aceptaTerminos: null })
-  }
+    setFormData({ ...formData, aceptaTerminos: e.target.checked });
+    if (errors.aceptaTerminos) setErrors({ ...errors, aceptaTerminos: null });
+  };
 
   // ── Validaciones ───────────────────────────────────────────────────────────
   const validacionesFormato = () => {
-    const e = {}
-    if (!formData.username) e.username = 'El username es obligatorio'
-    else if (formData.username.length < 3) e.username = 'Mínimo 3 caracteres'
-    else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) e.username = 'Solo letras, números y guión bajo'
+    const e = {};
+    if (!formData.username) e.username = 'El username es obligatorio';
+    else if (formData.username.length < 3) e.username = 'Mínimo 3 caracteres';
+    else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) e.username = 'Solo letras, números y guión bajo';
 
-    if (!formData.nombres) e.nombres = 'Los nombres son obligatorios'
-    else if (formData.nombres.length < 2) e.nombres = 'Mínimo 2 caracteres'
+    if (!formData.nombres) e.nombres = 'Los nombres son obligatorios';
+    else if (formData.nombres.length < 2) e.nombres = 'Mínimo 2 caracteres';
 
-    if (!formData.apellidoPaterno) e.apellidoPaterno = 'El apellido paterno es obligatorio'
-    else if (formData.apellidoPaterno.length < 2) e.apellidoPaterno = 'Mínimo 2 caracteres'
+    if (!formData.apellidoPaterno) e.apellidoPaterno = 'El apellido paterno es obligatorio';
+    else if (formData.apellidoPaterno.length < 2) e.apellidoPaterno = 'Mínimo 2 caracteres';
 
     if (formData.apellidoMaterno && formData.apellidoMaterno.length < 2)
-      e.apellidoMaterno = 'Mínimo 2 caracteres'
+      e.apellidoMaterno = 'Mínimo 2 caracteres';
 
-    if (!formData.correo) e.correo = 'El correo es obligatorio'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo no válido'
+    if (!formData.correo) e.correo = 'El correo es obligatorio';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo no válido';
 
-    if (!formData.telefono) e.telefono = 'El teléfono es obligatorio'
-    else if (formData.telefono.length !== 10) e.telefono = 'Debe tener 10 dígitos'
+    if (!formData.telefono) e.telefono = 'El teléfono es obligatorio';
+    else if (formData.telefono.length !== 10) e.telefono = 'Debe tener 10 dígitos';
 
-    if (!formData.curp) e.curp = 'El CURP es obligatorio'
+    if (!formData.curp) e.curp = 'El CURP es obligatorio';
     else if (!/^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/.test(formData.curp))
-      e.curp = 'CURP no válido (4 letras, 6 números, 6 letras, 2 alfanuméricos)'
+      e.curp = 'CURP no válido (4 letras, 6 números, 6 letras, 2 alfanuméricos)';
 
-    if (!formData.fechaNacimiento) e.fechaNacimiento = 'La fecha de nacimiento es obligatoria'
+    if (!formData.fechaNacimiento) e.fechaNacimiento = 'La fecha de nacimiento es obligatoria';
     else if (calcularEdad(formData.fechaNacimiento) < 17)
-      e.fechaNacimiento = 'Debes ser mayor o igual a 17 años'
+      e.fechaNacimiento = 'Debes ser mayor o igual a 17 años';
 
-    if (!formData.escuela) e.escuela = 'Debes seleccionar una escuela'
-    if (!formData.carreraId) e.carreraId = 'Debes seleccionar una carrera'
+    if (!formData.escuela) e.escuela = 'Debes seleccionar una escuela';
+    if (!formData.carreraId) e.carreraId = 'Debes seleccionar una carrera';
 
-    if (!formData.boleta) e.boleta = 'La boleta es obligatoria'
-    else if (formData.boleta.length !== 10) e.boleta = 'La boleta debe tener 10 dígitos'
+    if (!formData.boleta) e.boleta = 'La boleta es obligatoria';
+    else if (formData.boleta.length !== 10) e.boleta = 'La boleta debe tener 10 dígitos';
 
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    if (!formData.password) e.password = 'La contraseña es obligatoria'
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!formData.password) e.password = 'La contraseña es obligatoria';
     else if (!pwRegex.test(formData.password))
-      e.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo (@$!%*?&)'
+      e.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo (@$!%*?&)';
 
     if (formData.password !== formData.confirmPassword)
-      e.confirmPassword = 'Las contraseñas no coinciden'
+      e.confirmPassword = 'Las contraseñas no coinciden';
 
     if (!formData.aceptaTerminos)
-      e.aceptaTerminos = 'Debes aceptar el aviso de privacidad y los términos de uso'
+      e.aceptaTerminos = 'Debes aceptar el aviso de privacidad y los términos de uso';
 
-    return e
-  }
+    return e;
+  };
 
   const validarUnicidad = async () => {
     const campos = [
@@ -339,138 +332,150 @@ const RegistroEstudiante = ({ volver }) => {
       { campo: 'correo',   valor: formData.correo,   nombre: 'Correo' },
       { campo: 'curp',     valor: formData.curp,     nombre: 'CURP' },
       { campo: 'boleta',   valor: formData.boleta,   nombre: 'Boleta' },
-    ]
+    ];
     for (const item of campos) {
       try {
-        const r = await validarCampo(item.campo, item.valor)
-        if (r.existe) return { existe: true, mensaje: `${item.nombre} ya está registrado`, campo: item.campo }
+        const r = await validarCampo(item.campo, item.valor);
+        if (r.existe) return { existe: true, mensaje: `${item.nombre} ya está registrado`, campo: item.campo };
       } catch {
-        return { existe: true, mensaje: `Error al validar ${item.nombre}`, campo: item.campo }
+        return { existe: true, mensaje: `Error al validar ${item.nombre}`, campo: item.campo };
       }
     }
-    return { existe: false }
-  }
+    return { existe: false };
+  };
 
   // ── Submit ─────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const erroresFormato = validacionesFormato()
-      const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
-      const dominio = formData.correo.split('@')[1]?.toLowerCase()
-      if (!DOMINIOS.includes(dominio)) {
-        setErrors({ correo: 'El dominio del correo no está permitido' })
-        return
-      }
-    if (Object.keys(erroresFormato).length > 0) { setErrors(erroresFormato); return }
+    e.preventDefault();
+    const erroresFormato = validacionesFormato();
 
-    setEnviando(true)
-    const unicidad = await validarUnicidad()
-    if (unicidad.existe) {
-      setErrors({ ...errors, [unicidad.campo]: unicidad.mensaje })
-      setEnviando(false)
-      return
+    const DOMINIOS = ['alumno.ipn.mx', 'ipn.mx', 'gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com', 'outlook.es', 'yahoo.com', 'yahoo.es', 'icloud.com', 'live.com', 'msn.com', 'protonmail.com'];
+    const dominio = formData.correo.split('@')[1]?.toLowerCase();
+    if (!DOMINIOS.includes(dominio)) {
+      setErrors({ correo: 'El dominio del correo no está permitido' });
+      return;
     }
 
-    const fd = new FormData()
-    fd.append('username', formData.username)
-    fd.append('nombres', formData.nombres)
-    fd.append('apellidoPaterno', formData.apellidoPaterno)
-    fd.append('apellidoMaterno', formData.apellidoMaterno)
-    fd.append('correo', formData.correo)
-    fd.append('telefono', formData.telefono)
-    fd.append('curp', formData.curp)
-    fd.append('fechaNacimiento', formData.fechaNacimiento)
-    fd.append('carreraId', formData.carreraId)
-    fd.append('boleta', formData.boleta)
-    fd.append('password', formData.password)
-    // Si subió constancia → verificado; si no → pendiente (postergar)
-    const verificadoConDocumento = !!constanciaFile
-    fd.append('postergarVerificacion', verificadoConDocumento ? 'false' : 'true')
-    if (constanciaFile) fd.append('constancia', constanciaFile)
+    if (Object.keys(erroresFormato).length > 0) {
+      setErrors(erroresFormato);
+      return;
+    }
+
+    setEnviando(true);
+    const unicidad = await validarUnicidad();
+    if (unicidad.existe) {
+      setErrors({ ...errors, [unicidad.campo]: unicidad.mensaje });
+      setEnviando(false);
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append('username', formData.username);
+    fd.append('nombres', formData.nombres);
+    fd.append('apellidoPaterno', formData.apellidoPaterno);
+    fd.append('apellidoMaterno', formData.apellidoMaterno);
+    fd.append('correo', formData.correo);
+    fd.append('telefono', formData.telefono);
+    fd.append('curp', formData.curp);
+    fd.append('fechaNacimiento', formData.fechaNacimiento);
+    fd.append('carreraId', formData.carreraId);
+    fd.append('boleta', formData.boleta);
+    fd.append('password', formData.password);
+    const verificadoConDocumento = !!constanciaFile;
+    fd.append('postergarVerificacion', verificadoConDocumento ? 'false' : 'true');
+    if (constanciaFile) fd.append('constancia', constanciaFile);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-estudiante`, {  method: 'POST',  body: fd })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Error al registrar')
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-estudiante`, {
+        method: 'POST',
+        body: fd
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Error al registrar');
       navigate('/verificar-correo', {
         state: {
           correo: formData.correo,
           rol: 'estudiante',
-          verificadoConDocumento,  // true si subió constancia, false si postergó
+          verificadoConDocumento,
         }
-      })
+      });
     } catch (error) {
-      alert(error.message || 'Error al registrar. Intenta de nuevo')
+      setToast({ message: error.message || 'Error al registrar. Intenta de nuevo', type: 'error' });
     } finally {
-      setEnviando(false)
+      setEnviando(false);
     }
-  }
+  };
 
   // ── Effects ────────────────────────────────────────────────────────────────
   useEffect(() => {
-    getUnidadesAcademicas().then(setUnidades).catch(console.error)
-  }, [])
+    getUnidadesAcademicas().then(setUnidades).catch(console.error);
+  }, []);
 
   useEffect(() => {
     if (formData.escuela) {
-      setLoading(true)
+      setLoading(true);
       getCarrerasByUnidad(formData.escuela)
         .then(setCarreras)
         .catch(console.error)
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     } else {
-      setCarreras([])
+      setCarreras([]);
     }
-  }, [formData.escuela])
+  }, [formData.escuela]);
 
   // ── Helper: indicador visual de unicidad ──────────────────────────────────
   const IndicadorUnicidad = ({ campo }) => {
-    const estado = unicidad[campo]
-    if (!estado) return null
+    const estado = unicidad[campo];
+    if (!estado) return null;
     if (estado === 'checking') return (
       <span style={{ fontSize: '0.78rem', color: '#6b7280', marginTop: '0.2rem', display: 'block' }}>
         ⏳ Verificando...
       </span>
-    )
+    );
     if (estado === 'ok') return (
       <span style={{ fontSize: '0.78rem', color: '#16a34a', marginTop: '0.2rem', display: 'block' }}>
         ✓ Disponible
       </span>
-    )
+    );
     if (estado === 'taken') return (
       <span style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '0.2rem', display: 'block' }}>
         ✗ Ya está registrado
       </span>
-    )
-    return null
-  }
-
-  // ── Render ─────────────────────────────────────────────────────────────────
+    );
+    return null;
+  };
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Modal legal — renderiza encima de todo, lógica intacta */}
+      {/* Modal legal */}
       {modalLegal && (
         <LegalModal tipo={modalLegal} onCerrar={() => setModalLegal(null)} />
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
 
       <div className="registro-layout">
 
         {/* ════ SIDEBAR ════ */}
-        
         <aside className="registro-sidebar">
-          {/* Botón Regresar - ARRIBA del logo */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginBottom: '0.5rem' }}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-regresar-sidebar"
-              onClick={() => navigate(-1)}
+              onClick={volver || (() => navigate('/registro'))}
             >
               ← Regresar
             </button>
           </div>
-          
+
           <img src={burroLogo} alt="Mascota" className="sidebar-mascot" />
           <div className="sidebar-welcome">
             <h3>¡Cool listo!</h3>
@@ -497,12 +502,11 @@ const RegistroEstudiante = ({ volver }) => {
 
         {/* ════ FORMULARIO ════ */}
         <main className="registro-main">
-        
-        <div className="tipo-tabs">
+
+          <div className="tipo-tabs">
             <span className="tipo-tab active">Estudiante</span>
           </div>
-          
-          {/* Cabecera */}
+
           <div className="form-header">
             <div className="form-header-icon">🎓</div>
             <div className="form-header-text">
@@ -510,8 +514,6 @@ const RegistroEstudiante = ({ volver }) => {
               <p>Registra tu cuenta para buscar vivienda cercana y validar tu unidad académica.</p>
             </div>
           </div>
-
-         
 
           <form onSubmit={handleSubmit}>
 
@@ -751,17 +753,15 @@ const RegistroEstudiante = ({ volver }) => {
                 </div>
               </div>
 
-              {/* Toggle de postergar — lógica intacta */}
               <PostergarToggle
                 activo={postergarSeleccionado}
                 onChange={(valor) => {
-                  setPostergarSeleccionado(valor)
-                  if (valor) setConstanciaFile(null)
+                  setPostergarSeleccionado(valor);
+                  if (valor) setConstanciaFile(null);
                 }}
                 deshabilitado={false}
               />
 
-              {/* Campo de subir — solo visible si NO está postergando */}
               {!postergarSeleccionado && (
                 <>
                   <SubirDocumento
@@ -832,7 +832,7 @@ const RegistroEstudiante = ({ volver }) => {
         </main>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default RegistroEstudiante
+export default RegistroEstudiante;

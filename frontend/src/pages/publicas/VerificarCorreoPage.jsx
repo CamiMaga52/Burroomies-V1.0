@@ -213,7 +213,7 @@ const VerificarCorreoPage = () => {
             </form>
 
             <div className="verificar-hint">
-              Revisa tu bandeja de entrada y spam. El código expira en 24 horas.
+              Revisa tu bandeja de entrada y spam. El código expira en 12 horas.
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
 import NavbarSimple from '../../components/common/NavbarSimple'
 import FooterInicio from '../../components/common/FooterInicio'
@@ -20,16 +20,16 @@ const RestablecerPasswordPage = () => {
   const [exito, setExito] = useState(false)
   const [tiempoReenvio, setTiempoReenvio] = useState(60)
 
-  if (!correo) {
-    navigate('/usuarios/inicio-sesion')
-    return null
-  }
-
   useEffect(() => {
     if (tiempoReenvio <= 0) return
     const timer = setTimeout(() => setTiempoReenvio(tiempoReenvio - 1), 1000)
     return () => clearTimeout(timer)
   }, [tiempoReenvio])
+
+    if (!correo) {
+    navigate('/usuarios/inicio-sesion');
+    return null;
+  }
 
   const handleVerificarCodigo = async (e) => {
     e.preventDefault()
