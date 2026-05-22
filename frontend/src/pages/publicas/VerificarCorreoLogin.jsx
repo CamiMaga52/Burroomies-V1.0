@@ -48,39 +48,43 @@ const VerificarCorreoLogin = () => {
     return () => clearTimeout(timer)
   }, [tiempoReenvio])
 
-  const handleVerificar = async (e) => {
-    e.preventDefault()
-    setCargando(true)
-    setError('')
-    setMensaje('')
-    try {
-      const data = await verificarCodigoLogin(correo, codigo)
-      setMensaje('¡Correo verificado! Redirigiendo...')
-      setTimeout(() => {
-        if (rol === 'arrendador') {
-          localStorage.setItem('correoVerificado', '1')
-          localStorage.setItem('userId', userId)
-          localStorage.setItem('rol', rol)
-          localStorage.setItem('arrendadorId', arrendadorId)
-          navigate('/arrendador/mis-arrendamientos')
-          return
-        }
-        if (rol === 'arrendatario') {
+const handleVerificar = async (e) => {
+  e.preventDefault()
+  setCargando(true)
+  setError('')
+  setMensaje('')
+  try {
+    const data = await verificarCodigoLogin(correo, codigo)
+    setMensaje('¡Correo verificado! Redirigiendo...')
+    setTimeout(() => {
+      if (rol === 'arrendador') {
+        localStorage.setItem('correoVerificado', '1')
+        localStorage.setItem('userId', userId)
+        localStorage.setItem('rol', rol)
+        localStorage.setItem('arrendadorId', arrendadorId)
+        navigate('/arrendador/mis-arrendamientos')
+        return
+      }
+      if (rol === 'arrendatario') {
+        localStorage.setItem('correoVerificado', '1')
+        localStorage.setItem('userId', userId)
+        localStorage.setItem('rol', rol)
+        localStorage.setItem('arrendatarioId', arrendatarioId)
+        
         const verificadoIdentidad = data.arrendatarioVerificado === 1 || arrendatarioVerificadoInicial === 1
         if (verificadoIdentidad) {
-            navigate('/arrendatario/buscar-vivienda')
-            return
+          navigate('/arrendatario/buscar-vivienda')
+          return
         }
-        // Dejar que el backend decida si expiró o no
         navigate('/verificar-expiracion', { state: { userId } })
-        }
-      }, 1500)
-    } catch (err) {
-      setError(err.response?.data?.error || 'Error al verificar el código')
-    } finally {
-      setCargando(false)
-    }
+      }
+    }, 1500)
+  } catch (err) {
+    setError(err.response?.data?.error || 'Error al verificar el código')
+  } finally {
+    setCargando(false)
   }
+}
 
   const handleReenviar = async () => {
     setCargando(true)
