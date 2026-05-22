@@ -24,6 +24,7 @@ const CrearArrendamiento = () => {
   const [terminoBusqueda, setTerminoBusqueda] = useState('')
   const [resultadosBusqueda, setResultadosBusqueda] = useState([])
   const [buscando, setBuscando] = useState(false)
+  const [sinResultados, setSinResultados] = useState(false)
   const [arrendatarioSeleccionado, setArrendatarioSeleccionado] = useState(null)
   const [propiedades, setPropiedades] = useState([])
   const [propiedadSeleccionada, setPropiedadSeleccionada] = useState(null)
@@ -41,10 +42,10 @@ const CrearArrendamiento = () => {
 
   const handleBuscarArrendatario = async () => {
     if (terminoBusqueda.length < 3) { setError('Ingresa al menos 3 caracteres para buscar'); return }
-    setBuscando(true); setError(''); setResultadosBusqueda([])
+    setBuscando(true); setError(''); setResultadosBusqueda([]); setSinResultados(false)
     try {
       const data = await buscarArrendatario(terminoBusqueda)
-      if (data.length === 0) setError('No se encontraron arrendatarios con ese username o correo')
+      if (data.length === 0) setSinResultados(true)
       else setResultadosBusqueda(data)
     } catch { setError('Error al buscar arrendatario') }
     finally { setBuscando(false) }
@@ -57,7 +58,7 @@ const CrearArrendamiento = () => {
     }
     setArrendatarioSeleccionado(arrendatario)
     setFormData(prev => ({ ...prev, arrendatario_idArrendatario: arrendatario.idArrendatario }))
-    setResultadosBusqueda([]); setTerminoBusqueda(''); setError('')
+    setResultadosBusqueda([]); setTerminoBusqueda(''); setError(''); setSinResultados(false)
   }
 
   const handleSeleccionarPropiedad = (e) => {
@@ -183,6 +184,20 @@ const CrearArrendamiento = () => {
                   </div>
                   {errors.arrendatario_idArrendatario && (
                     <span className="arr-form-error">{errors.arrendatario_idArrendatario}</span>
+                  )}
+
+                  {sinResultados && (
+                    <div style={{
+                      marginTop: '0.5rem',
+                      padding: '10px 14px',
+                      backgroundColor: '#fff8e1',
+                      border: '1px solid #ffc107',
+                      borderRadius: '8px',
+                      fontSize: '0.85rem',
+                      color: '#856404'
+                    }}>
+                      🔍 No se encontraron arrendatarios con ese username o correo
+                    </div>
                   )}
 
                   {resultadosBusqueda.length > 0 && (

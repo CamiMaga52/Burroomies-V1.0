@@ -34,7 +34,7 @@ const DetallePropiedad = () => {
       if (fechaVerificacion && fechaVerificacion !== 'null' && fechaVerificacion !== 'undefined') {
         const ahora = new Date()
         const fechaVer = new Date(fechaVerificacion)
-        const mesesTranscurridos = (ahora - fechaVer) / (1000 * 60 * 60 * 24 * 30)
+        const mesesTranscurridos = (ahora.getFullYear() - fechaVer.getFullYear()) * 12 + (ahora.getMonth() - fechaVer.getMonth())
         
         if (mesesTranscurridos >= 6) {
           // Expirado - necesita renovación
@@ -66,7 +66,7 @@ const DetallePropiedad = () => {
             
             const ahora = new Date()
             const fechaVer = new Date(data.fechaVerificacion)
-            const mesesTranscurridos = (ahora - fechaVer) / (1000 * 60 * 60 * 24 * 30)
+            const mesesTranscurridos = (ahora.getFullYear() - fechaVer.getFullYear()) * 12 + (ahora.getMonth() - fechaVer.getMonth())
             
             if (mesesTranscurridos >= 6) {
               setEstaVerificado(false)
@@ -205,7 +205,7 @@ const DetallePropiedad = () => {
                 <>
                   <div style={{ height: '400px', backgroundColor: '#f0f0f0' }}>
                     <img
-                      src={propiedad.fotos[fotoActiva].fotosURL.startsWith('http') ? propiedad.fotos[fotoActiva].fotosURL : `http://localhost:5000${propiedad.fotos[fotoActiva].fotosURL}`}
+                      src={propiedad.fotos[fotoActiva].fotosURL}
                       alt={`Foto ${fotoActiva + 1}`}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerHTML = '<span style="font-size:60px">🏠</span>'; }}
@@ -216,7 +216,7 @@ const DetallePropiedad = () => {
                       {propiedad.fotos.map((foto, index) => (
                         <img
                           key={foto.idFotos}
-                          src={foto.fotosURL.startsWith('http') ? foto.fotosURL : `http://localhost:5000${foto.fotosURL}`}
+                          src={foto.fotosURL}
                           alt={`Miniatura ${index + 1}`}
                           onClick={() => setFotoActiva(index)}
                           style={{
@@ -282,8 +282,10 @@ const DetallePropiedad = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
                 <div>
                   <h2 style={{ color: '#1a237e', margin: 0, fontSize: '28px' }}>
-                    ${propiedad.precio.toLocaleString('es-MX')}
-                    <span style={{ fontSize: '16px', color: '#666', fontWeight: 'normal' }}>/mes</span>
+                    ${Number(propiedad.precio).toLocaleString('es-MX')}
+                    <span style={{ fontSize: '16px', color: '#666', fontWeight: 'normal' }}>
+                      /mes · por {propiedad.precioPor?.toLowerCase() || 'persona'}
+                    </span>
                   </h2>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -670,6 +672,7 @@ const DetallePropiedad = () => {
                       )}
 
                       {/* Info de resultados */}
+                      {resenasFiltradas.length > 0 && (
                       <p style={{
                         textAlign: 'center',
                         color: '#999',
@@ -679,6 +682,7 @@ const DetallePropiedad = () => {
                         Mostrando {inicio + 1}-{Math.min(inicio + RESENAS_POR_PAGINA, resenasFiltradas.length)} de {resenasFiltradas.length} reseñas
                         {filtroSentimiento !== 'todas' && ` (filtradas por "${filtroSentimiento}")`}
                       </p>
+                      )}
                     </>
                   ) : (
                     <p style={{ textAlign: 'center', color: '#999', padding: '30px', fontSize: '14px' }}>

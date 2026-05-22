@@ -48,7 +48,7 @@ const UsuariosInicioSesionPage = () => {
           return
         }
         localStorage.setItem('correoVerificado', '1')
-        navigate('/arrendador/mis-arrendamientos')
+        navigate('/arrendador/mis-viviendas')
         return
       }
 
@@ -59,7 +59,9 @@ const UsuariosInicioSesionPage = () => {
         localStorage.setItem('arrendatarioId', data.arrendatarioId)
         localStorage.setItem('fechaRegistro', data.fechaRegistro)
         localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
-        localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion || null)
+        if (data.arrendatarioFechaVerificacion) {
+          localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
+        }
 
         if (!data.correoVerificado) {
           await reenviarCodigo(data.correo)
@@ -83,9 +85,7 @@ const UsuariosInicioSesionPage = () => {
           return
         }
 
-        navigate('/verificar-expiracion', {
-          state: { userId: data.userId }
-        })
+        navigate('/arrendatario/verificacion-pendiente')
       }
 
     } catch (err) {

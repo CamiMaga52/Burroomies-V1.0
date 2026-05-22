@@ -114,14 +114,14 @@ const RegistroArrendador = ({ volver }) => {
       case 'numInt': v = restringirNumero(value); break
       default: break
     }
-    setFormData({ ...formData, [name]: v })
-    if (errors[name]) setErrors({ ...errors, [name]: null })
+    setFormData(prev => ({ ...prev, [name]: v }))
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
     if (name in CAMPOS_UNICOS) verificarCampoEnTiempoReal(name, v)
   }
 
   const handleCheckbox = (e) => {
-    setFormData({ ...formData, aceptaTerminos: e.target.checked })
-    if (errors.aceptaTerminos) setErrors({ ...errors, aceptaTerminos: null })
+    setFormData(prev => ({ ...prev, aceptaTerminos: e.target.checked }))
+    if (errors.aceptaTerminos) setErrors(prev => ({ ...prev, aceptaTerminos: null }))
   }
 
   // ── Verificación en tiempo real ────────────────────────────────────────────
@@ -178,16 +178,16 @@ const RegistroArrendador = ({ volver }) => {
   }
 
   const seleccionarDireccion = (direccion) => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       cp: direccion.d_codigo,
       colonia: direccion.d_asenta,
       municipio: direccion.D_mnpio,
       estado: direccion.d_estado
-    })
+    }))
     setMostrarSugerencias(false)
     setSugerenciasCP([])
-    if (errors.cp) setErrors({ ...errors, cp: null })
+    if (errors.cp) setErrors(prev => ({ ...prev, cp: null }))
   }
 
   // ── Validaciones ───────────────────────────────────────────────────────────
@@ -251,15 +251,16 @@ const RegistroArrendador = ({ volver }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const erroresFormato = validacionesFormato()
-      const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
-      const dominio = formData.correo.split('@')[1]?.toLowerCase()
-      if (!DOMINIOS.includes(dominio)) {
-        setErrors({ correo: 'El dominio del correo no está permitido' })
-        return
-      }
-
     if (Object.keys(erroresFormato).length > 0) { setErrors(erroresFormato); return }
-    if (!curpFile) { setErrors({ ...errors, curpFile: 'Es obligatorio subir el documento CURP' }); return }
+
+    const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
+    const dominio = formData.correo.split('@')[1]?.toLowerCase()
+    if (!DOMINIOS.includes(dominio)) {
+      setErrors({ correo: 'El dominio del correo no está permitido' })
+      return
+    }
+
+    if (!curpFile) { setErrors(prev => ({ ...prev, curpFile: 'Es obligatorio subir el documento CURP' })); return }
     setEnviando(true)
     const unicidad = await validarUnicidad()
     if (unicidad.existe) {
@@ -424,7 +425,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">CURP <span>*</span></label>
                   <input className="form-input" type="text" name="curp" value={formData.curp} onChange={handleChange} placeholder="Ej: HERS850101MDFRRN09" />
-                  <span className="form-hint">18 caracteres</span>
+                  <span className="form-hint">18 caracteres · <a href="https://www.gob.mx/curp/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>¿No sabes tu CURP? Consúltala aquí</a></span>
                   {errors.curp && <div className="form-error">{errors.curp}</div>}
                   <IndicadorUnicidad campo="curp" />
                 </div>
@@ -593,6 +594,12 @@ const RegistroArrendador = ({ volver }) => {
                 </div>
               </div>
 
+              <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '12px' }}>
+                ¿No tienes tu CURP en PDF?{' '}
+                <a href="https://www.gob.mx/curp/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}>
+                  Descárgala aquí →
+                </a>
+              </p>
               <SubirDocumento
                 tipo="curp"
                 onFileSelect={(file) => setCurpFile(file)}
