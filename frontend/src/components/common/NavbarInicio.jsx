@@ -72,6 +72,7 @@ const NavbarInicio = () => {
           { href: "#inicio",         label: "Inicio" },
           { href: "#quienes-somos",  label: "Quiénes Somos" },
           { href: "#caracteristicas",label: "Características" },
+          { href: "#zonas-cercanas", label: "Zonas Cercanas" },
           { href: "#perfiles",       label: "Perfiles" },
         ].map(({ href, label }) => (
           <li key={href}>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import NavbarInicio from "../../components/common/NavbarInicio";
 import FooterInicio from "../../components/common/FooterInicio";
 import burroSaludo from "../../assets/burro.png";
+import mapaCPs from "../../assets/mapa-cps-upalm.jpg"; // ← NUEVA IMAGEN
 import "../../styles/HomePage.css";
 
 /* ════════════════════════════════
@@ -15,6 +16,12 @@ const FEATURES = [
   { icon: "📍", title: "Solo zonas aledañas a UPALM", desc: "Registro de viviendas restringido a códigos postales colindantes al campus." },
   { icon: "📄", title: "Convenio arrendador-estudiante", desc: "Plantilla con los términos básicos del acuerdo de renta." },
   { icon: "🎓", title: "Comunidad IPN",            desc: "Plataforma orientada exclusivamente a la comunidad UPALM·IPN." },
+];
+
+const CP_LIST = [
+  '07700', '07720', '07755', '07730', '07739',
+  '07300', '07340', '07330', '07320', '07708',
+  '07754', '07740', '07750', '07369'
 ];
 
 const ARRENDADOR_CHECKS = [
@@ -132,7 +139,6 @@ function ProfileCard({ delay, variant, checks, icon, tag, title, description }) 
         padding: "2rem 2rem 1.75rem",
         position: "relative", overflow: "hidden",
       }}>
-        {/* ... resto del header igual ... */}
         <div style={{
           width: "60px", height: "60px", borderRadius: "14px",
           background: "rgba(255,255,255,0.2)",
@@ -157,7 +163,7 @@ function ProfileCard({ delay, variant, checks, icon, tag, title, description }) 
         </h3>
       </div>
 
-      {/* Body blanco - SIN BOTÓN */}
+      {/* Body blanco */}
       <div style={{
         background: "#ffffff", padding: "1.75rem 2rem 2rem",
         display: "flex", flexDirection: "column", flex: 1,
@@ -183,11 +189,11 @@ function ProfileCard({ delay, variant, checks, icon, tag, title, description }) 
             </div>
           ))}
         </div>
-        {/* ELIMINA EL BOTÓN DE AQUÍ */}
       </div>
     </div>
   );
 }
+
 /* ════════════════════════════════
    SECCIONES
 ════════════════════════════════ */
@@ -216,8 +222,8 @@ function Hero() {
         </p>
 
         <div className="hero-ctas">
-          <Link to="/usuarios/inicio-sesion"          className="btn btn-primary">Buscar vivienda</Link>
-          <a    href="#quienes-somos" className="btn btn-ghost">Conocer más →</a>
+          <Link to="/usuarios/inicio-sesion" className="btn btn-primary">Buscar vivienda</Link>
+          <a href="#quienes-somos" className="btn btn-ghost">Conocer más →</a>
         </div>
 
         <div className="hero-checklist">
@@ -356,10 +362,93 @@ function Caracteristicas() {
   );
 }
 
+function ZonasCercanas() {
+  const headerRef = useFadeIn();
+  const mapRef = useFadeIn();
+  const infoRef = useFadeIn();
+
+  return (
+    <section id="zonas-cercanas" className="section zonas">
+      {/* ── Encabezado ── */}
+      <div className="zonas-header fade-in" ref={headerRef} style={{ textAlign: "center", marginBottom: "3rem" }}>
+        <span className="section-label">Zonas Cercanas</span>
+        <h2 className="section-title">
+          Códigos Postales <em>aledaños</em> a la UPALM
+        </h2>
+        <p className="section-sub" style={{ margin: "0.75rem auto 0" }}>
+          Conoce las zonas donde puedes publicar y buscar viviendas. Siguiendo la división territorial de SEPOMEX, 
+          estos son los códigos postales colindantes al campus de la Unidad Profesional Adolfo López Mateos.
+        </p>
+      </div>
+
+      {/* ── Contenido: Mapa + Info (Grid Responsive) ── */}
+      <div className="zonas-content">
+        {/* ── Columna Izquierda: Mapa ── */}
+        <div
+          className="fade-in zonas-map-col"
+          ref={mapRef}
+          style={{ transitionDelay: "0.1s" }}
+        >
+          <div className="zonas-card">
+            <div className="zonas-map-wrapper">
+              <img
+                src={mapaCPs}
+                alt="Mapa de códigos postales aledaños a la UPALM IPN según SEPOMEX"
+                className="zonas-map-img"
+              />
+            </div>
+            <p className="zonas-map-caption">
+              División territorial SEPOMEX — Zona UPALM IPN
+            </p>
+          </div>
+        </div>
+
+        {/* ── Columna Derecha: Info + Leyenda ── */}
+        <div
+          className="fade-in zonas-info-col"
+          ref={infoRef}
+          style={{ transitionDelay: "0.2s" }}
+        >
+          <div className="zonas-card">
+            {/* Icono */}
+            <div className="zonas-info-icon">📍</div>
+
+            <h3 className="zonas-info-title">
+              ¿Por qué estas zonas?
+            </h3>
+
+            <p className="zonas-info-text">
+              RentIPN restringe el registro de viviendas exclusivamente a los códigos postales 
+              colindantes a la <strong>UPALM IPN</strong>. Esto garantiza que todas las propiedades 
+              publicadas se encuentren en zonas cercanas al campus, facilitando el traslado de los 
+              estudiantes y asegurando opciones de vivienda realmente accesibles.
+            </p>
+
+            {/* ── Leyenda de CPs ── */}
+            <h4 className="zonas-cp-title">CPs permitidos</h4>
+
+            <div className="zonas-cp-grid">
+              {CP_LIST.map((cp) => (
+                <span key={cp} className="zonas-cp-chip">
+                  {cp}
+                </span>
+              ))}
+            </div>
+
+            {/* Nota al pie */}
+            <p className="zonas-tip">
+              💡 <strong>Tip:</strong> Al buscar vivienda, utiliza estos códigos postales como referencia 
+              para encontrar opciones cerca de la UPALM.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Perfiles() {
   const ref = useFadeIn();
-  const mapRef = useFadeIn();
-  
   return (
     <section id="perfiles" className="section profiles">
       <div className="fade-in" ref={ref} style={{ textAlign: "center", marginBottom: "0.5rem" }}>
@@ -369,94 +458,6 @@ function Perfiles() {
         </h2>
       </div>
 
-      {/* ─── MAPA DE CPs ALEDAÑOS ─── */}
-      <div 
-        className="fade-in" 
-        ref={mapRef} 
-        style={{ 
-          textAlign: "center", 
-          marginBottom: "3rem",
-          transitionDelay: "0.1s"
-        }}
-      >
-        <div style={{
-          background: "#ffffff",
-          borderRadius: "20px",
-          padding: "2rem 2rem 1.5rem",
-          boxShadow: "0 8px 40px rgba(83,74,183,0.10)",
-          maxWidth: "700px",
-          margin: "0 auto",
-        }}>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            marginBottom: "0.5rem",
-          }}>
-            <span style={{ fontSize: "22px" }}>📍</span>
-            <h3 style={{
-              fontSize: "1.1rem",
-              fontWeight: 700,
-              color: "#2D2559",
-              margin: 0,
-            }}>
-              Códigos Postales aledaños a la UPALM IPN
-            </h3>
-          </div>
-          <p style={{
-            fontSize: "0.85rem",
-            color: "#6B6B8A",
-            marginBottom: "1.25rem",
-            lineHeight: 1.5,
-          }}>
-            Solo se permiten publicaciones de viviendas dentro de estas zonas colindantes al campus.
-          </p>
-          
-          {/* AQUÍ VA TU IMAGEN DEL MAPA */}
-          <div style={{
-            borderRadius: "14px",
-            overflow: "hidden",
-            border: "1.5px solid #E8E6F3",
-          }}>
-            <img 
-              src={"../styles/mapa-cps-upalm.jpg"} 
-              alt="Mapa de códigos postales aledaños a la UPALM IPN"
-              style={{
-                width: "100%",
-                height: "auto",
-                display: "block",
-              }}
-            />
-          </div>
-          
-          {/* Leyenda de CPs (opcional) */}
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "12px",
-            marginTop: "1rem",
-            fontSize: "0.78rem",
-            color: "#4A4668",
-            fontWeight: 500,
-          }}>
-            {["07320", "07340", "07360", "07370", "07730", "07739"].map((cp) => (
-              <span key={cp} style={{
-                background: "#EEEDFE",
-                padding: "4px 12px",
-                borderRadius: "20px",
-                color: "#534AB7",
-                fontWeight: 600,
-              }}>
-                {cp}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ─── TARJETAS DE PERFIL ─── */}
       <div className="profiles-grid">
         <ProfileCard
           delay={0.2}
@@ -477,11 +478,10 @@ function Perfiles() {
           checks={ARRENDATARIO_CHECKS}
         />
       </div>
-      
-      {/* Botón central de registro */}
+
       <div style={{ textAlign: "center", marginTop: "3rem" }}>
-        <Link to="/registro" className="btn btn-primary" style={{ 
-          padding: "14px 40px", 
+        <Link to="/registro" className="btn btn-primary" style={{
+          padding: "14px 40px",
           fontSize: "1rem",
           boxShadow: "0 8px 24px rgba(83,74,183,0.3)"
         }}>
@@ -498,17 +498,16 @@ function Perfiles() {
 export default function HomePage() {
   return (
     <>
-      {/* Navbar y Footer vienen de sus archivos separados en /components/common/ */}
       <NavbarInicio />
       <main>
         <Hero />
         <QuienesSomos />
         <Caracteristicas />
+        <ZonasCercanas />   {/* 🆕 NUEVA SECCIÓN */}
         <Perfiles />
       </main>
       <FooterInicio />
 
-      {/* Botón flotante FAQ */}
       <Link to="/faq" className="faq-btn" title="Preguntas Frecuentes">
         ?
       </Link>

@@ -659,3 +659,247 @@ body {
 @media (max-width: 900px) {
   .nav-hamburger { display: flex; align-items: center; }
 }
+
+/* ════════════════════════════════
+   ZONAS CERCANAS
+════════════════════════════════ */
+.zonas {
+  background: var(--white);
+}
+
+.zonas-header .section-sub {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Grid principal: 2 columnas en desktop ── */
+.zonas-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Card genérica para ambas columnas ── */
+.zonas-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 40px rgba(83, 74, 183, 0.10);
+  border: 1px solid #E8E6F3;
+}
+
+
+.zonas-map-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.zonas-map-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.zonas-map-caption {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #7A7899;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+.zonas-info-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #EEEDFE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 1.2rem;
+}
+
+.zonas-info-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1A1633;
+  margin-bottom: 0.75rem;
+}
+
+.zonas-info-text {
+  font-size: 0.88rem;
+  color: #4A4668;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.zonas-info-text strong {
+  color: #1A1633;
+  font-weight: 700;
+}
+
+/* ── Título de CPs ── */
+.zonas-cp-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A1633;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Grid de chips de CP ── */
+.zonas-cp-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.zonas-cp-chip {
+  background: #EEEDFE;
+  color: #534AB7;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #CECBF6;
+  transition: all 0.2s ease;
+  cursor: default;
+  user-select: none;
+}
+
+.zonas-cp-chip:hover {
+  background: #534AB7;
+  color: #ffffff;
+  border-color: #534AB7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(83, 74, 183, 0.25);
+}
+
+.zonas-cp-chip:active {
+  transform: scale(0.96);
+}
+
+/* ── Tip ── */
+.zonas-tip {
+  font-size: 0.75rem;
+  color: #7A7899;
+  margin-top: 1.25rem;
+  line-height: 1.6;
+}
+
+.zonas-tip strong {
+  color: #4A4668;
+}
+
+/* ════════════════════════════════
+   RESPONSIVE — TABLET (≤ 900px)
+════════════════════════════════ */
+@media (max-width: 900px) {
+  .zonas-content {
+    grid-template-columns: 1fr;       /* una sola columna */
+    gap: 2rem;
+    max-width: 600px;                 /* más angosto */
+  }
+
+  .zonas-card {
+    padding: 1.25rem;
+  }
+
+  .zonas-header .section-sub {
+    font-size: 0.92rem;
+    padding: 0 0.5rem;
+  }
+
+  .zonas-info-title {
+    font-size: 1.05rem;
+  }
+
+  .zonas-info-text {
+    font-size: 0.84rem;
+  }
+}
+
+/* ════════════════════════════════
+   RESPONSIVE — MÓVIL (≤ 600px)
+════════════════════════════════ */
+@media (max-width: 600px) {
+  .zonas {
+    padding: 4rem 1.25rem;            /* menos padding lateral */
+  }
+
+  .zonas-header {
+    margin-bottom: 2rem;
+  }
+
+  .zonas-content {
+    gap: 1.5rem;
+  }
+
+  .zonas-card {
+    padding: 1rem;
+    border-radius: 20px;
+  }
+
+  .zonas-map-wrapper {
+    border-radius: 12px;
+  }
+
+  .zonas-map-caption {
+    font-size: 0.68rem;
+  }
+
+  .zonas-info-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .zonas-info-title {
+    font-size: 1rem;
+  }
+
+  .zonas-info-text {
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .zonas-cp-title {
+    font-size: 0.75rem;
+  }
+
+  .zonas-cp-chip {
+    font-size: 0.74rem;
+    padding: 5px 12px;
+  }
+
+  .zonas-tip {
+    font-size: 0.72rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .zonas-card {
+    padding: 0.85rem;
+    border-radius: 16px;
+  }
+
+  .zonas-cp-grid {
+    gap: 6px;
+  }
+
+  .zonas-cp-chip {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
+}
