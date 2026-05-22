@@ -418,3 +418,332 @@
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-10px); }
 }
+
+
+
+/* ════════════════════════════════
+   VERIFICAR CORREO (LOGIN)
+════════════════════════════════ */
+
+.verificar-correo-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 50%, #F8F7FF 100%);
+}
+
+.verificar-correo-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 5vw;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+
+.verificar-correo-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(83, 74, 183, 0.12);
+  border: 1px solid #E8E6F3;
+  text-align: center;
+}
+
+/* ── Ícono ────────────────────────────────────────────────────────────────── */
+
+.verificar-correo-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #EEEDFE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 1.25rem;
+}
+
+/* ── Títulos ──────────────────────────────────────────────────────────────── */
+
+.verificar-correo-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1A1633;
+  margin-bottom: 0.5rem;
+}
+
+.verificar-correo-subtitle {
+  font-size: 0.9rem;
+  color: #4A4668;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.verificar-correo-highlight {
+  font-weight: 700;
+  color: #534AB7;
+}
+
+/* ── Caja de editar correo ────────────────────────────────────────────────── */
+
+.verificar-correo-edit-box {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #F8F7FF;
+  border-radius: 12px;
+  border: 1px solid #EEEDFE;
+}
+
+.verificar-correo-edit-link {
+  background: none;
+  border: none;
+  color: #534AB7;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.verificar-correo-edit-link:hover {
+  color: #3C3489;
+}
+
+/* ── Formulario de edición ────────────────────────────────────────────────── */
+
+.verificar-correo-edit-form {
+  text-align: left;
+}
+
+.verificar-correo-edit-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1A1633;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.verificar-correo-edit-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #CECBF6;
+  font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.verificar-correo-edit-input:focus {
+  border-color: #534AB7;
+}
+
+.verificar-correo-edit-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ── Botones pequeños ─────────────────────────────────────────────────────── */
+
+.verificar-correo-btn-sm {
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s;
+  border: none;
+}
+
+.verificar-correo-btn-sm-primary {
+  background: #534AB7;
+  color: #ffffff;
+}
+
+.verificar-correo-btn-sm-primary:hover:not(:disabled) {
+  background: #3C3489;
+}
+
+.verificar-correo-btn-sm-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verificar-correo-btn-sm-ghost {
+  background: #ffffff;
+  color: #534AB7;
+  border: 1.5px solid #CECBF6;
+}
+
+.verificar-correo-btn-sm-ghost:hover {
+  background: #EEEDFE;
+}
+
+/* ── Input de código ──────────────────────────────────────────────────────── */
+
+.verificar-correo-input-group {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.verificar-correo-input-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1A1633;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.verificar-correo-code-input {
+  width: 100%;
+  padding: 0.85rem;
+  font-size: 1.4rem;
+  text-align: center;
+  letter-spacing: 0.4rem;
+  border-radius: 12px;
+  border: 2px solid #CECBF6;
+  font-family: 'Plus Jakarta Sans', monospace;
+  font-weight: 700;
+  color: #1A1633;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.verificar-correo-code-input:focus {
+  border-color: #534AB7;
+}
+
+.verificar-correo-code-input::placeholder {
+  color: #CECBF6;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+/* ── Alertas ──────────────────────────────────────────────────────────────── */
+
+.verificar-correo-alert {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.verificar-correo-alert-error {
+  color: #991B1B;
+  background: #FEE2E2;
+  border: 1px solid #FECACA;
+}
+
+.verificar-correo-alert-success {
+  color: #065F46;
+  background: #D1FAE5;
+  border: 1px solid #A7F3D0;
+}
+
+/* ── Botones principales ──────────────────────────────────────────────────── */
+
+.verificar-correo-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+}
+
+.verificar-correo-btn-primary {
+  background: #534AB7;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(83, 74, 183, 0.3);
+}
+
+.verificar-correo-btn-primary:hover:not(:disabled) {
+  background: #3C3489;
+}
+
+.verificar-correo-btn-primary:disabled {
+  background: #AFA9EC;
+  box-shadow: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.verificar-correo-btn-secondary {
+  background: #ffffff;
+  color: #534AB7;
+  border: 1.5px solid #CECBF6;
+}
+
+.verificar-correo-btn-secondary:hover:not(:disabled) {
+  background: #EEEDFE;
+}
+
+.verificar-correo-btn-secondary:disabled {
+  background: #F8F7FF;
+  color: #AFA9EC;
+  border-color: #E8E6F3;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Hint y link volver ───────────────────────────────────────────────────── */
+
+.verificar-correo-hint {
+  margin-top: 1.25rem;
+  font-size: 0.78rem;
+  color: #7A7899;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.verificar-correo-back-link {
+  background: none;
+  border: none;
+  color: #534AB7;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 0.5rem;
+}
+
+.verificar-correo-back-link:hover {
+  color: #3C3489;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 500px) {
+  .verificar-correo-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 20px;
+  }
+
+  .verificar-correo-title {
+    font-size: 1.3rem;
+  }
+
+  .verificar-correo-code-input {
+    font-size: 1.2rem;
+    letter-spacing: 0.3rem;
+  }
+}
