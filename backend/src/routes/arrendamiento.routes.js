@@ -178,66 +178,67 @@ router.get('/:id/pdf', async (req, res) => {
     fila('Dirección', direccionCompleta);
 
     // ── 5. CLÁUSULAS ─────────────────────────────────────────────────────────
+
     seccion('5', 'CLÁUSULAS DEL CONTRATO');
 
     const clausulas = [
       {
-        titulo: 'PRIMERA. — OBJETO DEL CONTRATO',
-        texto: 'El ARRENDADOR cede en arrendamiento al ARRENDATARIO el inmueble descrito en la Sección 4, para uso exclusivo como vivienda estudiantil. Queda estrictamente prohibido cualquier otro uso sin autorización previa y por escrito del ARRENDADOR.'
+        titulo: 'PRIMERA. — OBJETO',
+        texto: 'El ARRENDADOR renta al ARRENDATARIO el inmueble descrito en la Sección 4 para uso exclusivo como vivienda estudiantil.'
       },
       {
         titulo: 'SEGUNDA. — DURACIÓN',
-        texto: 'El presente contrato tendrá una duración indefinida a partir de la fecha de inicio establecida en la plataforma RentIPN. Cualquiera de las partes podrá darlo por terminado, requiriéndose la confirmación de ambas partes para su finalización definitiva.'
+        texto: 'El contrato inicia en la fecha establecida y continúa hasta que cualquiera de las partes decida finalizarlo. Ambas partes deben confirmar la finalización.'
       },
       {
-        titulo: 'TERCERA. — RENTA Y FORMA DE PAGO',
-        texto: `La renta mensual acordada es de $${arrendamiento.arrendamientoRenta} MXN. El pago deberá realizarse de forma puntual conforme a los términos acordados entre las partes. RentIPN no interviene en las transacciones económicas entre arrendador y arrendatario.`
+        titulo: 'TERCERA. — RENTA',
+        texto: `La renta mensual es de $${arrendamiento.arrendamientoRenta} MXN. El pago se realiza directamente entre las partes. RentIPN no participa en las transacciones.`
       },
       {
-        titulo: 'CUARTA. — DEPÓSITO EN GARANTÍA',
-        texto: 'Las partes podrán acordar un depósito en garantía equivalente a uno o más meses de renta, el cual será devuelto al ARRENDATARIO al término del contrato, descontando los daños comprobados al inmueble si los hubiere.'
+        titulo: 'CUARTA. — DEPÓSITO',
+        texto: 'Si se acuerda un depósito de garantía, este se devuelve al finalizar el contrato, descontando daños comprobados si los hubiera.'
       },
       {
         titulo: 'QUINTA. — USO DEL INMUEBLE',
-        texto: 'El ARRENDATARIO se obliga a utilizar el inmueble únicamente como vivienda habitual para fines académicos. Queda prohibido subarrendar, ceder o traspasar, total o parcialmente, el uso del inmueble sin autorización expresa y por escrito del ARRENDADOR.'
+        texto: 'El ARRENDATARIO usará el inmueble solo como vivienda. No puede subarrendar ni ceder el uso sin permiso del ARRENDADOR.'
       },
       {
-        titulo: 'SEXTA. — CONSERVACIÓN Y MANTENIMIENTO',
-        texto: 'El ARRENDATARIO se obliga a conservar el inmueble en buen estado, realizando las reparaciones menores derivadas del uso cotidiano. Las reparaciones estructurales o de mayor envergadura serán responsabilidad del ARRENDADOR y deberán atenderse en un plazo razonable.'
+        titulo: 'SEXTA. — MANTENIMIENTO',
+        texto: 'El ARRENDATARIO cuida el inmueble y cubre reparaciones menores. Las reparaciones mayores son responsabilidad del ARRENDADOR.'
       },
       {
-        titulo: 'SÉPTIMA. — SERVICIOS E INSTALACIONES',
-        texto: 'Los servicios básicos incluidos en el arrendamiento (agua, luz, gas, internet, entre otros) serán los expresamente pactados entre las partes al momento de celebrar este contrato. Cualquier servicio no acordado será cubierto directamente por el ARRENDATARIO.'
+        titulo: 'SÉPTIMA. — SERVICIOS',
+        texto: 'Los servicios incluidos (agua, luz, gas, internet) son los acordados entre las partes. Servicios adicionales los paga el ARRENDATARIO.'
       },
       {
-        titulo: 'OCTAVA. — VISITAS Y CONVIVENCIA',
-        texto: 'El ARRENDATARIO podrá recibir visitas en el inmueble siempre que no afecten la tranquilidad de los demás ocupantes ni del vecindario. Las visitas nocturnas prolongadas deberán ser acordadas con el ARRENDADOR, respetando en todo momento el reglamento interno del inmueble si lo hubiere.'
+        titulo: 'OCTAVA. — VISITAS',
+        texto: 'Se permiten visitas siempre que no molesten a otros ocupantes o vecinos. Visitas prolongadas deben acordarse con el ARRENDADOR.'
       },
       {
-        titulo: 'NOVENA. — MODIFICACIONES AL INMUEBLE',
-        texto: 'El ARRENDATARIO no podrá realizar modificaciones, remodelaciones ni obras de ningún tipo en el inmueble sin contar con el consentimiento previo y por escrito del ARRENDADOR. Las mejoras realizadas sin autorización quedarán en beneficio del inmueble sin derecho a reembolso.'
+        titulo: 'NOVENA. — MODIFICACIONES',
+        texto: 'El ARRENDATARIO no puede hacer cambios al inmueble sin permiso escrito del ARRENDADOR.'
       },
       {
         titulo: 'DÉCIMA. — ACCESO DEL ARRENDADOR',
-        texto: 'El ARRENDADOR podrá acceder al inmueble para realizar inspecciones o reparaciones, notificando al ARRENDATARIO con al menos 24 horas de anticipación, salvo en casos de emergencia que pongan en riesgo la integridad del inmueble o de sus ocupantes.'
+        texto: 'El ARRENDADOR puede entrar al inmueble para revisión o reparación, avisando con 24 horas de anticipación, salvo emergencias.'
       },
       {
-        titulo: 'DÉCIMA PRIMERA. — TERMINACIÓN ANTICIPADA',
-        texto: 'Cualquiera de las partes podrá solicitar la terminación anticipada del contrato mediante la plataforma RentIPN, con un aviso mínimo de 15 días naturales. La terminación se formalizará una vez que ambas partes la confirmen en la plataforma.'
+        titulo: 'DÉCIMA PRIMERA. — TERMINACIÓN',
+        texto: 'Cualquiera de las partes puede terminar el contrato con 15 días de aviso a través de la plataforma.'
       },
       {
         titulo: 'DÉCIMA SEGUNDA. — RESPONSABILIDAD',
-        texto: 'El ARRENDATARIO será responsable de los daños causados al inmueble por negligencia, mal uso o descuido. El ARRENDADOR garantizará que el inmueble se encuentre en condiciones habitables al inicio del contrato y durante toda su vigencia.'
+        texto: 'El ARRENDATARIO responde por daños por mal uso. El ARRENDADOR entrega el inmueble en condiciones habitables.'
       }
     ];
 
     clausulas.forEach(clausula => {
       if (doc.y > 700) doc.addPage();
       doc.fontSize(8.5).font('Helvetica-Bold').fillColor(AZUL_MED)
-         .text(clausula.titulo, ML, doc.y, { width: ANCHO });
+        .text(clausula.titulo, ML, doc.y, { width: ANCHO });
       doc.moveDown(0.12);
       doc.fontSize(8).font('Helvetica').fillColor(NEGRO)
-         .text(clausula.texto, ML, doc.y, { align: 'justify', width: ANCHO });
+        .text(clausula.texto, ML, doc.y, { align: 'justify', width: ANCHO });
       doc.moveDown(0.3);
     });
 
