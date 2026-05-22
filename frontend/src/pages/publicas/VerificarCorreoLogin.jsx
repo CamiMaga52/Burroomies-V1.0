@@ -1,132 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import NavbarInicio from '../../components/common/NavbarInicio';
-import FooterInicio from '../../components/common/FooterInicio';
-import { verificarCodigoLogin, reenviarCodigo, actualizarCorreo, validarCampo } from '../../services/authService';
-import '../../styles/VerificarCorreo.css';
+import React, { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import NavbarInicio from '../../components/common/NavbarInicio'
+import FooterInicio from '../../components/common/FooterInicio'
+import { verificarCodigoLogin, reenviarCodigo, actualizarCorreo, validarCampo } from '../../services/authService'
+import '../../styles/VerificarCorreo.css'
 
 const VerificarCorreoLogin = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  const [correo, setCorreo] = useState('');
-  const [userId, setUserId] = useState(null);
-  const [rol, setRol] = useState(null);
-  const [arrendadorId, setArrendadorId] = useState(null);
-  const [arrendatarioId, setArrendatarioId] = useState(null);
-  const [fechaRegistro, setFechaRegistro] = useState(null);
-  const [arrendatarioVerificadoInicial, setArrendatarioVerificadoInicial] = useState(null);
+  const [correo, setCorreo] = useState('')
+  const [userId, setUserId] = useState(null)
+  const [rol, setRol] = useState(null)
+  const [arrendadorId, setArrendadorId] = useState(null)
+  const [arrendatarioId, setArrendatarioId] = useState(null)
+  const [fechaRegistro, setFechaRegistro] = useState(null)
+  const [arrendatarioVerificadoInicial, setArrendatarioVerificadoInicial] = useState(null)
 
-  const [codigo, setCodigo] = useState('');
-  const [error, setError] = useState('');
-  const [mensaje, setMensaje] = useState('');
-  const [cargando, setCargando] = useState(false);
-  const [tiempoReenvio, setTiempoReenvio] = useState(60);
+  const [codigo, setCodigo] = useState('')
+  const [error, setError] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [cargando, setCargando] = useState(false)
+  const [tiempoReenvio, setTiempoReenvio] = useState(60)
 
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [nuevoCorreo, setNuevoCorreo] = useState('');
+  const [modoEdicion, setModoEdicion] = useState(false)
+  const [nuevoCorreo, setNuevoCorreo] = useState('')
 
   useEffect(() => {
-    const state = location.state;
+    const state = location.state
     if (!state?.correo) {
-      navigate('/usuarios/inicio-sesion');
-      return;
+      navigate('/usuarios/inicio-sesion')
+      return
     }
-    setCorreo(state.correo);
-    setNuevoCorreo(state.correo);
-    setUserId(state.userId);
-    setRol(state.rol);
-    setArrendadorId(state.arrendadorId || null);
-    setArrendatarioId(state.arrendatarioId || null);
-    setFechaRegistro(state.fechaRegistro || null);
-    setArrendatarioVerificadoInicial(state.arrendatarioVerificado ?? null);
-  }, [location, navigate]);
+    setCorreo(state.correo)
+    setNuevoCorreo(state.correo)
+    setUserId(state.userId)
+    setRol(state.rol)
+    setArrendadorId(state.arrendadorId || null)
+    setArrendatarioId(state.arrendatarioId || null)
+    setFechaRegistro(state.fechaRegistro || null)
+    setArrendatarioVerificadoInicial(state.arrendatarioVerificado ?? null)
+  }, [location, navigate])
 
   useEffect(() => {
-    if (tiempoReenvio <= 0) return;
-    const timer = setTimeout(() => setTiempoReenvio(tiempoReenvio - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [tiempoReenvio]);
+    if (tiempoReenvio <= 0) return
+    const timer = setTimeout(() => setTiempoReenvio(tiempoReenvio - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [tiempoReenvio])
 
   const handleVerificar = async (e) => {
-    e.preventDefault();
-    setCargando(true);
-    setError('');
-    setMensaje('');
+    e.preventDefault()
+    setCargando(true)
+    setError('')
+    setMensaje('')
     try {
-      const data = await verificarCodigoLogin(correo, codigo);
-      setMensaje('¡Correo verificado! Redirigiendo...');
+      const data = await verificarCodigoLogin(correo, codigo)
+      setMensaje('¡Correo verificado! Redirigiendo...')
       setTimeout(() => {
         if (rol === 'arrendador') {
-          localStorage.setItem('correoVerificado', '1');
-          localStorage.setItem('userId', userId);
-          localStorage.setItem('rol', rol);
-          localStorage.setItem('arrendadorId', arrendadorId);
-          navigate('/arrendador/mis-arrendamientos');
-          return;
+          localStorage.setItem('correoVerificado', '1')
+          localStorage.setItem('userId', userId)
+          localStorage.setItem('rol', rol)
+          localStorage.setItem('arrendadorId', arrendadorId)
+          navigate('/arrendador/mis-arrendamientos')
+          return
         }
         if (rol === 'arrendatario') {
-          const verificadoIdentidad = data.arrendatarioVerificado === 1 || arrendatarioVerificadoInicial === 1;
-          if (verificadoIdentidad) {
-            navigate('/arrendatario/buscar-vivienda');
-            return;
-          }
-          navigate('/verificar-expiracion', { state: { userId } });
+        const verificadoIdentidad = data.arrendatarioVerificado === 1 || arrendatarioVerificadoInicial === 1
+        if (verificadoIdentidad) {
+            navigate('/arrendatario/buscar-vivienda')
+            return
         }
-      }, 1500);
+        // Dejar que el backend decida si expiró o no
+        navigate('/verificar-expiracion', { state: { userId } })
+        }
+      }, 1500)
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al verificar el código');
+      setError(err.response?.data?.error || 'Error al verificar el código')
     } finally {
-      setCargando(false);
+      setCargando(false)
     }
-  };
+  }
 
   const handleReenviar = async () => {
-    setCargando(true);
-    setError('');
-    setMensaje('');
+    setCargando(true)
+    setError('')
+    setMensaje('')
     try {
-      await reenviarCodigo(correo);
-      setMensaje('Código reenviado. Revisa tu correo.');
-      setTiempoReenvio(60);
-      setCodigo('');
+      await reenviarCodigo(correo)
+      setMensaje('Código reenviado. Revisa tu correo.')
+      setTiempoReenvio(60)
+      setCodigo('')
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al reenviar el código');
+      setError(err.response?.data?.error || 'Error al reenviar el código')
     } finally {
-      setCargando(false);
+      setCargando(false)
     }
-  };
+  }
 
   const handleActualizarCorreo = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMensaje('');
+    e.preventDefault()
+    setError('')
+    setMensaje('')
 
     if (!nuevoCorreo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nuevoCorreo)) {
-      setError('Ingresa un correo electrónico válido');
-      return;
+      setError('Ingresa un correo electrónico válido')
+      return
     }
 
-    setCargando(true);
+    setCargando(true)
     try {
-      const resultado = await validarCampo('correo', nuevoCorreo);
+      const resultado = await validarCampo('correo', nuevoCorreo)
       if (resultado.existe) {
-        setError('Este correo ya está registrado por otra cuenta');
-        setCargando(false);
-        return;
+        setError('Este correo ya está registrado por otra cuenta')
+        setCargando(false)
+        return
       }
-      await actualizarCorreo(correo, nuevoCorreo);
-      setCorreo(nuevoCorreo);
-      setModoEdicion(false);
-      setTiempoReenvio(0);
-      setCodigo('');
-      setMensaje('Correo actualizado. Se envió un nuevo código.');
+      await actualizarCorreo(correo, nuevoCorreo)
+      setCorreo(nuevoCorreo)
+      setModoEdicion(false)
+      setTiempoReenvio(0)
+      setCodigo('')
+      setMensaje('Correo actualizado. Se envió un nuevo código.')
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al actualizar el correo');
+      setError(err.response?.data?.error || 'Error al actualizar el correo')
     } finally {
-      setCargando(false);
+      setCargando(false)
     }
-  };
+  }
 
   return (
     <div className="verificar-correo-page">
@@ -134,23 +135,20 @@ const VerificarCorreoLogin = () => {
 
       <main className="verificar-correo-main">
         <div className="verificar-correo-card">
-          {/* Ícono */}
           <div className="verificar-correo-icon">📧</div>
 
-          {/* Título */}
           <h2 className="verificar-correo-title">Verificación de Correo</h2>
           <p className="verificar-correo-subtitle">
             Ingresa el código de 8 dígitos que enviamos a{' '}
             <strong className="verificar-correo-highlight">{correo}</strong>
           </p>
 
-          {/* Actualizar correo */}
           <div className="verificar-correo-edit-box">
             {!modoEdicion ? (
               <button
                 type="button"
                 className="verificar-correo-edit-link"
-                onClick={() => { setModoEdicion(true); setError(''); setMensaje(''); }}
+                onClick={() => { setModoEdicion(true); setError(''); setMensaje('') }}
               >
                 ¿Correo incorrecto o no te llega? Actualizar correo
               </button>
@@ -166,17 +164,13 @@ const VerificarCorreoLogin = () => {
                   required
                 />
                 <div className="verificar-correo-edit-btns">
-                  <button
-                    type="submit"
-                    disabled={cargando}
-                    className="verificar-correo-btn-sm verificar-correo-btn-sm-primary"
-                  >
+                  <button type="submit" disabled={cargando} className="verificar-correo-btn-sm verificar-correo-btn-sm-primary">
                     {cargando ? 'Actualizando...' : 'Actualizar'}
                   </button>
                   <button
                     type="button"
                     className="verificar-correo-btn-sm verificar-correo-btn-sm-ghost"
-                    onClick={() => { setModoEdicion(false); setNuevoCorreo(correo); setError(''); }}
+                    onClick={() => { setModoEdicion(false); setNuevoCorreo(correo); setError('') }}
                   >
                     Cancelar
                   </button>
@@ -185,7 +179,6 @@ const VerificarCorreoLogin = () => {
             )}
           </div>
 
-          {/* Formulario de código */}
           <form onSubmit={handleVerificar}>
             <div className="verificar-correo-input-group">
               <label className="verificar-correo-input-label">Código de verificación</label>
@@ -199,21 +192,17 @@ const VerificarCorreoLogin = () => {
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div className="verificar-correo-alert verificar-correo-alert-error">
                 <span>⚠️</span> {error}
               </div>
             )}
-
-            {/* Mensaje */}
             {mensaje && (
               <div className="verificar-correo-alert verificar-correo-alert-success">
                 <span>✓</span> {mensaje}
               </div>
             )}
 
-            {/* Botón Verificar */}
             <button
               type="submit"
               disabled={cargando || codigo.length !== 8}
@@ -222,7 +211,6 @@ const VerificarCorreoLogin = () => {
               {cargando ? 'Verificando...' : 'Verificar Código'}
             </button>
 
-            {/* Botón Reenviar */}
             <button
               type="button"
               onClick={handleReenviar}
@@ -233,13 +221,10 @@ const VerificarCorreoLogin = () => {
             </button>
           </form>
 
-          {/* Hint */}
           <p className="verificar-correo-hint">
-            Revisa tu bandeja de entrada y spam.<br />
-            El código expira en 12 horas.
+            Revisa tu bandeja de entrada y spam. El código expira en 12 horas.
           </p>
 
-          {/* Volver */}
           <button
             type="button"
             className="verificar-correo-back-link"
@@ -252,7 +237,7 @@ const VerificarCorreoLogin = () => {
 
       <FooterInicio />
     </div>
-  );
-};
+  )
+}
 
-export default VerificarCorreoLogin;
+export default VerificarCorreoLogin
