@@ -49,7 +49,7 @@ const CrearVivienda = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
-    if (name === 'propiedadTitulo') v = value.slice(0, 100)
+    if (name === 'propiedadTitulo') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
     else if (name === 'propiedadDescripcion') v = value.slice(0, 500)
     else if (name === 'propiedadLugares') {
       v = value.replace(/[^0-9]/g, '')
@@ -59,6 +59,7 @@ const CrearVivienda = () => {
       const parts = v.split('.')
       if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
       if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
+      if (v && parseFloat(v) > 25000) v = '25000'
     } else if (name === 'cp') {
       v = value.replace(/[^0-9]/g, '').slice(0, 5)
     } else if (name === 'direccionCalle') v = value.slice(0, 100)

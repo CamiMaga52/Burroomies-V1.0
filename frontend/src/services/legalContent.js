@@ -19,7 +19,7 @@ Al registrarse en el sistema, usted otorga su consentimiento expreso para el tra
     {
       subtitulo: '4. Finalidades del Tratamiento',
       texto: `Sus datos se utilizan para:
-• Primarias (necesarias para el servicio): crear y gestionar su cuenta, validar su identidad mediante extracción automatizada de datos del documento oficial, permitir la publicación y búsqueda de arrendamientos, y enviar comunicaciones relacionadas con el uso del sistema.
+• Primarias (necesarias para el servicio): crear y gestionar su cuenta, verificar su identidad mediante extracción automatizada de datos del documento oficial, permitir la publicación y búsqueda de arrendamientos, y enviar comunicaciones relacionadas con el uso del sistema.
 • Secundarias (opcionales): enviar avisos sobre nuevas funcionalidades o actualizaciones del sistema.
 
 Los correos electrónicos se utilizan únicamente para: verificación de correo al registrarse y recuperación de contraseña. No se envían correos con fines publicitarios.`
@@ -34,7 +34,7 @@ Los correos electrónicos se utilizan únicamente para: verificación de correo 
       subtitulo: '6. Plazo de Conservación',
       texto: `Los datos personales se conservan mientras la cuenta del usuario permanezca activa. Al eliminar la cuenta, los datos personales se eliminan. Sin embargo, los datos relacionados con reseñas publicadas se conservan de forma anónima para preservar el historial de las propiedades.
 
-DOCUMENTOS DE VALIDACIÓN: El archivo PDF (constancia de estudios o CURP) se procesa durante el registro mediante la API de PDF.co para extraer los datos del código QR y compararlos con la información del formulario. Una vez completada la validación, el archivo no se almacena en los servidores del sistema.`
+DOCUMENTOS DE VERIFICACIÓN: El archivo PDF (constancia de estudios o CURP) se procesa durante el registro mediante la API de PDF.co para extraer los datos del código QR y compararlos con la información del formulario. Una vez completada la verificación, el archivo no se almacena en los servidores del sistema.`
     },
     {
       subtitulo: '7. Derechos ARCO',
@@ -45,15 +45,24 @@ DOCUMENTOS DE VALIDACIÓN: El archivo PDF (constancia de estudios o CURP) se pro
       texto: `El servicio de extracción de datos PDF.co puede operar servidores fuera de México. Se exige contractualmente un nivel de protección equivalente al establecido por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).`
     },
     {
-      subtitulo: '9. Uso de Cookies',
+      subtitulo: '9. Seguridad de los Datos',
+      texto: `RentIPN implementa las siguientes medidas para proteger sus datos personales:
+• En transferencia: toda comunicación entre su dispositivo y los servidores del sistema utiliza protocolo HTTPS/TLS, lo que garantiza que los datos viajan cifrados.
+• En reposo: las contraseñas se almacenan con cifrado bcrypt. Los datos personales se almacenan en servidores con acceso restringido.
+• Los documentos PDF subidos para verificación se procesan en memoria y no se almacenan en los servidores del sistema una vez completada la verificación.
+
+En caso de una vulneración de seguridad que afecte sus datos personales, el sistema lo notificará conforme a lo establecido en la LFPDPPP.`
+    },
+    {
+      subtitulo: '10. Uso de Cookies',
       texto: `El sistema utiliza cookies de sesión para mantener el inicio de sesión activo durante el uso del sistema. Estas cookies son necesarias para el funcionamiento del servicio. No se utilizan cookies de terceros ni cookies con fines publicitarios o de rastreo.`
     },
     {
-      subtitulo: '10. Menores de Edad',
+      subtitulo: '11. Menores de Edad',
       texto: `Los estudiantes deben tener al menos 17 años para registrarse. Los menores de 18 años declaran contar con el consentimiento de sus padres o tutores al completar el registro. Los arrendadores deben ser mayores de 18 años. El sistema no recopila datos de menores sin el consentimiento adecuado.`
     },
     {
-      subtitulo: '11. Cambios al Aviso',
+      subtitulo: '12. Cambios al Aviso',
       texto: `Cualquier modificación a este aviso será notificada a través del correo registrado en la cuenta del usuario o mediante un aviso visible en el sistema al iniciar sesión.`
     }
   ],
@@ -66,7 +75,9 @@ DOCUMENTOS DE VALIDACIÓN: El archivo PDF (constancia de estudios o CURP) se pro
 • Datos académicos: boleta, carrera y unidad académica del IPN, constancia de estudios (PDF).
 • Datos de autenticación: contraseña (almacenada con cifrado bcrypt).
 
-VALIDACIÓN DE IDENTIDAD: La constancia de estudios se procesa durante el registro mediante la API de PDF.co, que extrae los datos del código QR del documento y los compara con la información ingresada en el formulario. El estudiante dispone de una prórroga de 60 días para subir su constancia si no lo hace al momento del registro. Mientras la cuenta no esté validada, se bloquean los medios de contacto con arrendadores. El archivo PDF no se almacena después de la validación.`
+VERIFICACIÓN DE IDENTIDAD: La constancia de estudios se procesa durante el registro mediante la API de PDF.co, que extrae los datos del código QR del documento y los compara con la información ingresada en el formulario. El estudiante dispone de una prórroga de 60 días para subir su constancia si no lo hace al momento del registro. Mientras la cuenta no esté verificada, se bloquean los medios de contacto con arrendadores. El archivo PDF no se almacena después de la verificación.
+
+DATOS SENSIBLES: El CURP es considerado un dato personal de tratamiento especial conforme a la LFPDPPP. Su uso se limita exclusivamente a la verificación de identidad dentro del sistema. No se comparte con terceros salvo los proveedores tecnológicos descritos en este aviso.`
     },
     arrendador: {
       subtitulo: '3. Datos Personales Recabados',
@@ -74,10 +85,12 @@ VALIDACIÓN DE IDENTIDAD: La constancia de estudios se procesa durante el regist
 • Datos de identificación: nombre completo, CURP, fecha de nacimiento, RFC.
 • Datos de contacto: correo electrónico, número de teléfono.
 • Datos de domicilio: calle, número exterior/interior, colonia, municipio, estado y código postal.
-• Documento CURP en formato PDF para validación de identidad.
+• Documento CURP en formato PDF para verificación de identidad.
 • Datos de autenticación: contraseña (almacenada con cifrado bcrypt).
 
-VALIDACIÓN DE IDENTIDAD: El CURP en PDF se procesa durante el registro mediante la API de PDF.co, que extrae los datos del código QR del documento y los compara con la información ingresada en el formulario. Este paso es obligatorio. El archivo PDF no se almacena después de la validación.`
+VERIFICACIÓN DE IDENTIDAD: El CURP en PDF se procesa durante el registro mediante la API de PDF.co, que extrae los datos del código QR del documento y los compara con la información ingresada en el formulario. Este paso es obligatorio. El archivo PDF no se almacena después de la verificación.
+
+DATOS SENSIBLES: El CURP es considerado un dato personal de tratamiento especial conforme a la LFPDPPP. Su uso se limita exclusivamente a la verificación de identidad dentro del sistema. No se comparte con terceros salvo los proveedores tecnológicos descritos en este aviso.`
     }
   }
 }
@@ -148,30 +161,30 @@ Para cualquier conflicto legal derivado de un arrendamiento, las partes deberán
       texto: `El sistema se reserva el derecho de suspender o cancelar cuentas que:
 • Incumplan estos términos de uso.
 • Proporcionen documentos falsos o alterados.
-• Publiquen reseñas con lenguaje inapropiado (el sistema verifica automáticamente la presencia de groserías).
+• Publiquen reseñas con lenguaje inapropiado (el sistema valida automáticamente la presencia de groserías).
 • Sean reportadas por conducta inadecuada.
 
 Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 días posteriores al registro serán eliminadas automáticamente.`
     },
     {
-      subtitulo: '9. Proceso de validación de Identidad',
-      texto: `El sistema valida la identidad de los usuarios mediante el siguiente proceso:
+      subtitulo: '9. Proceso de verificación de Identidad',
+      texto: `El sistema verifica la identidad de los usuarios mediante el siguiente proceso:
 
 1. El usuario sube su documento oficial (constancia de estudios IPN para estudiantes, CURP para arrendadores) en formato PDF durante el registro.
 2. El sistema utiliza la API de PDF.co para extraer los datos del código QR del documento.
 3. Los datos extraídos se comparan automáticamente con la información ingresada en el formulario de registro.
-4. Si los datos coinciden, la cuenta queda validada. Si no coinciden, se notifica al usuario para que corrija la información.
-5. Una vez completada la validación, el archivo PDF se elimina de los servidores. No se conservan copias.
+4. Si los datos coinciden, la cuenta queda verificada. Si no coinciden, se notifica al usuario para que corrija la información.
+5. Una vez completada la verificación, el archivo PDF se elimina de los servidores. No se conservan copias.
 
 • El procesamiento ocurre durante el registro.
 • Los estudiantes disponen de una prórroga de 60 días para subir su constancia.
-• Mientras la cuenta no esté validada, el estudiante no puede contactar arrendadores ni ser ligado a un arrendamiento.`
+• Mientras la cuenta no esté verificada, el estudiante no puede contactar arrendadores ni ser ligado a un arrendamiento.`
     },
     {
       subtitulo: '10. Sistema de Reseñas',
       texto: `El módulo de reseñas opera bajo las siguientes reglas:
 
-• Pueden publicar reseñas los estudiantes validados que hayan finalizado un arrendamiento.
+• Pueden publicar reseñas los estudiantes verificados que hayan finalizado un arrendamiento.
 • Para finalizar un arrendamiento, tanto el estudiante como el arrendador deben confirmar la finalización.
 • El sistema verifica automáticamente que la reseña no contenga groserías.
 • Si un estudiante elimina su cuenta, sus reseñas se conservan y se ligan a un perfil genérico para preservar el historial de la propiedad.
@@ -182,11 +195,35 @@ Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 día
       texto: `Las viviendas publicadas deben estar ubicadas en los códigos postales colindantes a la UPALM IPN definidos por el sistema. Estos CPs están basados en la división territorial de SEPOMEX y pueden consultarse en la sección "Zonas Cercanas" de la plataforma. Las publicaciones fuera de estas zonas serán rechazadas.`
     },
     {
-      subtitulo: '12. Legislación Aplicable',
-      texto: `Estos términos se rigen por las leyes de los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). Para cualquier controversia, las partes se someten a la jurisdicción de los tribunales competentes de la Ciudad de México.`
+      subtitulo: '12. Obligaciones Fiscales de los Arrendadores',
+      texto: `RentIPN es una plataforma de publicidad y NO actúa como agente retenedor ni intermediario fiscal ante el Servicio de Administración Tributaria (SAT) ni ante ninguna otra autoridad hacendaria.
+
+El arrendador reconoce y acepta expresamente que:
+• RentIPN no procesa, cobra, retiene ni transfiere pagos de renta entre usuarios, por lo que no le corresponde ninguna obligación fiscal derivada de dichos pagos.
+• El arrendador es el único responsable de cumplir con sus obligaciones fiscales derivadas del arrendamiento de inmuebles, incluyendo la emisión de comprobantes fiscales digitales (CFDI), la declaración de ingresos por arrendamiento ante el SAT conforme al artículo 114 y siguientes de la Ley del Impuesto sobre la Renta (LISR), y el pago de los impuestos correspondientes.
+• RentIPN no asesora, orienta ni se responsabiliza por el cumplimiento o incumplimiento de las obligaciones fiscales de ningún usuario.
+• Cualquier consecuencia fiscal, sanción, multa o requerimiento del SAT derivado de la actividad de arrendamiento es responsabilidad exclusiva del arrendador.
+
+Se recomienda a los arrendadores consultar a un contador o asesor fiscal para cumplir correctamente con sus obligaciones ante el SAT.`
     },
     {
-      subtitulo: '13. Contacto',
+      subtitulo: '13. Aceptación de Términos y Deslinde de Responsabilidad',
+      texto: `Al completar el proceso de registro en RentIPN, el usuario declara haber leído, comprendido y aceptado en su totalidad los presentes Términos y Condiciones de Uso, así como el Aviso de Privacidad correspondiente a su rol.
+
+Esta aceptación tiene carácter vinculante y produce los siguientes efectos:
+• El usuario reconoce que RentIPN actúa exclusivamente como intermediario de publicidad y no como parte en ninguna relación de arrendamiento.
+• El usuario libera a RentIPN, sus desarrolladores, colaboradores y al Instituto Politécnico Nacional de cualquier responsabilidad civil, penal, fiscal o de cualquier otra naturaleza derivada del uso del sistema o de las relaciones entre usuarios.
+• El usuario asume plena responsabilidad por la veracidad de la información que proporciona al registrarse y durante el uso del sistema.
+• El usuario acepta que cualquier reclamación deberá dirigirse directamente a la contraparte involucrada, y no a RentIPN.
+
+La aceptación de estos términos queda registrada con fecha, hora e identificador de cuenta al momento del registro.`
+    },
+    {
+      subtitulo: '14. Legislación Aplicable',
+      texto: `Estos términos se rigen por las leyes de los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) y la Ley del Impuesto sobre la Renta (LISR). Para cualquier controversia, las partes se someten a la jurisdicción de los tribunales competentes de la Ciudad de México.`
+    },
+    {
+      subtitulo: '15. Contacto',
       texto: `Para reportes, quejas o aclaraciones: rent.ipn.contacto@gmail.com`
     }
   ],
@@ -197,9 +234,9 @@ Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 día
 • Ser alumno activo del Instituto Politécnico Nacional (IPN).
 • Tener al menos 17 años de edad. Si es menor de 18, declara contar con consentimiento de sus padres o tutores.
 • Proporcionar una boleta escolar válida.
-• Subir su constancia de estudios vigente en formato PDF para validación de identidad (al momento del registro o dentro de los 60 días posteriores).
-• Si no valida su identidad en el plazo de 60 días, su cuenta será eliminada automáticamente.
-• Mientras la cuenta no esté validada, no podrá acceder a los medios de contacto de los arrendadores ni ser ligado a un arrendamiento.
+• Subir su constancia de estudios vigente en formato PDF para verificación de identidad (al momento del registro o dentro de los 60 días posteriores).
+• Si no verifica su identidad en el plazo de 60 días, su cuenta será eliminada automáticamente.
+• Mientras la cuenta no esté verificada, no podrá acceder a los medios de contacto de los arrendadores ni ser ligado a un arrendamiento.
 
 El acceso es personal; compartir credenciales está prohibido.`
     },
@@ -207,7 +244,7 @@ El acceso es personal; compartir credenciales está prohibido.`
       subtitulo: '2. Condiciones de Acceso como Arrendador',
       texto: `Para registrarse como Arrendador debe:
 • Ser mayor de 18 años de edad.
-• Proporcionar un documento CURP válido en formato PDF para validar su identidad. Este paso es obligatorio.
+• Proporcionar un documento CURP válido en formato PDF para verificar su identidad. Este paso es obligatorio.
 • Contar con un RFC vigente.
 • Ser propietario o contar con la facultad legal para arrendar el inmueble que publique.
 • Publicar inmuebles ubicados en los códigos postales autorizados por el sistema.

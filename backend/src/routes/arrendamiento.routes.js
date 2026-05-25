@@ -153,7 +153,6 @@ router.get('/:id/pdf', async (req, res) => {
     fila('Nombre completo', nomArrendador);
     fila('Correo electrónico', arrendador.usuario.usuarioCorreo);
     fila('Teléfono', arrendador.usuario.usuarioTel);
-    fila('RFC', arrendador.arrendadorRFC);
 
     // ── 3. DATOS DEL ARRENDATARIO ────────────────────────────────────────────
     seccion('3', 'DATOS DEL ARRENDATARIO');
@@ -223,8 +222,24 @@ router.get('/:id/pdf', async (req, res) => {
         texto: 'El ARRENDADOR puede entrar al inmueble para revisión o reparación, avisando con anticipación.'
       },
       {
-        titulo: 'DÉCIMA <PRIMERA>. — RESPONSABILIDAD',
-        texto: 'El ARRENDATARIO responde por daños por mal uso. El ARRENDADOR entrega el inmueble en condiciones habitables.'
+        titulo: 'DÉCIMA PRIMERA. — RESPONSABILIDAD',
+        texto: 'El ARRENDATARIO responde por los daños ocasionados al inmueble por mal uso o negligencia. El ARRENDADOR se obliga a entregar y mantener el inmueble en condiciones habitables durante la vigencia del contrato.'
+      },
+      {
+        titulo: 'DÉCIMA SEGUNDA. — RESCISIÓN',
+        texto: 'Cualquiera de las partes podrá dar por terminado el presente contrato de manera anticipada en los siguientes supuestos: a) Incumplimiento reiterado en el pago de la renta acordada. b) Uso del inmueble para actividades distintas a las pactadas o ilícitas. c) Daños graves al inmueble por parte del ARRENDATARIO. d) Mutuo acuerdo entre las partes. En cualquier caso, la finalización deberá confirmarse por ambas partes a través de la plataforma RentIPN.'
+      },
+      {
+        titulo: 'DÉCIMA TERCERA. — OBLIGACIONES FISCALES',
+        texto: `Los ingresos derivados del arrendamiento del inmueble son responsabilidad fiscal exclusiva del ARRENDADOR, quien deberá cumplir con sus obligaciones ante el Servicio de Administración Tributaria (SAT) conforme a los artículos 114 y siguientes de la Ley del Impuesto sobre la Renta (LISR). RentIPN NO actúa como agente retenedor, NO procesa pagos de renta y NO tiene ninguna obligación fiscal derivada de la relación entre las partes. El ARRENDATARIO no asume responsabilidad fiscal alguna por el uso de la plataforma.`
+      },
+      {
+        titulo: 'DÉCIMA CUARTA. — DESLINDE DE RentIPN',
+        texto: 'RentIPN es una plataforma digital de publicidad y NO es parte del presente contrato de arrendamiento. Su participación se limita a facilitar el contacto entre las partes y generar este documento con carácter meramente informativo. RentIPN no asume ninguna responsabilidad civil, penal, fiscal o de cualquier otra naturaleza derivada de los acuerdos, incumplimientos o disputas que surjan entre el ARRENDADOR y el ARRENDATARIO. Se recomienda a ambas partes formalizar su relación contractual ante un profesional legal o fedatario público.'
+      },
+      {
+        titulo: 'DÉCIMA QUINTA. — JURISDICCIÓN',
+        texto: 'Para la interpretación y cumplimiento del presente contrato, las partes se someten a la jurisdicción de los tribunales competentes de la Ciudad de México, renunciando a cualquier otro fuero que pudiera corresponderles en razón de sus domicilios presentes o futuros.'
       }
     ];
 

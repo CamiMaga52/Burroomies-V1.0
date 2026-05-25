@@ -19,7 +19,7 @@ const FaqPage = () => {
     },
     {
       pregunta: '¿Cómo me registro como arrendador?',
-      respuesta: 'Debes ir a la página de Registro, seleccionar "Arrendador", llenar tus datos personales, tu domicilio (el CP se autocompleta) y subir tu documento CURP en PDF para validar tu identidad.'
+      respuesta: 'Debes ir a la página de Registro, seleccionar "Arrendador", llenar tus datos personales, tu domicilio (el CP se autocompleta) y subir tu documento CURP en PDF para verificar tu identidad.'
     },
     {
       pregunta: '¿Qué pasa si no verifico mi cuenta?',

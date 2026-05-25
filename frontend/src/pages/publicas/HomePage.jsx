@@ -11,7 +11,7 @@ import "../../styles/HomePage.css";
 ════════════════════════════════ */
 const FEATURES = [
   { icon: "🔍", title: "Búsqueda con Filtros",    desc: "Filtra viviendas por presupuesto, tipo, servicios disponibles y códigos postales." },
-  { icon: "✅", title: "Usuarios Validados",     desc: "Arrendadores validados con CURP oficial y estudiantes con constancia  de estudios del IPN vigente." },
+  { icon: "✅", title: "Usuarios verificados",     desc: "Arrendadores verificados con CURP oficial y estudiantes con constancia  de estudios del IPN vigente." },
   { icon: "⭐", title: "Reseñas y Calificaciones", desc: "Lee experiencias de otros estudiantes del IPN sobre las viviendas que han rentado." },
   { icon: "📍", title: "Solo zonas aledañas a UPALM", desc: "Registro de viviendas restringido a códigos postales colindantes al campus." },
   { icon: "📄", title: "Convenio arrendador-estudiante", desc: "Plantilla con los términos básicos del acuerdo de renta." },
@@ -25,13 +25,13 @@ const CP_LIST = [
 ];
 
 const ARRENDADOR_CHECKS = [
-  "Perfil validado con CURP en formato pdf",
+  "Perfil verificado con CURP en formato pdf",
   "Publica inmuebles ampliamente",
   "Construye reputación con reseñas",
 ];
 
 const ARRENDATARIO_CHECKS = [
-  "Validado con constancia del IPN",
+  "verificado con constancia del IPN",
   "Filtra por presupuesto y servicios",
   "Reseñas de otros estudiantes",
   "Acceso a plantilla de contrato",
@@ -229,7 +229,7 @@ function Hero() {
         <div className="hero-checklist">
           {[
             "Viviendas cerca de la zona UPALM·IPN",
-            "Arrendadores validados con CURP en formato pdf",
+            "Arrendadores verificados con CURP en formato pdf",
             "Reseñas de estudiantes del IPN que hayan rentado la vivienda",
           ].map((texto) => (
             <div className="hero-check" key={texto}>
@@ -286,20 +286,20 @@ function QuienesSomos() {
               },
               {
                 num: "02",
-                title: "Validación de identidad con documentos",
+                title: "verificación de identidad con documentos",
                 body: null,
                 bodyJsx: (
                   <>
                     Conecta a <strong>arrendadores</strong> que publican viviendas en zonas 
                     aledañas a la UPALM con <strong>estudiantes del IPN</strong>, mediante 
-                    validación de documentos oficiales y un sistema de reseñas entre usuarios.
+                    verificación de documentos oficiales y un sistema de reseñas entre usuarios.
                   </>
                 ),
               },
               {
                 num: "03",
                 title: "Decisiones informadas",
-                body: "El sistema permite registrar propiedades, validar identidades mediante documentos oficiales y consultar experiencias de otros usuarios antes de tomar una decisión.",
+                body: "El sistema permite registrar propiedades, verificar identidades mediante documentos oficiales y consultar experiencias de otros usuarios antes de tomar una decisión.",
               },
             ].map(({ num, title, body, bodyJsx }) => (
               <div className="about-step" key={num}>
@@ -464,7 +464,7 @@ function Perfiles() {
           icon="🏠"
           tag="Arrendador"
           title="Publica y gestiona tus propiedades"
-          description="Si tienes un inmueble cerca de la UPALM·IPN y deseas rentarlo a estudiantes, RentIPN es tu plataforma. Regístrate, valida tu identidad con tu CURP y comparte tu anuncio para que estudiantes validados puedan contactarte directamente."
+          description="Si tienes un inmueble cerca de la UPALM·IPN y deseas rentarlo a estudiantes, RentIPN es tu plataforma. Regístrate, verifica tu identidad con tu CURP y comparte tu anuncio para que estudiantes verificados puedan contactarte directamente."
           checks={ARRENDADOR_CHECKS}
         />
         <ProfileCard
@@ -473,7 +473,7 @@ function Perfiles() {
           icon="🎓"
           tag="Estudiante"
           title="Encuentra tu hogar estudiantil"
-          description="Busca, compara y elige viviendas en renta en zonas aledañas a la UPALM IPN según tu presupuesto. Con validación de documentos oficiales del IPN, reseñas y plantilla de convenio incluida."
+          description="Busca, compara y elige viviendas en renta en zonas aledañas a la UPALM IPN según tu presupuesto. Con verificación de documentos oficiales del IPN, reseñas y plantilla de convenio incluida."
           checks={ARRENDATARIO_CHECKS}
         />
       </div>

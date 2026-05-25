@@ -8,14 +8,14 @@ import '../../styles/Registro.css'
 
 // ── Beneficios por tipo ──────────────────────────────────────────────────────
 const ARRENDADOR_CHECKS = [
-  "Perfil validado con CURP en formato pdf",
+  "Perfil verificado con CURP en formato pdf",
   "Publica inmuebles",
   "Construye reputación con reseñas",
   "Acceso a plantilla de contrato",
 ]
 
 const ARRENDATARIO_CHECKS = [
-  "Validado con constancia del IPN",
+  "verificado con constancia del IPN",
   "Filtra por presupuesto y servicios",
   "Reseñas de otros estudiantes",
   "Acceso a plantilla de contrato",
@@ -193,7 +193,7 @@ const SeleccionTipo = ({ onSeleccionar }) => {
             icon="🏠"
             tag="Arrendador"
             title="Publica y gestiona tus propiedades"
-            description="Si tienes un inmueble cerca de la UPALM·IPN y deseas rentarlo a estudiantes. Regístrate, valida tu identidad con CURP y comparte tu anuncio para que estudiantes validados puedan contactarte directamente."
+            description="Si tienes un inmueble cerca de la UPALM·IPN y deseas rentarlo a estudiantes. Regístrate, verifica tu identidad con CURP y comparte tu anuncio para que estudiantes verificados puedan contactarte directamente."
             checks={ARRENDADOR_CHECKS}
             onSelect={onSeleccionar}
           />
@@ -202,7 +202,7 @@ const SeleccionTipo = ({ onSeleccionar }) => {
             icon="🎓"
             tag="Estudiante"
             title="Encuentra tu hogar estudiantil"
-            description="Como estudiante del IPN en la UPALM, busca viviendas cercanas adaptadas a tu presupuesto. Valida tu estatus con tu constancia de estudios y accede a propiedades con reseñas de otros estudiantes."
+            description="Como estudiante del IPN en la UPALM, busca viviendas cercanas adaptadas a tu presupuesto. verifica tu estatus con tu constancia de estudios y accede a propiedades con reseñas de otros estudiantes."
             checks={ARRENDATARIO_CHECKS}
             onSelect={onSeleccionar}
           />

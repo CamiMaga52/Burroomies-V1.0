@@ -155,15 +155,15 @@ const BuscarVivienda = () => {
             {/* ORDENAR — Precio */}
             <p style={labelSeccion}>Precio</p>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
-              <button style={btnOrden('precio_asc')} onClick={() => handleOrden('precio_asc')}>↑ Menor</button>
-              <button style={btnOrden('precio_desc')} onClick={() => handleOrden('precio_desc')}>↓ Mayor</button>
+              <button style={btnOrden('precio_asc')} onClick={() => handleOrden('precio_asc')}>↑ Ascendente</button>
+              <button style={btnOrden('precio_desc')} onClick={() => handleOrden('precio_desc')}>↓ Descendente</button>
             </div>
 
             {/* ORDENAR — Valoración */}
             <p style={labelSeccion}>Valoración</p>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '18px' }}>
-              <button style={btnOrden('calificacion')} onClick={() => handleOrden('calificacion')}>⭐ Mejores</button>
-              <button style={btnOrden('calificacion_asc')} onClick={() => handleOrden('calificacion_asc')}>👎 Peores</button>
+              <button style={btnOrden('calificacion')} onClick={() => handleOrden('calificacion')}>⭐ Mayor calificación</button>
+              <button style={btnOrden('calificacion_asc')} onClick={() => handleOrden('calificacion_asc')}>👎 Menor calificación</button>
             </div>
 
             <div style={separador} />

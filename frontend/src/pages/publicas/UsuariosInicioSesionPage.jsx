@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import NavbarSimple from '../../components/common/NavbarSimple'
 import FooterInicio from '../../components/common/FooterInicio'
@@ -8,6 +8,13 @@ import burroLogo from '../../assets/burro.png'
 
 const UsuariosInicioSesionPage = () => {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const rol = localStorage.getItem('rol')
+    if (rol === 'arrendador') navigate('/arrendador/mis-viviendas')
+    else if (rol === 'arrendatario') navigate('/arrendatario/buscar-vivienda')
+  }, [])
+
   const [correo, setCorreo] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -165,7 +172,7 @@ const UsuariosInicioSesionPage = () => {
                     className="login-input"
                     value={correo}
                     onChange={(e) => setCorreo(e.target.value)}
-                    placeholder="correo@ejemplo.com"
+                    placeholder="ej.correo@ejemplo.com"
                     required
                   />
                 </div>
@@ -181,8 +188,10 @@ const UsuariosInicioSesionPage = () => {
                     className="login-input login-input-icon"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Tu contraseña"
+                    placeholder="Ingresa tu contraseña"
                     required
+                    onCopy={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
                   />
                   <button
                     type="button"

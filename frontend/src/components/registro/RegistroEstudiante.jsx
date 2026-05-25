@@ -338,7 +338,7 @@ const RegistroEstudiante = ({ volver }) => {
         const r = await validarCampo(item.campo, item.valor);
         if (r.existe) return { existe: true, mensaje: `${item.nombre} ya está registrado`, campo: item.campo };
       } catch {
-        return { existe: true, mensaje: `Error al validar ${item.nombre}`, campo: item.campo };
+        return { existe: true, mensaje: `Error al verificar ${item.nombre}`, campo: item.campo };
       }
     }
     return { existe: false };
@@ -511,7 +511,7 @@ const RegistroEstudiante = ({ volver }) => {
             <div className="form-header-icon">🎓</div>
             <div className="form-header-text">
               <h2>Encuentra tu hogar estudiantil</h2>
-              <p>Registra tu cuenta para buscar vivienda cercana y validar tu unidad académica.</p>
+              <p>Registra tu cuenta para buscar vivienda cercana y verificar tu unidad académica.</p>
             </div>
           </div>
 
@@ -534,7 +534,7 @@ const RegistroEstudiante = ({ volver }) => {
                     <span className="icon">@</span>
                     <input className="form-input" type="text" name="username"
                       value={formData.username} onChange={handleChange}
-                      placeholder="Ej: juan_perez" />
+                      placeholder="Ej: juan_perez" maxLength={20}/>
                   </div>
                   <span className="form-hint">Solo letras, números y guión bajo. Máximo 20 caracteres</span>
                   {errors.username && <div className="form-error">{errors.username}</div>}
@@ -547,7 +547,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <label className="form-label">Nombres <span>*</span></label>
                   <input className="form-input" type="text" name="nombres"
                     value={formData.nombres} onChange={handleChange}
-                    placeholder="Ej: Juan Carlos" />
+                    placeholder="Ej: Juan Carlos" maxLength={50} />
                   <span className="form-hint">Solo letras y espacios</span>
                   {errors.nombres && <div className="form-error">{errors.nombres}</div>}
                 </div>
@@ -555,7 +555,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <label className="form-label">Apellido paterno <span>*</span></label>
                   <input className="form-input" type="text" name="apellidoPaterno"
                     value={formData.apellidoPaterno} onChange={handleChange}
-                    placeholder="Ej: Hernández" />
+                    placeholder="Ej: Hernández" maxLength={35} />
                   <span className="form-hint">Solo letras y espacios</span>
                   {errors.apellidoPaterno && <div className="form-error">{errors.apellidoPaterno}</div>}
                 </div>
@@ -563,7 +563,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <label className="form-label">Apellido materno</label>
                   <input className="form-input" type="text" name="apellidoMaterno"
                     value={formData.apellidoMaterno} onChange={handleChange}
-                    placeholder="Ej: López" />
+                    placeholder="Ej: López" maxLength={35} />
                   <span className="form-hint">(Opcional) Solo letras y espacios</span>
                   {errors.apellidoMaterno && <div className="form-error">{errors.apellidoMaterno}</div>}
                 </div>
@@ -576,7 +576,7 @@ const RegistroEstudiante = ({ volver }) => {
                     <span className="icon">✉️</span>
                     <input className="form-input" type="email" name="correo"
                       value={formData.correo} onChange={handleChange}
-                      placeholder="Ej: juan@ejemplo.com" />
+                      placeholder="Ej: juan@ejemplo.com" maxLength={60}/>
                   </div>
                   {errors.correo && <div className="form-error">{errors.correo}</div>}
                   <IndicadorUnicidad campo="correo" />
@@ -587,7 +587,7 @@ const RegistroEstudiante = ({ volver }) => {
                     <span className="icon">📱</span>
                     <input className="form-input" type="tel" name="telefono"
                       value={formData.telefono} onChange={handleChange}
-                      placeholder="Ej: 5512345678" />
+                      placeholder="Ej: 5512345678" maxLength={10} />
                   </div>
                   <span className="form-hint">10 dígitos, solo números</span>
                   {errors.telefono && <div className="form-error">{errors.telefono}</div>}
@@ -599,7 +599,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <label className="form-label">CURP <span>*</span></label>
                   <input className="form-input" type="text" name="curp"
                     value={formData.curp} onChange={handleChange}
-                    placeholder="Ej: HERS850101MDFRRN09" />
+                    placeholder="Ej: HERS850101MDFRRN09" maxLength={18} />
                   <span className="form-hint">18 caracteres: 4 letras, 6 números, 6 letras, 2 alfanuméricos</span>
                   {errors.curp && <div className="form-error">{errors.curp}</div>}
                   <IndicadorUnicidad campo="curp" />
@@ -622,7 +622,7 @@ const RegistroEstudiante = ({ volver }) => {
                 <div className="form-section-icon">🎓</div>
                 <div>
                   <h3>Datos Académicos</h3>
-                  <p>Información de tu inscripción en el IPN — necesaria para validar tu unidad y adscripción</p>
+                  <p>Información de tu inscripción en el IPN — necesaria para verificar tu unidad y adscripción</p>
                 </div>
               </div>
 
@@ -688,7 +688,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <div style={{ position: 'relative' }}>
                     <input className="form-input" type={mostrarPassword ? 'text' : 'password'}
                       name="password" value={formData.password} onChange={handleChange}
-                      style={{ paddingRight: '2.5rem' }} />
+                      style={{ paddingRight: '2.5rem' }} maxLength={30}/>
                     <button
                       type="button"
                       className="login-password-toggle"
@@ -716,7 +716,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <div style={{ position: 'relative' }}>
                     <input className="form-input" type={mostrarPassword ? 'text' : 'password'}
                       name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
-                      style={{ paddingRight: '2.5rem' }} />
+                      style={{ paddingRight: '2.5rem' }} maxLength={30} />
                     <button
                       type="button"
                       className="login-password-toggle"
@@ -749,7 +749,7 @@ const RegistroEstudiante = ({ volver }) => {
                 <div className="form-section-icon">📄</div>
                 <div>
                   <h3>Verificación de Identidad</h3>
-                  <p>Sube tu constancia vigente en PDF para validar tu estatus académico automáticamente.</p>
+                  <p>Sube tu constancia vigente en PDF para verificar tu estatus académico automáticamente.</p>
                 </div>
               </div>
 

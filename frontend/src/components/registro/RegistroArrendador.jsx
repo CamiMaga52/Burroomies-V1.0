@@ -241,7 +241,7 @@ const RegistroArrendador = ({ volver }) => {
         const r = await validarCampo(item.campo, item.valor)
         if (r.existe) return { existe: true, mensaje: `${item.nombre} ya está registrado`, campo: item.campo }
       } catch {
-        return { existe: true, mensaje: `Error al validar ${item.nombre}`, campo: item.campo }
+        return { existe: true, mensaje: `Error al verificar ${item.nombre}`, campo: item.campo }
       }
     }
     return { existe: false }
@@ -385,17 +385,17 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Nombres <span>*</span></label>
-                  <input className="form-input" type="text" name="nombres" value={formData.nombres} onChange={handleChange} placeholder="Ej: Juan Carlos" />
+                  <input className="form-input" type="text" name="nombres" value={formData.nombres} onChange={handleChange} placeholder="Ej: Juan Carlos" maxLength={60} />
                   {errors.nombres && <div className="form-error">{errors.nombres}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Apellido paterno <span>*</span></label>
-                  <input className="form-input" type="text" name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} placeholder="Ej: Hernández" />
+                  <input className="form-input" type="text" name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} placeholder="Ej: Hernández" maxLength={35}/>
                   {errors.apellidoPaterno && <div className="form-error">{errors.apellidoPaterno}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Apellido materno</label>
-                  <input className="form-input" type="text" name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} placeholder="Ej: López (opcional)" />
+                  <input className="form-input" type="text" name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} placeholder="Ej: López (opcional)" maxLength={35}/>
                   {errors.apellidoMaterno && <div className="form-error">{errors.apellidoMaterno}</div>}
                 </div>
               </div>
@@ -405,7 +405,7 @@ const RegistroArrendador = ({ volver }) => {
                   <label className="form-label">Correo electrónico <span>*</span></label>
                   <div className="form-input-icon">
                     <span className="icon">✉️</span>
-                    <input className="form-input" type="email" name="correo" value={formData.correo} onChange={handleChange} placeholder="Ej: juan@ejemplo.com" />
+                    <input className="form-input" type="email" name="correo" value={formData.correo} onChange={handleChange} placeholder="Ej: juan@ejemplo.com" maxLength={60}/>
                   </div>
                   {errors.correo && <div className="form-error">{errors.correo}</div>}
                   <IndicadorUnicidad campo="correo" />
@@ -414,7 +414,7 @@ const RegistroArrendador = ({ volver }) => {
                   <label className="form-label">Teléfono <span>*</span></label>
                   <div className="form-input-icon">
                     <span className="icon">📱</span>
-                    <input className="form-input" type="tel" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Ej: 5512345678" />
+                    <input className="form-input" type="tel" name="telefono" value={formData.telefono} onChange={handleChange} placeholder="Ej: 5512345678" maxLength={10}/>
                   </div>
                   <span className="form-hint">10 dígitos, solo números</span>
                   {errors.telefono && <div className="form-error">{errors.telefono}</div>}
@@ -424,14 +424,14 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-2">
                 <div className="form-group">
                   <label className="form-label">CURP <span>*</span></label>
-                  <input className="form-input" type="text" name="curp" value={formData.curp} onChange={handleChange} placeholder="Ej: HERS850101MDFRRN09" />
+                  <input className="form-input" type="text" name="curp" value={formData.curp} onChange={handleChange} placeholder="Ej: HERS850101MDFRRN09" maxLength={18}/>
                   <span className="form-hint">18 caracteres · <a href="https://www.gob.mx/curp/" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>¿No sabes tu CURP? Consúltala aquí</a></span>
                   {errors.curp && <div className="form-error">{errors.curp}</div>}
                   <IndicadorUnicidad campo="curp" />
                 </div>
                 <div className="form-group">
                   <label className="form-label">RFC <span>*</span></label>
-                  <input className="form-input" type="text" name="rfc" value={formData.rfc} onChange={handleChange} placeholder="Ej: HERS850101XXX" />
+                  <input className="form-input" type="text" name="rfc" value={formData.rfc} onChange={handleChange} placeholder="Ej: HERS850101XXX" maxLength={13}/>
                   <span className="form-hint">13 caracteres</span>
                   {errors.rfc && <div className="form-error">{errors.rfc}</div>}
                   <IndicadorUnicidad campo="rfc" />
@@ -463,7 +463,7 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-2">
                 <div className="form-group" style={{ position: 'relative' }}>
                   <label className="form-label">Código Postal <span>*</span></label>
-                  <input className="form-input" type="text" name="cp" value={formData.cp} onChange={handleCPChange} placeholder="Ej: 07300" />
+                  <input className="form-input" type="text" name="cp" value={formData.cp} onChange={handleCPChange} placeholder="Ej: 07300" maxLength={5}/>
                   {buscandoCP && <span className="form-hint">Buscando...</span>}
                   {mostrarSugerencias && sugerenciasCP.length > 0 && (
                     <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #ccc', borderRadius: '8px', maxHeight: '200px', overflowY: 'auto', zIndex: 1000, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
@@ -479,7 +479,7 @@ const RegistroArrendador = ({ volver }) => {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Calle <span>*</span></label>
-                  <input className="form-input" type="text" name="calle" value={formData.calle} onChange={handleChange} placeholder="Ej: Av. Insurgentes" />
+                  <input className="form-input" type="text" name="calle" value={formData.calle} onChange={handleChange} placeholder="Ej: Av. Insurgentes" maxLength={50} />
                   {errors.calle && <div className="form-error">{errors.calle}</div>}
                 </div>
               </div>
@@ -487,12 +487,12 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Número exterior <span>*</span></label>
-                  <input className="form-input" type="text" name="numExt" value={formData.numExt} onChange={handleChange} placeholder="Ej: 123" />
+                  <input className="form-input" type="text" name="numExt" value={formData.numExt} onChange={handleChange} placeholder="Ej: 123" maxLength={10} />
                   {errors.numExt && <div className="form-error">{errors.numExt}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Número interior</label>
-                  <input className="form-input" type="text" name="numInt" value={formData.numInt} onChange={handleChange} placeholder="Ej: 3B (opcional)" />
+                  <input className="form-input" type="text" name="numInt" value={formData.numInt} onChange={handleChange} placeholder="Ej: 3B (opcional)" maxLength={10} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Colonia <span>*</span></label>
@@ -531,7 +531,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Contraseña <span>*</span></label>
                   <div style={{ position: 'relative' }}>
-                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} style={{ paddingRight: '2.5rem' }} />
+                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30}/>
                     <button
                     type="button"
                     className="login-password-toggle"
@@ -557,7 +557,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Confirmar contraseña <span>*</span></label>
                   <div style={{ position: 'relative' }}>
-                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ paddingRight: '2.5rem' }} />
+                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30} />
                     <button
                       type="button"
                       className="login-password-toggle"

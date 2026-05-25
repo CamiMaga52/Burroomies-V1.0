@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { loginAdmin } from '../../services/authService'
 import burroLogo from '../../assets/burro.png'
@@ -7,6 +7,13 @@ import '../../components/admin/admin.css'
 
 const AdminInicioSesionPage = () => {
   const navigate = useNavigate()
+
+    useEffect(() => {
+    if (localStorage.getItem('adminId')) {
+      navigate('/admin/arrendatarios')
+    }
+  }, [])
+
   const [formData, setFormData] = useState({ adminUser: '', adminContra: '' })
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(false)
@@ -78,6 +85,8 @@ const AdminInicioSesionPage = () => {
                     onChange={handleChange}
                     placeholder="Ingresa tu contraseña"
                     required
+                    onCopy={(e) => e.preventDefault()}
+                    onCut={(e) => e.preventDefault()}
                   />
                   <button
                     type="button"
