@@ -348,10 +348,10 @@ const PerfilArrendatario = () => {
                 <div style={infoSectionStyle}>
                   <h3 style={sectionTitleStyle}>✏️ Editar Información</h3>
                   
-                  <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value)} />
-                  <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value)} />
-                  <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value)} />
-                  <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} type="tel" />
+                  <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60))} maxLength={60} />
+                  <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
+                  <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
+                  <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))} type="tel" maxLength={10} />
                   
                   <div style={{ marginBottom: '15px' }}>
                     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
@@ -557,7 +557,7 @@ const InfoRow = ({ label, value, bloqueado }) => (
   </div>
 )
 
-const InputField = ({ label, value, onChange, type = 'text' }) => (
+const InputField = ({ label, value, onChange, type = 'text', maxLength }) => (
   <div style={{ marginBottom: '15px' }}>
     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
       {label}
@@ -566,6 +566,7 @@ const InputField = ({ label, value, onChange, type = 'text' }) => (
       type={type}
       value={value}
       onChange={onChange}
+      maxLength={maxLength}
       style={{
         width: '100%',
         padding: '10px',

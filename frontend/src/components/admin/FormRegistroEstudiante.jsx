@@ -77,9 +77,9 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
-    if (['nombres', 'apellidoPaterno', 'apellidoMaterno'].includes(name)) {
-      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')
-    }
+    if (name === 'nombres') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
+    if (name === 'apellidoPaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    if (name === 'apellidoMaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'telefono') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     if (name === 'curp') v = value.toUpperCase().slice(0, 18)
     if (name === 'boleta') v = value.replace(/[^0-9]/g, '').slice(0, 10)
@@ -169,7 +169,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
               <label className="admin-form-label">Nombres *</label>
               <input
                 className={`admin-form-input${errors.nombres ? ' is-error' : ''}`}
-                name="nombres" value={formData.nombres} onChange={handleChange} maxLength={80}
+                name="nombres" value={formData.nombres} onChange={handleChange} maxLength={60}
               />
               {errors.nombres && <span className="admin-form-error">{errors.nombres}</span>}
             </div>
@@ -177,7 +177,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
               <label className="admin-form-label">Ap. Paterno *</label>
               <input
                 className={`admin-form-input${errors.apellidoPaterno ? ' is-error' : ''}`}
-                name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} maxLength={60}
+                name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} maxLength={35}
               />
               {errors.apellidoPaterno && <span className="admin-form-error">{errors.apellidoPaterno}</span>}
             </div>
@@ -187,7 +187,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
             <label className="admin-form-label">Ap. Materno *</label>
             <input
               className={`admin-form-input${errors.apellidoMaterno ? ' is-error' : ''}`}
-              name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} maxLength={60}
+              name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} maxLength={35}
             />
             {errors.apellidoMaterno && <span className="admin-form-error">{errors.apellidoMaterno}</span>}
           </div>
@@ -197,7 +197,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
               <label className="admin-form-label">Correo *</label>
               <input
                 className={`admin-form-input${errors.correo ? ' is-error' : ''}`}
-                type="email" name="correo" value={formData.correo} onChange={handleChange} onBlur={handleBlur} maxLength={100}
+                type="email" name="correo" value={formData.correo} onChange={handleChange} onBlur={handleBlur} maxLength={60}
               />
               {validando.correo && <span className="admin-form-hint">Validando...</span>}
               {errors.correo && <span className="admin-form-error">{errors.correo}</span>}

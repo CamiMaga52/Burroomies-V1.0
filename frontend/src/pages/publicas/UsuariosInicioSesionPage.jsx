@@ -192,6 +192,7 @@ const UsuariosInicioSesionPage = () => {
                     required
                     onCopy={(e) => e.preventDefault()}
                     onCut={(e) => e.preventDefault()}
+                    onPaste={(e) => e.preventDefault()}
                   />
                   <button
                     type="button"

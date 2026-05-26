@@ -46,12 +46,14 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
-    if (['usuarioNom', 'usuarioApePat', 'usuarioApeMat'].includes(name)) {
-      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '')
-    }
+    if (name === 'usuarioNom') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
+    if (name === 'usuarioApePat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    if (name === 'usuarioApeMat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'usuarioTel') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     if (name === 'usuarioCurp') v = value.toUpperCase().slice(0, 18)
-    if (name === 'arrendadorRFC') v = value.toUpperCase().slice(0, 13)
+    if (name === 'arrendadorRFC') v = value.toUpperCase().slice(0, 14)
+    if (name === 'direccionCalle') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
+    if (name === 'direccionNumExt' || name === 'direccionNumInt') v = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
     setFormData(prev => ({ ...prev, [name]: v }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
   }
@@ -127,7 +129,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
               <label className="admin-form-label">Nombres *</label>
               <input
                 className={`admin-form-input${errors.usuarioNom ? ' is-error' : ''}`}
-                name="usuarioNom" value={formData.usuarioNom} onChange={handleChange} maxLength={80}
+                name="usuarioNom" value={formData.usuarioNom} onChange={handleChange} maxLength={60}
               />
               {errors.usuarioNom && <span className="admin-form-error">{errors.usuarioNom}</span>}
             </div>
@@ -135,7 +137,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
               <label className="admin-form-label">Ap. Paterno *</label>
               <input
                 className={`admin-form-input${errors.usuarioApePat ? ' is-error' : ''}`}
-                name="usuarioApePat" value={formData.usuarioApePat} onChange={handleChange} maxLength={60}
+                name="usuarioApePat" value={formData.usuarioApePat} onChange={handleChange} maxLength={35}
               />
               {errors.usuarioApePat && <span className="admin-form-error">{errors.usuarioApePat}</span>}
             </div>
@@ -143,7 +145,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
 
           <div className="admin-form-field">
             <label className="admin-form-label">Ap. Materno</label>
-            <input className="admin-form-input" name="usuarioApeMat" value={formData.usuarioApeMat} onChange={handleChange} maxLength={60} />
+            <input className="admin-form-input" name="usuarioApeMat" value={formData.usuarioApeMat} onChange={handleChange} maxLength={35} />
           </div>
 
           <div className="grid-2">
@@ -175,7 +177,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
               <label className="admin-form-label">RFC (12-13 car.)</label>
               <input
                 className={`admin-form-input${errors.arrendadorRFC ? ' is-error' : ''}`}
-                name="arrendadorRFC" value={formData.arrendadorRFC} onChange={handleChange} disabled={isVerified} maxLength={13}
+                name="arrendadorRFC" value={formData.arrendadorRFC} onChange={handleChange} disabled={isVerified} maxLength={14}
               />
               {errors.arrendadorRFC && <span className="admin-form-error">{errors.arrendadorRFC}</span>}
             </div>

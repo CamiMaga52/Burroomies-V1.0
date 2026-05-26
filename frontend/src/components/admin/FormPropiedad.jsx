@@ -27,7 +27,21 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    let v = value
+    if (name === 'propiedadTitulo')
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 45)
+    if (name === 'propiedadDescripcion')
+      v = value.slice(0, 300)
+    if (name === 'propiedadLugares')
+      v = value.replace(/[^0-9]/g, '').slice(0, 2)
+    if (name === 'propiedadPrecio') {
+      v = value.replace(/[^0-9.]/g, '')
+      const parts = v.split('.')
+      if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
+      if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
+      if (v && parseFloat(v) > 25000) v = '25000'
+    }
+    setFormData(prev => ({ ...prev, [name]: v }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
   }
 
@@ -72,7 +86,7 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
             <label className="admin-form-label">Título *</label>
             <input
               className={`admin-form-input${errors.propiedadTitulo ? ' is-error' : ''}`}
-              name="propiedadTitulo" value={formData.propiedadTitulo} onChange={handleChange} maxLength={100}
+              name="propiedadTitulo" value={formData.propiedadTitulo} onChange={handleChange} maxLength={45}
             />
             {errors.propiedadTitulo && <span className="admin-form-error">{errors.propiedadTitulo}</span>}
           </div>
@@ -82,7 +96,7 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
             <textarea
               className={`admin-form-input${errors.propiedadDescripcion ? ' is-error' : ''}`}
               name="propiedadDescripcion" value={formData.propiedadDescripcion} onChange={handleChange}
-              maxLength={500} rows={3} style={{ resize: 'vertical', minHeight: '80px' }}
+              maxLength={300} rows={3} style={{ resize: 'vertical', minHeight: '80px' }}
             />
             {errors.propiedadDescripcion && <span className="admin-form-error">{errors.propiedadDescripcion}</span>}
           </div>

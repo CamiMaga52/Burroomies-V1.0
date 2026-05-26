@@ -350,10 +350,10 @@ const PerfilArrendador = () => {
               {/* Editar Datos Personales */}
               <div style={infoSectionStyle}>
                 <h3 style={sectionTitleStyle}>✏️ Editar Datos Personales</h3>
-                <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value)} />
-                <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value)} />
-                <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value)} />
-                <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value)} type="tel" />
+                <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60))} maxLength={60} />
+                <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
+                <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
+                <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))} type="tel" maxLength={10} />
 
                 <div style={{ marginTop: '20px' }}>
                   <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
@@ -369,11 +369,11 @@ const PerfilArrendador = () => {
               {/* Editar Dirección */}
               <div style={infoSectionStyle}>
                 <h3 style={sectionTitleStyle}>✏️ Editar Dirección</h3>
-                <InputField label="Calle" value={calle} onChange={(e) => setCalle(e.target.value)} />
+                <InputField label="Calle" value={calle} onChange={(e) => setCalle(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100))} maxLength={100} />
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                  <InputField label="Número Exterior" value={numExt} onChange={(e) => setNumExt(e.target.value)} />
-                  <InputField label="Número Interior" value={numInt} onChange={(e) => setNumInt(e.target.value)} />
+                  <InputField label="Número Exterior" value={numExt} onChange={(e) => setNumExt(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10))} maxLength={10} />
+                  <InputField label="Número Interior" value={numInt} onChange={(e) => setNumInt(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10))} maxLength={10} />
                 </div>
 
                 <InputField label="Código Postal" value={cp} onChange={handleCPChange} />
@@ -553,7 +553,7 @@ const InfoRow = ({ label, value, bloqueado }) => (
   </div>
 )
 
-const InputField = ({ label, value, onChange, type = 'text' }) => (
+const InputField = ({ label, value, onChange, type = 'text', maxLength }) => (
   <div style={{ marginBottom: '15px' }}>
     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
       {label}
@@ -562,6 +562,7 @@ const InputField = ({ label, value, onChange, type = 'text' }) => (
       type={type}
       value={value}
       onChange={onChange}
+      maxLength={maxLength}
       style={{
         width: '100%',
         padding: '10px',

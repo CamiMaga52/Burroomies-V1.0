@@ -70,7 +70,35 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    let v = value
+
+    if (name === 'propiedadTitulo')
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 45)
+
+    if (name === 'propiedadDescripcion')
+      v = value.slice(0, 300)
+
+    if (name === 'propiedadLugares')
+      v = value.replace(/[^0-9]/g, '').slice(0, 2)
+
+    if (name === 'propiedadPrecio') {
+      v = value.replace(/[^0-9.]/g, '')
+      const parts = v.split('.')
+      if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
+      if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
+      if (v && parseFloat(v) > 25000) v = '25000'
+    }
+
+    if (name === 'cp')
+      v = value.replace(/[^0-9]/g, '').slice(0, 5)
+
+    if (name === 'direccionCalle')
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9s]/g, '').slice(0, 45)
+
+    if (name === 'direccionNumExt' || name === 'direccionNumInt')
+      v = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+
+    setFormData({ ...formData, [name]: v })
   }
 
   const handleBuscarCP = async () => {

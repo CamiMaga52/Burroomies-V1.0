@@ -662,7 +662,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <label className="form-label">Boleta <span>*</span></label>
                   <input className="form-input" type="text" name="boleta"
                     value={formData.boleta} onChange={handleChange}
-                    placeholder="Ej: 2024030001" />
+                    placeholder="Ej: 2024030001" maxLength={10} />
                   <span className="form-hint">10 dígitos, solo números</span>
                   {errors.boleta && <div className="form-error">{errors.boleta}</div>}
                   <IndicadorUnicidad campo="boleta" />
