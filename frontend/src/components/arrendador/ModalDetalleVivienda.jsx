@@ -118,13 +118,13 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
 
   const handleNuevasFotos = (e) => {
     const files = Array.from(e.target.files)
-    if (fotosExistentes.length + nuevasFotos.length + files.length > 10) { alert('Máximo 10 fotos en total'); return }
+    if (fotosExistentes.length + nuevasFotos.length + files.length > 10) { setError('Máximo 10 fotos en total'); return }
     setNuevasFotos(prev => [...prev, ...files])
     setPreviewsNuevas(prev => [...prev, ...files.map(f => URL.createObjectURL(f))])
   }
 
   const eliminarFotoExistente = (idFoto) => {
-    if (fotosExistentes.length - 1 + nuevasFotos.length < 3) { alert('Debes mantener al menos 3 fotos'); return }
+    if (fotosExistentes.length - 1 + nuevasFotos.length < 3) { setError('Debes mantener al menos 3 fotos'); return }
     setFotosExistentes(prev => prev.filter(f => f.idFotos !== idFoto))
   }
 

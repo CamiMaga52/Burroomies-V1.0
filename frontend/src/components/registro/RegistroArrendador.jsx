@@ -44,9 +44,40 @@ const terminosStyles = {
 }
 
 // ─── Componente principal ─────────────────────────────────────────────────────
+
+const ErrorModal = ({ mensaje, onCerrar }) => (
+  <div style={{
+    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+  }}>
+    <div style={{
+      backgroundColor: '#fff', borderRadius: '12px', maxWidth: '420px', width: '100%',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.25)', overflow: 'hidden'
+    }}>
+      <div style={{ backgroundColor: '#dc2626', padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+        <h3 style={{ margin: 0, color: '#fff', fontSize: '1rem', fontWeight: 700 }}>Error al registrar</h3>
+      </div>
+      <div style={{ padding: '1.5rem' }}>
+        <p style={{ margin: '0 0 1.5rem 0', color: '#374151', fontSize: '0.9rem', lineHeight: 1.6 }}>{mensaje}</p>
+        <button
+          onClick={onCerrar}
+          style={{
+            width: '100%', padding: '0.65rem', backgroundColor: '#dc2626', color: '#fff',
+            border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer'
+          }}
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+)
+
 const RegistroArrendador = ({ volver }) => {
   const navigate = useNavigate()
   const [enviando, setEnviando] = useState(false)
+  const [modalError, setModalError] = useState(null)
   const [buscandoCP, setBuscandoCP] = useState(false)
   const [sugerenciasCP, setSugerenciasCP] = useState([])
   const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
@@ -298,7 +329,7 @@ const RegistroArrendador = ({ volver }) => {
         }
       })
     } catch (error) {
-      alert(error.message || 'Error al registrar. Intenta de nuevo')
+      setModalError(error.message || 'Error al registrar. Intenta de nuevo')
     } finally {
       setEnviando(false)
     }
