@@ -156,11 +156,11 @@ const BienvenidaPage = () => {
                     Verificación de identidad pendiente
                   </div>
                   <div style={styles.alertText('#78350F')}>
-                    Tienes <strong>2 meses</strong> para subir tu constancia de estudios y verificar tu identidad.
+                    Tienes <strong>60 días</strong> para subir tu constancia de estudios y verificar tu identidad.
                     Si no lo haces antes de esa fecha, <strong>tu cuenta será eliminada automáticamente</strong>.
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#92400E', marginTop: '0.5rem' }}>
-                    Puedes hacerlo desde tu perfil en cualquier momento.
+                    Puedes hacerlo desde tu cuenta en cualquier momento.
                   </div>
                 </div>
               </div>
@@ -179,7 +179,7 @@ const BienvenidaPage = () => {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              Iniciar Sesión
+              Iniciar sesión
             </button>
           </div>
         </div>
@@ -233,7 +233,7 @@ const BienvenidaPage = () => {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            Iniciar Sesión
+            Iniciar sesión
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { buscarPropiedades, obtenerServicios } from '../../services/propiedadService'
 import NavbarArrendatario from '../../components/common/NavbarArrendatario'
 import FooterInicio from '../../components/common/FooterInicio'
+import '../../styles/Arrendatario.css'
 
 const BuscarVivienda = () => {
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ const BuscarVivienda = () => {
   const [precioMaxGlobal, setPrecioMaxGlobal] = useState(10000)
   const [serviciosAbiertos, setServiciosAbiertos] = useState({ Basicos: false, Entretenimiento: false, Adicionales: false })
   const [mensajeRelajado, setMensajeRelajado] = useState(null)
+  const [filtrosVisibles, setFiltrosVisibles] = useState(false)
   const busquedaTimer = useRef(null)
 
   const [filtros, setFiltros] = useState({
@@ -131,10 +133,18 @@ const BuscarVivienda = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <NavbarArrendatario />
 
-      <div style={{ flex: 1, display: 'flex', maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '20px', gap: '25px' }}>
+      <div className="atr-search-layout">
+
+        {/* Botón toggle filtros — solo visible en móvil */}
+        <button
+          className="atr-filtros-toggle"
+          onClick={() => setFiltrosVisibles(v => !v)}
+        >
+          {filtrosVisibles ? '✕ Cerrar filtros' : '🔎 Filtros'}
+        </button>
 
         {/* ===== SIDEBAR ===== */}
-        <div style={{ width: '270px', minWidth: '270px', alignSelf: 'flex-start', position: 'sticky', top: '20px' }}>
+        <div className={`atr-search-sidebar${filtrosVisibles ? ' atr-search-sidebar--open' : ''}`}>
           <div style={{ backgroundColor: 'white', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <h2 style={{ fontSize: '16px', margin: 0, color: '#333' }}>🔎 Filtros</h2>
@@ -328,7 +338,7 @@ const BuscarVivienda = () => {
         </div>
 
         {/* ===== RESULTADOS ===== */}
-        <div style={{ flex: 1 }}>
+        <div className="atr-search-results">
           <h1 style={{ fontSize: '22px', marginBottom: '12px' }}>Buscar Vivienda</h1>
 
           {/* Mensaje de filtros relajados */}
@@ -395,12 +405,12 @@ const BuscarVivienda = () => {
                       <div
                         key={propiedad.id}
                         onClick={() => navigate(`/arrendatario/propiedad/${propiedad.id}`)}
-                        style={{ display: 'flex', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', transition: 'box-shadow 0.2s' }}
+                        className="atr-property-card"
                         onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'}
                         onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'}
                       >
                         {/* Imagen */}
-                        <div style={{ width: '260px', minWidth: '260px', height: '190px', backgroundColor: '#e9ecef', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                        <div className="atr-property-img">
                           {propiedad.fotoPrincipal
                             ? <img src={propiedad.fotoPrincipal.startsWith('http') ? propiedad.fotoPrincipal : `http://localhost:5000${propiedad.fotoPrincipal}`} alt={propiedad.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             : <span style={{ fontSize: '50px', color: '#999' }}>🏠</span>

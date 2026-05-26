@@ -32,13 +32,13 @@ const NavbarArrendatario = () => {
             to="/arrendatario/buscar-vivienda"
             className={`atr-nav-link${isActive('/arrendatario/buscar-vivienda') ? ' active' : ''}`}
           >
-            🔍 Buscar Vivienda
+            🔍 Buscar vivienda
           </Link>
           <Link
             to="/arrendatario/mi-arrendamiento"
             className={`atr-nav-link${isActive('/arrendatario/mi-arrendamiento') ? ' active' : ''}`}
           >
-            📋 Mi Arrendamiento
+            📋 Mi arrendamiento
           </Link>
         </div>
 
@@ -47,10 +47,10 @@ const NavbarArrendatario = () => {
             <div className="atr-nav-avatar">
               {nombre.charAt(0).toUpperCase()}
             </div>
-            <span className="atr-nav-profile-name">Mi Perfil</span>
+            <span className="atr-nav-profile-name">Mi perfil</span>
           </Link>
           <button className="atr-nav-logout" onClick={handleCerrarSesion}>
-            Cerrar Sesión
+            Cerrar sesión
           </button>
           <button
             className="atr-nav-hamburger"
@@ -69,20 +69,20 @@ const NavbarArrendatario = () => {
             className={`atr-nav-mobile-link${isActive('/arrendatario/buscar-vivienda') ? ' active' : ''}`}
             onClick={cerrarMenu}
           >
-            🔍 Buscar Vivienda
+            🔍 Buscar vivienda
           </Link>
           <Link
             to="/arrendatario/mi-arrendamiento"
             className={`atr-nav-mobile-link${isActive('/arrendatario/mi-arrendamiento') ? ' active' : ''}`}
             onClick={cerrarMenu}
           >
-            📋 Mi Arrendamiento
+            📋 Mi arrendamiento
           </Link>
           <Link to="/arrendatario/perfil" className="atr-nav-mobile-link" onClick={cerrarMenu}>
-            👤 Mi Perfil
+            👤 Mi perfil
           </Link>
           <button className="atr-nav-mobile-btn" onClick={() => { cerrarMenu(); handleCerrarSesion(); }}>
-            🚪 Cerrar Sesión
+            🚪 Cerrar sesión
           </button>
         </div>
       )}

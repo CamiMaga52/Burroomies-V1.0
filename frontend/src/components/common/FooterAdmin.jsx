@@ -10,14 +10,14 @@ const FooterAdmin = () => {
     <>
       <footer className="admin-footer">
         <div className="admin-footer-content">
-          <div className="admin-footer-brand">RentIPN — Panel de Administración</div>
+          <div className="admin-footer-brand">RentIPN — Panel de administración</div>
           <div className="admin-footer-links">
             <Link to="/legal/aviso-privacidad" className="admin-footer-link">
-              Aviso de Privacidad
+              Aviso de privacidad
             </Link>
             <span className="admin-footer-dot">·</span>
             <Link to="/legal/terminos-uso" className="admin-footer-link">
-              Términos y Condiciones
+              Términos y condiciones de uso
             </Link>
             <span className="admin-footer-dot">·</span>
             <button

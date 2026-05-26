@@ -50,11 +50,11 @@ const FooterInicio = () => {
           }}
         >
           {[
-            { to: "/legal/aviso-privacidad", label: "Aviso de Privacidad", isLink: true },
+            { to: "/legal/aviso-privacidad", label: "Aviso de privacidad", isLink: true },
             { label: "·", isSep: true },
-            { to: "/legal/terminos-uso", label: "Términos y Condiciones", isLink: true },
+            { to: "/legal/terminos-uso", label: "Términos y condiciones de uso", isLink: true },
             { label: "·", isSep: true },
-            { label: "Contacto", isModalTrigger: true }, // ← CAMBIADO
+            { label: "Contacto", isModalTrigger: true },
           ].map((item, i) => {
             if (item.isSep) {
               return (

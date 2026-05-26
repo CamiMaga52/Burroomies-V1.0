@@ -70,9 +70,9 @@ const NavbarInicio = () => {
       >
         {[
           { href: "#inicio",         label: "Inicio" },
-          { href: "#quienes-somos",  label: "Quiénes Somos" },
+          { href: "#quienes-somos",  label: "Quiénes somos" },
           { href: "#caracteristicas",label: "Características" },
-          { href: "#zonas-cercanas", label: "Zonas Cercanas" },
+          { href: "#zonas-cercanas", label: "Zonas cercanas" },
           { href: "#perfiles",       label: "Perfiles" },
         ].map(({ href, label }) => (
           <li key={href}>
@@ -115,7 +115,7 @@ const NavbarInicio = () => {
           onMouseEnter={(e) => (e.currentTarget.style.background = "#EEEDFE")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
         >
-          Iniciar Sesión
+          Iniciar sesión
         </Link>
 
         <Link
@@ -144,7 +144,7 @@ const NavbarInicio = () => {
             e.currentTarget.style.transform = "translateY(0)";
           }}
         >
-          Registrarse
+          registrarse
         </Link>
       </div>
     </nav>

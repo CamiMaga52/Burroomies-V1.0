@@ -62,7 +62,7 @@ const NavbarAdmin = () => {
           🏘️ Propiedades
         </Link>
         <button className="admin-nav-logout" onClick={handleLogout}>
-          🚪 Cerrar Sesión
+          🚪 Cerrar sesión
         </button>
       </div>
 
@@ -100,7 +100,7 @@ const NavbarAdmin = () => {
             🏘️ Propiedades
           </Link>
           <button className="admin-nav-mobile-btn" onClick={() => { cerrarMenu(); handleLogout(); }}>
-            🚪 Cerrar Sesión
+            🚪 Cerrar sesión
           </button>
         </div>
       )}

@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 import NavbarInicio from "../../components/common/NavbarInicio";
 import FooterInicio from "../../components/common/FooterInicio";
 import burroSaludo from "../../assets/burro.png";
-import mapaCPs from "../../assets/mapa-cps-upalm.jpg"; // ← NUEVA IMAGEN
+import mapaCPs from "../../assets/mapa-cps-upalm.jpg"; 
 import "../../styles/HomePage.css";
 
 /* ════════════════════════════════
    DATOS
 ════════════════════════════════ */
 const FEATURES = [
-  { icon: "🔍", title: "Búsqueda con Filtros",    desc: "Filtra viviendas por presupuesto, tipo, servicios disponibles y códigos postales." },
+  { icon: "🔍", title: "Búsqueda con filtros",    desc: "Filtra viviendas por presupuesto, tipo, servicios disponibles y códigos postales." },
   { icon: "✅", title: "Usuarios verificados",     desc: "Arrendadores verificados con CURP oficial y estudiantes con constancia  de estudios del IPN vigente." },
-  { icon: "⭐", title: "Reseñas y Calificaciones", desc: "Lee experiencias de otros estudiantes del IPN sobre las viviendas que han rentado." },
+  { icon: "⭐", title: "Reseñas y calificaciones", desc: "Lee experiencias de otros estudiantes del IPN sobre las viviendas que han rentado." },
   { icon: "📍", title: "Solo zonas aledañas a UPALM", desc: "Registro de viviendas restringido a códigos postales colindantes al campus." },
   { icon: "📄", title: "Convenio arrendador-estudiante", desc: "Plantilla con los términos básicos del acuerdo de renta." },
   { icon: "🎓", title: "Comunidad IPN",            desc: "Plataforma orientada exclusivamente a la comunidad UPALM·IPN." },
@@ -31,7 +31,7 @@ const ARRENDADOR_CHECKS = [
 ];
 
 const ARRENDATARIO_CHECKS = [
-  "verificado con constancia del IPN",
+  "Verificado con constancia del IPN",
   "Filtra por presupuesto y servicios",
   "Reseñas de otros estudiantes",
   "Acceso a plantilla de contrato",
@@ -205,7 +205,7 @@ function Hero() {
         <div className="hero-eyebrow">
           <span className="badge">
             <span className="badge-dot" />
-            Exclusivo para estudiantes UPALM · IPN
+            Exclusivo para estudiantes Unidad Profesional Adolfo López Mateos · IPN
           </span>
         </div>
 
@@ -272,7 +272,7 @@ function QuienesSomos() {
     <section id="quienes-somos" className="section about">
       <div className="about-inner">
         <div className="fade-in" ref={ref}>
-          <span className="section-label">Quiénes Somos</span>
+          <span className="section-label">Quiénes somos</span>
           <h2 className="section-title">
             Conectamos estudiantes<br />con su <em>próximo hogar</em>
           </h2>

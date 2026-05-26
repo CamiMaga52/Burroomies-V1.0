@@ -32,13 +32,13 @@ const NavbarArrendador = () => {
             to="/arrendador/mis-viviendas"
             className={`arr-nav-link${isActive('/arrendador/mis-viviendas') ? ' active' : ''}`}
           >
-            🏠 Mis Viviendas
+            🏠 Mis viviendas
           </Link>
           <Link
             to="/arrendador/mis-arrendamientos"
             className={`arr-nav-link${isActive('/arrendador/mis-arrendamientos') ? ' active' : ''}`}
           >
-            📋 Mis Arrendamientos
+            📋 Mis arrendamientos
           </Link>
         </div>
 
@@ -47,10 +47,10 @@ const NavbarArrendador = () => {
             <div className="arr-nav-avatar">
               {nombre.charAt(0).toUpperCase()}
             </div>
-            <span className="arr-nav-profile-name">Mi Perfil</span>
+            <span className="arr-nav-profile-name">Mi perfil</span>
           </Link>
           <button className="arr-nav-logout" onClick={handleCerrarSesion}>
-            Cerrar Sesión
+            Cerrar sesión
           </button>
           <button
             className="arr-nav-hamburger"
@@ -69,20 +69,20 @@ const NavbarArrendador = () => {
             className={`arr-nav-mobile-link${isActive('/arrendador/mis-viviendas') ? ' active' : ''}`}
             onClick={cerrarMenu}
           >
-            🏠 Mis Viviendas
+            🏠 Mis viviendas
           </Link>
           <Link
             to="/arrendador/mis-arrendamientos"
             className={`arr-nav-mobile-link${isActive('/arrendador/mis-arrendamientos') ? ' active' : ''}`}
             onClick={cerrarMenu}
           >
-            📋 Mis Arrendamientos
+            📋 Mis arrendamientos
           </Link>
           <Link to="/arrendador/perfil" className="arr-nav-mobile-link" onClick={cerrarMenu}>
-            👤 Mi Perfil
+            👤 Mi perfil
           </Link>
           <button className="arr-nav-mobile-btn" onClick={() => { cerrarMenu(); handleCerrarSesion(); }}>
-            🚪 Cerrar Sesión
+            🚪 Cerrar sesión
           </button>
         </div>
       )}

@@ -146,7 +146,7 @@ const AvisoPrivacidadPage = () => {
 
         {/* Badge rol */}
         <div style={s.badge}>
-          {rol === 'estudiante' ? '🎓 Versión para Estudiantes IPN' : '🏠 Versión para Arrendadores'}
+          {rol === 'estudiante' ? '🎓 Versión para estudiantes IPN' : '🏠 Versión para arrendadores'}
         </div>
 
         {/* Contenido */}

@@ -90,7 +90,7 @@ const ModalContacto = ({ onClose }) => {
             letterSpacing: '0.06em',
             marginBottom: '0.5rem',
           }}>
-            📧 Correo Electrónico
+            📧 Correo electrónico
           </div>
           <a 
             style={{ 
@@ -122,7 +122,7 @@ const ModalContacto = ({ onClose }) => {
             letterSpacing: '0.06em',
             marginBottom: '0.75rem',
           }}>
-             Redes Sociales
+             Redes sociales
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

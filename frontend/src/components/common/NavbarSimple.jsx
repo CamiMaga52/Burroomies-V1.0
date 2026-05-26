@@ -12,7 +12,7 @@ const NavbarSimple = () => {
 
       <div className="navbar-simple-right">
         <Link to="/usuarios/inicio-sesion" className="navbar-simple-login">
-           Iniciar Sesión
+           Iniciar sesión
         </Link>
       
         <Link to="/registro" className="navbar-simple-login">
