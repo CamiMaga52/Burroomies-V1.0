@@ -506,10 +506,6 @@ export default function HomePage() {
         <Perfiles />
       </main>
       <FooterInicio />
-
-      <Link to="/faq" className="faq-btn" title="Preguntas Frecuentes">
-        ?
-      </Link>
     </>
   );
 }

@@ -1,5 +1,4 @@
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 
 // Páginas públicas
 import HomePage from './pages/publicas/HomePage'
@@ -42,9 +41,41 @@ import VerificarIdentidad from './pages/arrendatario/VerificarIdentidad'
 import VerificacionExitosa from './pages/arrendatario/VerificacionExitosa'
 import RenovarIdentidad from './pages/arrendatario/RenovarIdentidad'
 
+const FaqButton = () => {
+  const location = useLocation()
+  if (location.pathname === '/faq') return null
+  return (
+    <Link
+      to="/faq"
+      title="Preguntas Frecuentes"
+      style={{
+        position: 'fixed',
+        bottom: '28px',
+        right: '28px',
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        backgroundColor: '#1A1633',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '22px',
+        fontWeight: 'bold',
+        textDecoration: 'none',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        zIndex: 9999
+      }}
+    >
+      ?
+    </Link>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <FaqButton />
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<HomePage />} />

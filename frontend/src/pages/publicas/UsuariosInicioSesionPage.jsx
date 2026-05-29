@@ -12,8 +12,23 @@ const UsuariosInicioSesionPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token')
     const rol = localStorage.getItem('rol')
-    if (token && rol === 'arrendador') navigate('/arrendador/mis-viviendas')
-    else if (token && rol === 'arrendatario') navigate('/arrendatario/buscar-vivienda')
+    const fechaUIS = localStorage.getItem('usuarioFechaUIS')
+
+    if (token && rol && fechaUIS) {
+      const inicio = new Date(fechaUIS)
+      const ahora = new Date()
+      const horas = (ahora - inicio) / (1000 * 60 * 60)
+
+      if (horas >= 5) {
+        // Sesión expirada — limpiar todo
+        localStorage.clear()
+        return
+      }
+
+      // Sesión vigente — redirigir
+      if (rol === 'arrendador') navigate('/arrendador/mis-viviendas')
+      else if (rol === 'arrendatario') navigate('/arrendatario/buscar-vivienda')
+    }
   }, [])
 
   const [correo, setCorreo] = useState('')
@@ -43,6 +58,7 @@ const UsuariosInicioSesionPage = () => {
         localStorage.setItem('correo', data.correo)
         localStorage.setItem('arrendadorId', data.arrendadorId)
         if (data.token) localStorage.setItem('token', data.token)
+        localStorage.setItem('usuarioFechaUIS', new Date().toISOString())
 
         if (!data.correoVerificado) {
           await reenviarCodigo(data.correo)
@@ -69,6 +85,7 @@ const UsuariosInicioSesionPage = () => {
         localStorage.setItem('fechaRegistro', data.fechaRegistro)
         localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
         if (data.token) localStorage.setItem('token', data.token)
+        localStorage.setItem('usuarioFechaUIS', new Date().toISOString())
         if (data.arrendatarioFechaVerificacion) {
           localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
         }

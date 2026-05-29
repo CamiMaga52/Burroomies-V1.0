@@ -350,7 +350,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
 
               {/* Fotos */}
               <div className="arr-form-group">
-                <label className="arr-form-label">Fotos ({fotosExistentes.length + nuevasFotos.length}/10) — mínimo 3</label>
+                <label className="arr-form-label">Fotos ({fotosExistentes.length + nuevasFotos.length}/10) — mínimo 3 - máximo 10</label>
 
                 {fotosExistentes.length > 0 && (
                   <div className="arr-foto-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))' }}>
