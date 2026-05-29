@@ -144,7 +144,7 @@ const NavbarInicio = () => {
             e.currentTarget.style.transform = "translateY(0)";
           }}
         >
-          registrarse
+          Registrarse
         </Link>
       </div>
     </nav>
