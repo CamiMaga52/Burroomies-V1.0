@@ -400,7 +400,7 @@ const DetallePropiedad = () => {
                   }}>
                     <div>
                       <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a237e' }}>
-                        {propiedad.calificaciones.promedioCalGen || 'N/A'}
+                        {propiedad.calificaciones.promedioCalGen ? `${propiedad.calificaciones.promedioCalGen}/5` : 'N/A'}
                       </div>
                       <div style={{ fontSize: '12px', color: '#666' }}>⭐ General</div>
                     </div>
@@ -411,7 +411,7 @@ const DetallePropiedad = () => {
                           {propiedad.calificaciones.promedioCalSerBasic === null
                             ? <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}>✨ Nuevo</span>
                             : propiedad.calificaciones.promedioCalSerBasic > 0
-                              ? propiedad.calificaciones.promedioCalSerBasic
+                              ? `${propiedad.calificaciones.promedioCalSerBasic}/5`
                               : 'N/A'
                           }
                         </div>
@@ -425,7 +425,7 @@ const DetallePropiedad = () => {
                           {propiedad.calificaciones.promedioCalSerComEnt === null
                             ? <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}>✨ Nuevo</span>
                             : propiedad.calificaciones.promedioCalSerComEnt > 0
-                              ? propiedad.calificaciones.promedioCalSerComEnt
+                              ? `${propiedad.calificaciones.promedioCalSerComEnt}/5`
                               : 'N/A'
                           }
                         </div>
@@ -439,7 +439,7 @@ const DetallePropiedad = () => {
                           {propiedad.calificaciones.promedioCalSerAdicio === null
                             ? <span style={{ fontSize: '13px', color: '#f59e0b', fontWeight: 'bold' }}>✨ Nuevo</span>
                             : propiedad.calificaciones.promedioCalSerAdicio > 0
-                              ? propiedad.calificaciones.promedioCalSerAdicio
+                              ? `${propiedad.calificaciones.promedioCalSerAdicio}/5`
                               : 'N/A'
                           }
                         </div>
@@ -583,7 +583,7 @@ const DetallePropiedad = () => {
                             flexWrap: 'wrap'
                           }}>
                             <span style={{ color: '#ffc107', fontSize: '14px' }}>
-                              ⭐ {resena.calGen}
+                              ⭐ Calificación general {resena.calGen}/5
                             </span>
                             {resena.duracionRenta && (
                               <span style={{ 

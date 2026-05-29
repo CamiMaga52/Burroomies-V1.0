@@ -19,7 +19,6 @@ const EncuestaFinalizacion = () => {
   const [enviando, setEnviando] = useState(false)
   const [completado, setCompletado] = useState(false)
 
-  // Datos del arrendamiento
   const [serviciosPropiedad, setServiciosPropiedad] = useState({
     basicos: false,
     entretenimiento: false,
@@ -27,14 +26,12 @@ const EncuestaFinalizacion = () => {
   })
   const [listaServicios, setListaServicios] = useState([])
 
-  // Calificaciones
   const [calServiciosBasicos, setCalServiciosBasicos] = useState(0)
   const [calEntretenimiento, setCalEntretenimiento] = useState(0)
   const [calAdicionales, setCalAdicionales] = useState(0)
   const [calGeneral, setCalGeneral] = useState(0)
   const [resena, setResena] = useState('')
 
-  // Estado para el modal
   const [modal, setModal] = useState({ isOpen: false, message: '' })
 
   useEffect(() => {
@@ -81,8 +78,19 @@ const EncuestaFinalizacion = () => {
       mostrarModal('La calificación general es obligatoria')
       return
     }
+    if (serviciosPropiedad.basicos && calServiciosBasicos === 0) {
+      mostrarModal('Debes calificar los servicios básicos')
+      return
+    }
+    if (serviciosPropiedad.entretenimiento && calEntretenimiento === 0) {
+      mostrarModal('Debes calificar los servicios de entretenimiento')
+      return
+    }
+    if (serviciosPropiedad.adicionales && calAdicionales === 0) {
+      mostrarModal('Debes calificar los servicios adicionales')
+      return
+    }
 
-    // Filtro de groserías
     if (resena.trim()) {
       const resenaLower = resena.toLowerCase()
       if (GROSERIAS.some(g => resenaLower.includes(g))) {
@@ -135,7 +143,6 @@ const EncuestaFinalizacion = () => {
     }
   }
 
-  // Función para filtrar servicios por categoría
   const filtrarServicios = (categoria) => {
     return listaServicios.filter(s => s.servicioCategoria === categoria)
   }
@@ -244,7 +251,6 @@ const EncuestaFinalizacion = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <NavbarArrendatario />
 
-      {/* Modal personalizado */}
       {modal.isOpen && (
         <div style={{
           position: 'fixed',
@@ -267,18 +273,8 @@ const EncuestaFinalizacion = () => {
             textAlign: 'center',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
           }}>
-            <p style={{
-              fontSize: '40px',
-              marginBottom: '15px'
-            }}>
-              ⚠️
-            </p>
-            <p style={{
-              fontSize: '16px',
-              color: '#333',
-              marginBottom: '25px',
-              lineHeight: '1.5'
-            }}>
+            <p style={{ fontSize: '40px', marginBottom: '15px' }}>⚠️</p>
+            <p style={{ fontSize: '16px', color: '#333', marginBottom: '25px', lineHeight: '1.5' }}>
               {modal.message}
             </p>
             <button
@@ -343,6 +339,9 @@ const EncuestaFinalizacion = () => {
             <h3 style={{ textAlign: 'center', fontSize: '16px', marginBottom: '15px', color: '#333' }}>
               🔌 ¿Qué tal te parecieron los servicios básicos que te proporcionó la vivienda?
             </h3>
+            <p style={{ textAlign: 'center', color: '#dc3545', fontSize: '12px', marginBottom: '15px' }}>
+              * Obligatorio
+            </p>
             {renderEstrellas(calServiciosBasicos, setCalServiciosBasicos)}
             {calServiciosBasicos > 0 && (
               <p style={{ textAlign: 'center', fontSize: '14px', color: '#1a237e', fontWeight: 'bold', marginTop: '10px' }}>
@@ -365,6 +364,9 @@ const EncuestaFinalizacion = () => {
             <h3 style={{ textAlign: 'center', fontSize: '16px', marginBottom: '15px', color: '#333' }}>
               🎮 ¿Qué tal te parecieron los servicios de entretenimiento?
             </h3>
+            <p style={{ textAlign: 'center', color: '#dc3545', fontSize: '12px', marginBottom: '15px' }}>
+              * Obligatorio
+            </p>
             {renderEstrellas(calEntretenimiento, setCalEntretenimiento)}
             {calEntretenimiento > 0 && (
               <p style={{ textAlign: 'center', fontSize: '14px', color: '#1a237e', fontWeight: 'bold', marginTop: '10px' }}>
@@ -387,6 +389,9 @@ const EncuestaFinalizacion = () => {
             <h3 style={{ textAlign: 'center', fontSize: '16px', marginBottom: '15px', color: '#333' }}>
               ✨ ¿Qué tal te parecieron los servicios adicionales?
             </h3>
+            <p style={{ textAlign: 'center', color: '#dc3545', fontSize: '12px', marginBottom: '15px' }}>
+              * Obligatorio
+            </p>
             {renderEstrellas(calAdicionales, setCalAdicionales)}
             {calAdicionales > 0 && (
               <p style={{ textAlign: 'center', fontSize: '14px', color: '#1a237e', fontWeight: 'bold', marginTop: '10px' }}>
@@ -411,7 +416,10 @@ const EncuestaFinalizacion = () => {
 
           <textarea
             value={resena}
-            onChange={(e) => setResena(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 .,;:!?¡¿'"()\-\n]/g, '')
+              if (val.length <= 250) setResena(val)
+            }}
             placeholder="Cuéntanos tu experiencia viviendo aquí..."
             rows={4}
             style={{
@@ -424,6 +432,9 @@ const EncuestaFinalizacion = () => {
               boxSizing: 'border-box'
             }}
           />
+          <p style={{ textAlign: 'right', fontSize: '12px', color: resena.length >= 240 ? '#dc3545' : '#999', marginTop: '5px' }}>
+            {resena.length}/250
+          </p>
         </div>
 
         {/* BOTÓN ENVIAR */}

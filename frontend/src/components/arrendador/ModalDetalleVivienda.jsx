@@ -327,7 +327,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                 {Object.keys(serviciosCatalogo).map(cat => (
                   <div key={cat} className="arr-services-section">
                     <p className="arr-services-cat-title">
-                      {cat === 'Basico' ? '🔧 Básicos' : cat === 'Entretenimiento' ? '📺 Entretenimiento' : '✨ Adicionales'}
+                      {cat === 'Basico' ? '🔧 Básicos (mínimo 1)' : cat === 'Entretenimiento' ? '📺 Entretenimiento' : '✨ Adicionales'}
                     </p>
                     <div className="arr-services-grid">
                       {serviciosCatalogo[cat].map(s => (

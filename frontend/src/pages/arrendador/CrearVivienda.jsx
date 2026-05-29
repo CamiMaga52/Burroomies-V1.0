@@ -49,8 +49,8 @@ const CrearVivienda = () => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
-    if (name === 'propiedadTitulo') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
-    else if (name === 'propiedadDescripcion') v = value.slice(0, 500)
+    if (name === 'propiedadTitulo') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 43)
+    else if (name === 'propiedadDescripcion') { v = value.replace(/^[0-9]+/, ''); v = v.slice(0, 200) }
     else if (name === 'propiedadLugares') {
       v = value.replace(/[^0-9]/g, '')
       if (v) { const n = parseInt(v); if (n < 1) v = '1'; if (n > 10) v = '10' }
@@ -60,6 +60,7 @@ const CrearVivienda = () => {
       if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
       if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
       if (v && parseFloat(v) > 25000) v = '25000'
+      if (v && parseFloat(v) < 1 && v !== '') v = v
     } else if (name === 'cp') {
       v = value.replace(/[^0-9]/g, '').slice(0, 5)
     } else if (name === 'direccionCalle') v = value.slice(0, 100)
@@ -93,6 +94,7 @@ const CrearVivienda = () => {
     const files = Array.from(e.target.files)
     const validos = ['image/jpeg', 'image/png', 'image/webp']
     if (files.some(f => !validos.includes(f.type))) { setError('Solo se permiten imágenes JPG, PNG o WebP'); return }
+    if (files.some(f => f.size > 5 * 1024 * 1024)) { setError('Cada foto no puede superar 5 MB'); return }
     if (files.length + fotos.length > 10) { setError('Máximo 10 fotos permitidas'); return }
     setFotos(prev => [...prev, ...files])
     if (errors.fotos) setErrors({ ...errors, fotos: null })
@@ -106,12 +108,24 @@ const CrearVivienda = () => {
 
   const validarFormulario = () => {
     const errs = {}
-    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length < 5) errs.propiedadTitulo = 'El título es obligatorio (mínimo 5 caracteres)'
-    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 20) errs.propiedadDescripcion = 'La descripción es obligatoria (mínimo 20 caracteres)'
+    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length === 0) {
+      errs.propiedadTitulo = 'El título es obligatorio'
+    } else if (!/[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]{3,}/.test(formData.propiedadTitulo)) {
+      errs.propiedadTitulo = 'El título debe contener al menos una palabra con 3 letras'
+    } else if (formData.propiedadTitulo.trim().length > 43) {
+      errs.propiedadTitulo = 'El título no puede superar 43 caracteres'
+    }
+    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 10) {
+      errs.propiedadDescripcion = 'La descripción es obligatoria (mínimo 10 caracteres)'
+    } else if (formData.propiedadDescripcion.trim().length > 200) {
+      errs.propiedadDescripcion = 'La descripción no puede superar 200 caracteres'
+    } else if (/^[0-9]/.test(formData.propiedadDescripcion.trim())) {
+      errs.propiedadDescripcion = 'La descripción no puede iniciar con un número'
+    }
     if (!formData.propiedadTipo) errs.propiedadTipo = 'Selecciona un tipo de propiedad'
     if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) errs.propiedadLugares = 'Debe tener al menos 1 lugar'
     else if (parseInt(formData.propiedadLugares) > 10) errs.propiedadLugares = 'Máximo 10 lugares'
-    if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) <= 0) errs.propiedadPrecio = 'El precio debe ser mayor a 0'
+    if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) < 1000) errs.propiedadPrecio = 'El precio mínimo es $1,000'
     if (!formData.propiedadPrecioPor) errs.propiedadPrecioPor = 'Selecciona el tipo de precio'
     if (!formData.cp || formData.cp.length !== 5) errs.cp = 'El código postal debe tener 5 dígitos'
     else if (cpValido !== true) errs.cp = 'Debes buscar y validar el CP antes de continuar'
@@ -204,7 +218,7 @@ const CrearVivienda = () => {
                   maxLength={500}
                   className="arr-form-textarea"
                 />
-                <span className="arr-form-hint">{formData.propiedadDescripcion.length}/500 caracteres</span>
+                <span className="arr-form-hint">{formData.propiedadDescripcion.length}/200 caracteres</span>
                 {errors.propiedadDescripcion && <span className="arr-form-error">{errors.propiedadDescripcion}</span>}
               </div>
 

@@ -10,9 +10,10 @@ const UsuariosInicioSesionPage = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
     const rol = localStorage.getItem('rol')
-    if (rol === 'arrendador') navigate('/arrendador/mis-viviendas')
-    else if (rol === 'arrendatario') navigate('/arrendatario/buscar-vivienda')
+    if (token && rol === 'arrendador') navigate('/arrendador/mis-viviendas')
+    else if (token && rol === 'arrendatario') navigate('/arrendatario/buscar-vivienda')
   }, [])
 
   const [correo, setCorreo] = useState('')
@@ -41,6 +42,7 @@ const UsuariosInicioSesionPage = () => {
         localStorage.setItem('rol', data.rol)
         localStorage.setItem('correo', data.correo)
         localStorage.setItem('arrendadorId', data.arrendadorId)
+        if (data.token) localStorage.setItem('token', data.token)
 
         if (!data.correoVerificado) {
           await reenviarCodigo(data.correo)
@@ -66,6 +68,7 @@ const UsuariosInicioSesionPage = () => {
         localStorage.setItem('arrendatarioId', data.arrendatarioId)
         localStorage.setItem('fechaRegistro', data.fechaRegistro)
         localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
+        if (data.token) localStorage.setItem('token', data.token)
         if (data.arrendatarioFechaVerificacion) {
           localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
         }
