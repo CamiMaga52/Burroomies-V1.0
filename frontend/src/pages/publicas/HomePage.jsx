@@ -247,8 +247,8 @@ function Hero() {
           <div className="hero-chip chip-top">
             <div className="chip-avatar">👤</div>
             <div>
-              <strong>+300 estudiantes</strong>
-              <span className="chip-label">encontraron hogar</span>
+              <strong>diseñado</strong>
+              <span className="chip-label">para estudiantes del IPN</span>
             </div>
           </div>
 
