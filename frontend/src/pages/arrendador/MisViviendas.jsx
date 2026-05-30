@@ -26,7 +26,7 @@ const MisViviendas = () => {
     try {
       const data = await getPropiedadesArrendador(idArrendador)
       setPropiedades(data)
-    } catch { setError('Error al cargar propiedades') }
+    } catch { setError('Error al cargar propiedades'); setTimeout(() => setError(''), 4000) }
     finally { setCargando(false) }
   }
 
@@ -34,7 +34,7 @@ const MisViviendas = () => {
     try {
       await cambiarEstadoPropiedad(idPropiedad, nuevoEstado)
       cargarPropiedades(localStorage.getItem('arrendadorId'))
-    } catch (err) { setError(err.response?.data?.error || 'Error al cambiar estado') }
+    } catch (err) { setError(err.response?.data?.error || 'Error al cambiar estado'); setTimeout(() => setError(''), 4000) }
   }
 
   const handleSolicitarEliminar = (id) => setModalEliminar({ abierto: true, id })
@@ -45,7 +45,7 @@ const MisViviendas = () => {
       setModalEliminar({ abierto: false, id: null })
       cargarPropiedades(localStorage.getItem('arrendadorId'))
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al eliminar propiedad')
+      setError(err.response?.data?.error || 'Error al eliminar propiedad'); setTimeout(() => setError(''), 4000)
       setModalEliminar({ abierto: false, id: null })
     }
   }
