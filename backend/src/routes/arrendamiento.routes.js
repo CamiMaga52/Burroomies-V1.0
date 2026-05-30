@@ -5,6 +5,17 @@ const { Arrendamiento, Arrendatario, Usuario, Propiedad, Direccion, CP, Arrendad
 const { Op } = require('sequelize');
 const { analizarSentimiento } = require('../utils/sentimiento');
 
+
+// Helper: actualizar estatus de propiedad según lugares disponibles
+const actualizarEstatusPropiedad = async (idPropiedad) => {
+  const propiedad = await Propiedad.findByPk(idPropiedad);
+  if (!propiedad || propiedad.propiedadEstatus === 'Desactivada') return;
+  const ocupados = await Arrendamiento.count({ where: { propiedad_idPropiedad: idPropiedad } });
+  const disponibles = propiedad.propiedadLugares - ocupados;
+  const nuevoEstatus = disponibles > 0 ? 'Disponible' : 'Sin Disponibilidad';
+  await propiedad.update({ propiedadEstatus: nuevoEstatus });
+};
+
 // =====================================================
 // RUTAS ESPECÍFICAS PRIMERO
 // =====================================================
@@ -466,7 +477,9 @@ router.put('/:id/finalizar-estudiante', async (req, res) => {
 
     // Si el arrendador ya finalizó, eliminar arrendamiento
     if (arrendamiento.arrendamientoValArrendador === 1) {
+      const idProp = arrendamiento.propiedad_idPropiedad;
       await arrendamiento.destroy();
+      await actualizarEstatusPropiedad(idProp);
       return res.json({ 
         message: 'Arrendamiento finalizado y eliminado exitosamente', 
         eliminado: true,
@@ -574,6 +587,7 @@ router.post('/', async (req, res) => {
       propiedad_idPropiedad
     });
 
+    await actualizarEstatusPropiedad(propiedad_idPropiedad);
     res.status(201).json({ message: 'Arrendamiento creado exitosamente', arrendamiento: nuevoArrendamiento });
   } catch (error) {
     console.error('Error al crear arrendamiento:', error);
@@ -594,7 +608,9 @@ router.put('/:id/finalizar', async (req, res) => {
     await arrendamiento.update({ arrendamientoValArrendador: 1 });
 
     if (arrendamiento.arrendamientoValEstudiante === 1) {
+      const idProp = arrendamiento.propiedad_idPropiedad;
       await arrendamiento.destroy();
+      await actualizarEstatusPropiedad(idProp);
       return res.json({ message: 'Arrendamiento finalizado y eliminado exitosamente', eliminado: true });
     }
 

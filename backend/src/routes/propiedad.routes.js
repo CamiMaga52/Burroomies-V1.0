@@ -224,17 +224,57 @@ router.patch('/:id/estado', async (req, res) => {
     }
 
     const propiedad = await Propiedad.findByPk(id);
-    
     if (!propiedad) {
       return res.status(404).json({ error: 'Propiedad no encontrada' });
     }
 
+    // Calcular lugares ocupados
+    const lugaresOcupados = await Arrendamiento.count({
+      where: { propiedad_idPropiedad: id }
+    });
+    const lugaresDisponibles = propiedad.propiedadLugares - lugaresOcupados;
+
+    // Si no hay lugares disponibles, no puede ponerse en Disponible
+    if (estado === 'Disponible' && lugaresDisponibles <= 0) {
+      return res.status(400).json({ error: 'No puedes activar la propiedad porque no tiene lugares disponibles' });
+    }
+
     await propiedad.update({ propiedadEstatus: estado });
 
-    res.json({ message: 'Estado actualizado exitosamente', propiedad });
+    res.json({ message: 'Estado actualizado exitosamente', propiedad, lugaresDisponibles });
   } catch (error) {
     console.error('Error al cambiar estado:', error);
     res.status(500).json({ error: 'Error al cambiar estado' });
+  }
+});
+
+// Actualizar estatus automáticamente según lugares disponibles
+router.patch('/:id/actualizar-estatus', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const propiedad = await Propiedad.findByPk(id);
+    if (!propiedad) {
+      return res.status(404).json({ error: 'Propiedad no encontrada' });
+    }
+
+    // No tocar propiedades desactivadas manualmente
+    if (propiedad.propiedadEstatus === 'Desactivada') {
+      return res.json({ message: 'Propiedad desactivada, no se modifica', estatus: 'Desactivada' });
+    }
+
+    const lugaresOcupados = await Arrendamiento.count({
+      where: { propiedad_idPropiedad: id }
+    });
+    const lugaresDisponibles = propiedad.propiedadLugares - lugaresOcupados;
+
+    const nuevoEstatus = lugaresDisponibles > 0 ? 'Disponible' : 'Sin Disponibilidad';
+    await propiedad.update({ propiedadEstatus: nuevoEstatus });
+
+    res.json({ message: 'Estatus actualizado', estatus: nuevoEstatus, lugaresDisponibles });
+  } catch (error) {
+    console.error('Error al actualizar estatus:', error);
+    res.status(500).json({ error: 'Error al actualizar estatus' });
   }
 });
 
@@ -481,6 +521,17 @@ router.put('/:id', uploadFotos.array('fotos', 10), comprimirYGuardar, async (req
         })
       );
       await Promise.all(serviciosPromises);
+    }
+
+    // Recalcular estatus según nuevos lugares disponibles
+    if (propiedadLugares) {
+      const propiedad2 = await Propiedad.findByPk(id);
+      if (propiedad2 && propiedad2.propiedadEstatus !== 'Desactivada') {
+        const ocupados = await Arrendamiento.count({ where: { propiedad_idPropiedad: id } });
+        const disponibles = parseInt(propiedadLugares) - ocupados;
+        const nuevoEstatus = disponibles > 0 ? 'Disponible' : 'Sin Disponibilidad';
+        await propiedad2.update({ propiedadEstatus: nuevoEstatus });
+      }
     }
 
     res.json({ message: 'Propiedad actualizada exitosamente' });
