@@ -357,7 +357,7 @@ const RegistroArrendador = ({ volver }) => {
             <button 
               type="button" 
               className="btn-regresar-sidebar"
-              onClick={() => navigate(-1)}
+              onClick={volver || (() => navigate('/registro'))}
             >
               ← Regresar
             </button>
