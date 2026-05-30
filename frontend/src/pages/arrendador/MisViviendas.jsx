@@ -86,6 +86,22 @@ const MisViviendas = () => {
           )}
         </div>
 
+        {/* Semáforo de estados */}
+        <div style={{ display: 'flex', gap: '18px', marginBottom: '20px', flexWrap: 'wrap', padding: '14px 18px', backgroundColor: '#f9f9fb', borderRadius: '10px', border: '1px solid #e8e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '13px', height: '13px', borderRadius: '50%', backgroundColor: '#22c55e', display: 'inline-block', flexShrink: 0 }}></span>
+            <span style={{ fontSize: '13px', color: '#333' }}><strong>Disponible</strong> — visible y con lugares libres</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '13px', height: '13px', borderRadius: '50%', backgroundColor: '#f59e0b', display: 'inline-block', flexShrink: 0 }}></span>
+            <span style={{ fontSize: '13px', color: '#333' }}><strong>Sin disponibilidad</strong> — visible pero sin lugares libres</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '13px', height: '13px', borderRadius: '50%', backgroundColor: '#ef4444', display: 'inline-block', flexShrink: 0 }}></span>
+            <span style={{ fontSize: '13px', color: '#333' }}><strong>Desactivada</strong> — no se les muestra a los estudiantes</span>
+          </div>
+        </div>
+
         {error && <div className="arr-alert arr-alert-error">⚠️ {error}</div>}
 
         {propiedades.length === 0 ? (

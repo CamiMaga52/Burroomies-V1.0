@@ -263,9 +263,10 @@ const CrearVivienda = () => {
                   name="propiedadPrecio"
                   value={formData.propiedadPrecio}
                   onChange={handleChange}
-                  min="0"
+                  min="1000"
+                  max="25000"
                   step="0.01"
-                  placeholder="0.00"
+                  placeholder="mínimo 1000, máximo 25000"
                   className={inputCls('propiedadPrecio')}
                 />
                 {errors.propiedadPrecio && <span className="arr-form-error">{errors.propiedadPrecio}</span>}

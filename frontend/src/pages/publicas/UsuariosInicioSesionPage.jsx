@@ -10,11 +10,10 @@ const UsuariosInicioSesionPage = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
     const rol = localStorage.getItem('rol')
     const fechaUIS = localStorage.getItem('usuarioFechaUIS')
 
-    if (token && rol && fechaUIS) {
+    if (rol && fechaUIS) {
       const horas = (Date.now() - parseInt(fechaUIS)) / (1000 * 60 * 60)
       if (horas >= 5) {
         localStorage.clear()
