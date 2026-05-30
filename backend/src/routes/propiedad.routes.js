@@ -206,7 +206,12 @@ router.get('/:id/completo', async (req, res) => {
       return res.status(404).json({ error: 'Propiedad no encontrada' });
     }
 
-    res.json(propiedad);
+    // Contar arrendamientos activos para validar el mínimo de lugares al editar
+    const arrendamientosActivos = await Arrendamiento.count({
+      where: { propiedad_idPropiedad: id }
+    });
+
+    res.json({ ...propiedad.toJSON(), arrendamientosActivos });
   } catch (error) {
     console.error('Error al obtener propiedad completa:', error);
     res.status(500).json({ error: 'Error al obtener propiedad' });
@@ -450,6 +455,18 @@ router.put('/:id', uploadFotos.array('fotos', 10), comprimirYGuardar, async (req
     
     if (!propiedad) {
       return res.status(404).json({ error: 'Propiedad no encontrada' });
+    }
+
+    // Validar que los nuevos lugares no sean menores a los arrendamientos activos
+    if (propiedadLugares !== undefined) {
+      const arrendamientosActivos = await Arrendamiento.count({
+        where: { propiedad_idPropiedad: id }
+      });
+      if (parseInt(propiedadLugares) < arrendamientosActivos) {
+        return res.status(400).json({
+          error: `No puedes reducir los lugares a ${propiedadLugares}. Hay ${arrendamientosActivos} arrendamiento(s) activo(s) que requieren al menos ${arrendamientosActivos} lugar(es).`
+        });
+      }
     }
 
     // Actualizar dirección

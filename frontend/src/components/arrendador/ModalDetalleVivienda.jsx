@@ -32,6 +32,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
   const [previewsNuevas, setPreviewsNuevas] = useState([])
   const [buscandoCP, setBuscandoCP] = useState(false)
   const [cpValido, setCpValido] = useState(null)
+  const [arrendamientosActivos, setArrendamientosActivos] = useState(0)
 
   useEffect(() => {
     cargarDatosCompletos()
@@ -59,6 +60,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
       })
       setFotosExistentes(data.fotos || [])
       if (data.servicios?.length > 0) setServiciosSeleccionados(data.servicios.map(s => s.idServicio))
+      setArrendamientosActivos(data.arrendamientosActivos || 0)
     } catch { setError('Error al cargar los datos de la propiedad') }
     finally { setCargandoDatos(false) }
   }
@@ -78,8 +80,11 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
     if (name === 'propiedadDescripcion')
       v = value.slice(0, 300)
 
-    if (name === 'propiedadLugares')
+    if (name === 'propiedadLugares') {
       v = value.replace(/[^0-9]/g, '').slice(0, 2)
+      const num = parseInt(v)
+      if (!isNaN(num) && num < arrendamientosActivos) v = String(arrendamientosActivos)
+    }
 
     if (name === 'propiedadPrecio') {
       v = value.replace(/[^0-9.]/g, '')
@@ -138,6 +143,10 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
     if (total < 3) { setError('Debes tener mínimo 3 fotos'); return }
     if (total > 10) { setError('Máximo 10 fotos permitidas'); return }
     if (cpValido === false) { setError('El CP no es válido'); return }
+    if (parseInt(formData.propiedadLugares) < arrendamientosActivos) {
+      setError(`No puedes tener menos de ${arrendamientosActivos} lugar(es) porque hay ${arrendamientosActivos} arrendamiento(s) activo(s)`)
+      return
+    }
     setCargando(true); setError(''); setMensaje('')
     try {
       const fd = new FormData()
@@ -271,7 +280,12 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                 </div>
                 <div className="arr-form-group">
                   <label className="arr-form-label">Lugares</label>
-                  <input type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min="1" max="10" className="arr-form-input" />
+                  <input type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={arrendamientosActivos > 0 ? arrendamientosActivos : 1} max="10" className="arr-form-input" />
+                  {arrendamientosActivos > 0 && (
+                    <span className="arr-form-hint" style={{ color: 'var(--warning, #b45309)', fontSize: '0.75rem' }}>
+                      Mínimo {arrendamientosActivos} ({arrendamientosActivos} arrendamiento{arrendamientosActivos > 1 ? 's' : ''} activo{arrendamientosActivos > 1 ? 's' : ''})
+                    </span>
+                  )}
                 </div>
                 <div className="arr-form-group">
                   <label className="arr-form-label">Precio ($)</label>
