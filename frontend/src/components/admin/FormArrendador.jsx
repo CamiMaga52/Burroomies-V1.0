@@ -117,7 +117,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
         {error && <div className="admin-form-notice error">{error}</div>}
         {isVerified && (
           <div className="admin-form-notice verified">
-            ✓ Arrendador verificado — CURP, RFC y correo no se pueden editar.
+            ✓ Arrendador verificado — CURP, RFC y correo electrónico no se pueden editar.
           </div>
         )}
 
@@ -150,7 +150,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">Correo</label>
+              <label className="admin-form-label">Correo electrónico</label>
               <input className="admin-form-input" value={formData.usuarioCorreo} disabled />
               <span className="admin-form-hint">No modificable</span>
             </div>

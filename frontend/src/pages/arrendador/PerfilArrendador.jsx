@@ -288,7 +288,7 @@ const PerfilArrendador = () => {
                 <InfoRow label="Nombre" value={usuario.usuarioNom} />
                 <InfoRow label="Apellido Paterno" value={usuario.usuarioApePat} />
                 <InfoRow label="Apellido Materno" value={usuario.usuarioApeMat || '—'} />
-                <InfoRow label="Correo" value={usuario.usuarioCorreo} bloqueado />
+                <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                 <InfoRow label="Teléfono" value={usuario.usuarioTel || '—'} />
                 <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
                 <InfoRow label="RFC" value={perfil.arrendadorRFC} bloqueado />
@@ -359,7 +359,7 @@ const PerfilArrendador = () => {
                   <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
                      Información no editable:
                   </p>
-                  <InfoRow label="Correo" value={usuario.usuarioCorreo} bloqueado />
+                  <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                   <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
                   <InfoRow label="RFC" value={perfil.arrendadorRFC} bloqueado />
                   <InfoRow label="Fecha de Nacimiento" value={usuario.usuarioFechaNac ? new Date(usuario.usuarioFechaNac).toLocaleDateString('es-MX') : '—'} bloqueado />

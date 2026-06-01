@@ -88,7 +88,7 @@ const AdminArrendadoresPage = () => {
           <input
             className="admin-search-input"
             type="text"
-            placeholder="Buscar por RFC, correo o CURP..."
+            placeholder="Buscar por RFC, correo electrónico o CURP..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -126,7 +126,7 @@ const AdminArrendadoresPage = () => {
                   <th>ID</th>
                   <th>Nombre Completo</th>
                   <th>RFC</th>
-                  <th>Correo</th>
+                  <th>Correo electrónico</th>
                   <th>CURP</th>
                   <th className="center">Acciones</th>
                 </tr>
@@ -139,7 +139,7 @@ const AdminArrendadoresPage = () => {
                       {a.usuario?.usuarioApePat} {a.usuario?.usuarioApeMat || ''} {a.usuario?.usuarioNom}
                     </td>
                     <td data-label="RFC">{a.arrendadorRFC || '-'}</td>
-                    <td data-label="Correo">{a.usuario?.usuarioCorreo || '-'}</td>
+                    <td data-label="Correo electrónico">{a.usuario?.usuarioCorreo || '-'}</td>
                     <td data-label="CURP" className="muted">{a.usuario?.usuarioCurp || '-'}</td>
                     <td data-label="Acciones" className="center">
                       <div className="admin-actions">
@@ -251,7 +251,7 @@ const AdminArrendadoresPage = () => {
                       </div>
                     </div>
                     <div className="admin-info-item">
-                      <div className="admin-info-label">Correo</div>
+                      <div className="admin-info-label">Correo electrónico</div>
                       <div className="admin-info-value">{selectedArrendador.usuario?.usuarioCorreo || '-'}</div>
                     </div>
                     <div className="admin-info-item">

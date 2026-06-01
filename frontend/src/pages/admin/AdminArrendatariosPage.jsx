@@ -111,7 +111,7 @@ const AdminArrendatariosPage = () => {
           <input
             className="admin-search-input"
             type="text"
-            placeholder="Buscar por boleta, username, correo o CURP..."
+            placeholder="Buscar por boleta, nombre de usuario, correo electrónico o CURP..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -148,10 +148,10 @@ const AdminArrendatariosPage = () => {
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Username</th>
+                    <th>Nombre de usuario</th>
                     <th>Nombre Completo</th>
                     <th>Boleta</th>
-                    <th>Correo</th>
+                    <th>Correo electrónico</th>
                     <th>CURP</th>
                     <th className="center">Verificado</th>
                     <th className="center">Acciones</th>
@@ -161,12 +161,12 @@ const AdminArrendatariosPage = () => {
                   {arrendatariosActuales.map((a) => (
                     <tr key={a.idArrendatario}>
                       <td data-label="ID" className="muted">{a.idArrendatario}</td>
-                      <td data-label="Username">{a.arrendatarioUser || '-'}</td>
+                      <td data-label="Nombre de usuario">{a.arrendatarioUser || '-'}</td>
                       <td data-label="Nombre Completo" style={{ fontWeight: 500 }}>
                         {a.usuario?.usuarioApePat} {a.usuario?.usuarioApeMat || ''} {a.usuario?.usuarioNom}
                       </td>
                       <td data-label="Boleta">{a.arrendatarioBoleta || '-'}</td>
-                      <td data-label="Correo">{a.usuario?.usuarioCorreo || '-'}</td>
+                      <td data-label="Correo electrónico">{a.usuario?.usuarioCorreo || '-'}</td>
                       <td data-label="CURP" className="muted">{a.usuario?.usuarioCurp || '-'}</td>
                       <td data-label="Verificado" className="center">
                         <span className={`admin-badge ${a.arrendatarioVerificado === 1 ? 'badge-success' : 'badge-warning'}`}>
@@ -274,7 +274,7 @@ const AdminArrendatariosPage = () => {
                       <div className="admin-info-value">{selectedArrendatario.idArrendatario}</div>
                     </div>
                     <div className="admin-info-item">
-                      <div className="admin-info-label">Username</div>
+                      <div className="admin-info-label">Nombre de usuario</div>
                       <div className="admin-info-value">{selectedArrendatario.arrendatarioUser || '-'}</div>
                     </div>
                     <div className="admin-info-item admin-info-full">
@@ -288,7 +288,7 @@ const AdminArrendatariosPage = () => {
                       <div className="admin-info-value">{selectedArrendatario.arrendatarioBoleta || '-'}</div>
                     </div>
                     <div className="admin-info-item">
-                      <div className="admin-info-label">Correo</div>
+                      <div className="admin-info-label">Correo electrónico</div>
                       <div className="admin-info-value">{selectedArrendatario.usuario?.usuarioCorreo || '-'}</div>
                     </div>
                     <div className="admin-info-item">

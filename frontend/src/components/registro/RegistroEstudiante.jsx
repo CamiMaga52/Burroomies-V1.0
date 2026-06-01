@@ -292,8 +292,8 @@ const RegistroEstudiante = ({ volver }) => {
     if (formData.apellidoMaterno && formData.apellidoMaterno.length < 2)
       e.apellidoMaterno = 'Mínimo 2 caracteres';
 
-    if (!formData.correo) e.correo = 'El correo es obligatorio';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo no válido';
+    if (!formData.correo) e.correo = 'El correo electrónico es obligatorio';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo electrónico no válido';
 
     if (!formData.telefono) e.telefono = 'El teléfono es obligatorio';
     else if (formData.telefono.length !== 10) e.telefono = 'Debe tener 10 dígitos';
@@ -352,7 +352,7 @@ const RegistroEstudiante = ({ volver }) => {
     const DOMINIOS = ['alumno.ipn.mx', 'ipn.mx', 'gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com', 'outlook.es', 'yahoo.com', 'yahoo.es', 'icloud.com', 'live.com', 'msn.com', 'protonmail.com'];
     const dominio = formData.correo.split('@')[1]?.toLowerCase();
     if (!DOMINIOS.includes(dominio)) {
-      setErrors({ correo: 'El dominio del correo no está permitido' });
+      setErrors({ correo: 'El dominio del correo electrónico no está permitido' });
       return;
     }
 
@@ -529,7 +529,7 @@ const RegistroEstudiante = ({ volver }) => {
 
               <div className="form-grid" style={{ marginBottom: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Username (nombre de usuario) <span>*</span></label>
+                  <label className="form-label">Nombre de usuario (Username)<span>*</span></label>
                   <div className="form-input-icon">
                     <span className="icon">@</span>
                     <input className="form-input" type="text" name="username"
@@ -606,8 +606,18 @@ const RegistroEstudiante = ({ volver }) => {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Fecha de nacimiento <span>*</span></label>
-                  <input className="form-input" type="date" name="fechaNacimiento"
-                    value={formData.fechaNacimiento} onChange={handleChange} />
+                  <input
+                    className="form-input"
+                    type="date"
+                    name="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                    max={(() => {
+                      const d = new Date();
+                      d.setFullYear(d.getFullYear() - 17);
+                      return d.toISOString().split('T')[0];
+                    })()}
+                  />
                   <span className="form-hint">Debes ser mayor de 17 años</span>
                   {errors.fechaNacimiento && <div className="form-error">{errors.fechaNacimiento}</div>}
                 </div>

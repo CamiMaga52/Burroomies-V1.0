@@ -110,7 +110,7 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
         {error && <div className="admin-form-notice error">{error}</div>}
         {isVerified && (
           <div className="admin-form-notice verified">
-            ✓ Estudiante verificado — CURP, boleta, correo y username no se pueden editar.
+            ✓ Estudiante verificado — CURP, boleta, correo electrónico y nombre de usuario no se pueden editar.
           </div>
         )}
 
@@ -143,7 +143,7 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">Correo</label>
+              <label className="admin-form-label">Correo electrónico</label>
               <input className="admin-form-input" value={formData.usuarioCorreo} disabled />
               <span className="admin-form-hint">No modificable</span>
             </div>

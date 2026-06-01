@@ -94,12 +94,12 @@ const VerificarCorreoPage = () => {
     try {
       const resultado = await validarCampo('correo', nuevoCorreo)
       if (resultado.existe) {
-        setError('Este correo ya está registrado por otra cuenta')
+        setError('Este correo electrónico ya está registrado por otra cuenta')
         setCargando(false)
         return
       }
     } catch {
-      setError('No se pudo verificar el correo. Intenta de nuevo.')
+      setError('No se pudo verificar el correo electrónico. Intenta de nuevo.')
       setCargando(false)
       return
     }
@@ -112,7 +112,7 @@ const VerificarCorreoPage = () => {
       setTiempoReenvio(0)
       setCodigo('')
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al actualizar el correo')
+      setError(err.response?.data?.error || 'Error al actualizar el correo electrónico')
     } finally {
       setCargando(false)
     }
@@ -132,7 +132,7 @@ const VerificarCorreoPage = () => {
           
           <div className="verificar-body">
             <div className="verificar-info">
-              <label>Correo registrado</label>
+              <label>Correo electrónico registrado</label>
               <div className="verificar-email">{correo}</div>
               {!modoEdicion ? (
                 <button
@@ -140,7 +140,7 @@ const VerificarCorreoPage = () => {
                   className="verificar-update-btn"
                   onClick={() => setModoEdicion(true)}
                 >
-                  ¿Correo incorrecto? Actualizar →
+                  ¿Correo electrónico incorrecto? Actualizar →
                 </button>
               ) : (
                 <form onSubmit={handleActualizarCorreo} className="verificar-update-form">
@@ -149,7 +149,7 @@ const VerificarCorreoPage = () => {
                     className="verificar-input"
                     value={nuevoCorreo}
                     onChange={(e) => setNuevoCorreo(e.target.value)}
-                    placeholder="Ingresa tu correo correcto"
+                    placeholder="Ingresa tu correo electrónico correcto"
                     required
                   />
                   <div className="verificar-button-group">

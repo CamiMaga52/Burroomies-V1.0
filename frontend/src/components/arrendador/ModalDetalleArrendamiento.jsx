@@ -64,11 +64,11 @@ const ModalDetalleArrendamiento = ({ arrendamiento, onClose }) => {
                 </p>
               </div>
               <div className="arr-info-item">
-                <p className="arr-info-label">Username</p>
-                <p className="arr-info-value">@{arrendamiento.arrendatario?.arrendatarioUser}</p>
+                <p className="arr-info-label">Nombre de usuario</p>
+                <p className="arr-info-value">{arrendamiento.arrendatario?.arrendatarioUser}</p>
               </div>
               <div className="arr-info-item">
-                <p className="arr-info-label">Correo</p>
+                <p className="arr-info-label">Correo electrónico</p>
                 <p className="arr-info-value">{arrendamiento.arrendatario?.usuario?.usuarioCorreo}</p>
               </div>
               <div className="arr-info-item">

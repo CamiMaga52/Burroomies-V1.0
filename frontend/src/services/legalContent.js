@@ -22,7 +22,7 @@ Al registrarse en el sistema, usted otorga su consentimiento expreso para el tra
 • Primarias (necesarias para el servicio): crear y gestionar su cuenta, verificar su identidad mediante extracción automatizada de datos del documento oficial, permitir la publicación y búsqueda de arrendamientos, y enviar comunicaciones relacionadas con el uso del sistema.
 • Secundarias (opcionales): enviar avisos sobre nuevas funcionalidades o actualizaciones del sistema.
 
-Los correos electrónicos se utilizan únicamente para: verificación de correo al registrarse y recuperación de contraseña. No se envían correos con fines publicitarios.`
+Los correos electrónicos se utilizan únicamente para: verificación de correo electrónico al registrarse y recuperación de contraseña. No se envían correos con fines publicitarios.`
     },
     {
       subtitulo: '5. Transferencia de Datos a Terceros',
@@ -63,7 +63,7 @@ En caso de una vulneración de seguridad que afecte sus datos personales, el sis
     },
     {
       subtitulo: '12. Cambios al Aviso',
-      texto: `Cualquier modificación a este aviso será notificada a través del correo registrado en la cuenta del usuario o mediante un aviso visible en el sistema al iniciar sesión.`
+      texto: `Cualquier modificación a este aviso será notificada a través del correo electrónico registrado en la cuenta del usuario o mediante un aviso visible en el sistema al iniciar sesión.`
     }
   ],
   datosPorRol: {

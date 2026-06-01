@@ -55,7 +55,7 @@ const handleVerificar = async (e) => {
   setMensaje('')
   try {
     const data = await verificarCodigoLogin(correo, codigo)
-    setMensaje('¡Correo verificado! Redirigiendo...')
+    setMensaje('¡Correo electrónico verificado! Redirigiendo...')
     setTimeout(() => {
       if (rol === 'arrendador') {
         localStorage.setItem('correoVerificado', '1')
@@ -92,7 +92,7 @@ const handleVerificar = async (e) => {
     setMensaje('')
     try {
       await reenviarCodigo(correo)
-      setMensaje('Código reenviado. Revisa tu correo.')
+      setMensaje('Código reenviado. Revisa tu correo electrónico.')
       setTiempoReenvio(60)
       setCodigo('')
     } catch (err) {
@@ -116,7 +116,7 @@ const handleVerificar = async (e) => {
     try {
       const resultado = await validarCampo('correo', nuevoCorreo)
       if (resultado.existe) {
-        setError('Este correo ya está registrado por otra cuenta')
+        setError('Este correo electrónico ya está registrado por otra cuenta')
         setCargando(false)
         return
       }
@@ -125,9 +125,9 @@ const handleVerificar = async (e) => {
       setModoEdicion(false)
       setTiempoReenvio(0)
       setCodigo('')
-      setMensaje('Correo actualizado. Se envió un nuevo código.')
+      setMensaje('Correo electrónico actualizado. Se envió un nuevo código.')
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al actualizar el correo')
+      setError(err.response?.data?.error || 'Error al actualizar el correo electrónico')
     } finally {
       setCargando(false)
     }
@@ -141,7 +141,7 @@ const handleVerificar = async (e) => {
         <div className="verificar-correo-card">
           <div className="verificar-correo-icon">📧</div>
 
-          <h2 className="verificar-correo-title">Verificación de Correo</h2>
+          <h2 className="verificar-correo-title">Verificación de Correo electrónico</h2>
           <p className="verificar-correo-subtitle">
             Ingresa el código de 8 dígitos que enviamos a{' '}
             <strong className="verificar-correo-highlight">{correo}</strong>
@@ -154,16 +154,16 @@ const handleVerificar = async (e) => {
                 className="verificar-correo-edit-link"
                 onClick={() => { setModoEdicion(true); setError(''); setMensaje('') }}
               >
-                ¿Correo incorrecto o no te llega? Actualizar correo
+                ¿Correo electrónico incorrecto o no te llega? Actualizar correo
               </button>
             ) : (
               <form onSubmit={handleActualizarCorreo} className="verificar-correo-edit-form">
-                <label className="verificar-correo-edit-label">Nuevo correo:</label>
+                <label className="verificar-correo-edit-label">Nuevo correo electrónico:</label>
                 <input
                   type="email"
                   value={nuevoCorreo}
                   onChange={(e) => setNuevoCorreo(e.target.value)}
-                  placeholder="nuevo@correo.com"
+                  placeholder="ej.nuevo@correo.com"
                   className="verificar-correo-edit-input"
                   required
                 />

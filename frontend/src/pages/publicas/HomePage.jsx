@@ -216,9 +216,11 @@ function Hero() {
         </h1>
 
         <p className="hero-subtitle">
-          Sistema web para búsqueda de vivienda en renta para estudiantes de la{" "}
+          Sistema web para la búsqueda de vivienda en renta para estudiantes de la{" "}
           <strong>Unidad Profesional Adolfo López Mateos</strong>, con filtros
-          de búsqueda y módulo de reseñas para estudiantes que hayan rentado una vivienda.
+          de búsqueda y módulo de reseñas para estudiantes que hayan rentado una vivienda. 
+          Este sistema se deriva de el trabajo terminal 2026-A046 del IPN, desarrollado por 
+          estudiantes de la carrera de Ingeniería en Sistemas Computacionales.
         </p>
 
         <div className="hero-ctas">

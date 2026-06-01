@@ -75,7 +75,7 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
     try {
       const result = await validarCampo(campo, valor)
       if (result.existe) {
-        const msgs = { correo: 'El correo ya está registrado', curp: 'El CURP ya está registrado', rfc: 'El RFC ya está registrado' }
+        const msgs = { correo: 'El correo electrónicoya está registrado', curp: 'El CURP ya está registrado', rfc: 'El RFC ya está registrado' }
         setErrors(prev => ({ ...prev, [campo]: msgs[campo] }))
         return false
       } else {
@@ -141,7 +141,7 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
     if (!formData.apellidoPaterno) errs.apellidoPaterno = 'Obligatorio'
     if (!formData.apellidoMaterno) errs.apellidoMaterno = 'Obligatorio'
     if (!formData.correo) errs.correo = 'Obligatorio'
-    else if (!validarDominio(formData.correo)) errs.correo = 'Usa Gmail, Hotmail, Outlook, Yahoo o correo IPN'
+    else if (!validarDominio(formData.correo)) errs.correo = 'Solo se aceptan estos dominios: Gmail, Hotmail, Outlook, Yahoo o correo IPN'
     if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener 10 dígitos'
     if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener 18 caracteres'
     if (!formData.fechaNacimiento) errs.fechaNacimiento = 'Obligatorio'
@@ -221,7 +221,7 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">Correo *</label>
+              <label className="admin-form-label">Correo electrónico *</label>
               <input
                 className={`admin-form-input${errors.correo ? ' is-error' : ''}`}
                 type="email" name="correo" value={formData.correo} onChange={handleChange} onBlur={handleBlur} maxLength={60}

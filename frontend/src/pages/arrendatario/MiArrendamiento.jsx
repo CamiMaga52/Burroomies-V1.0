@@ -365,7 +365,7 @@ const MiArrendamiento = () => {
 
                 <div style={{ paddingLeft: '10px' }}>
                   <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#555' }}>
-                    📧 Correo: {arrendador?.usuarioCorreo || 'No disponible'}
+                    📧 Correo electrónico: {arrendador?.usuarioCorreo || 'No disponible'}
                   </p>
                   <p style={{ margin: 0, fontSize: '14px', color: '#555' }}>
                     📞 Teléfono: {arrendador?.usuarioTel || 'No disponible'}

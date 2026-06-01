@@ -167,7 +167,7 @@ const CrearArrendamiento = () => {
                         type="text"
                         value={terminoBusqueda}
                         onChange={(e) => setTerminoBusqueda(e.target.value)}
-                        placeholder="Buscar por username o correo..."
+                        placeholder="Buscar por nombre de usuario o correo electrónico..."
                         className={`arr-form-input${errors.arrendatario_idArrendatario ? ' is-error' : ''}`}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleBuscarArrendatario())}
                       />
@@ -196,7 +196,7 @@ const CrearArrendamiento = () => {
                       fontSize: '0.85rem',
                       color: '#856404'
                     }}>
-                      🔍 No se encontraron arrendatarios con ese username o correo
+                      🔍 No se encontraron arrendatarios con ese nombre de usuario o correo electrónico
                     </div>
                   )}
 
@@ -214,7 +214,7 @@ const CrearArrendamiento = () => {
                                 {a.usuario?.usuarioNom} {a.usuario?.usuarioApePat}
                               </span>
                               <span style={{ color: 'var(--text-light)', fontSize: '0.85rem', marginLeft: '0.4rem' }}>
-                                @{a.arrendatarioUser}
+                                {a.arrendatarioUser}
                               </span>
                             </div>
                             {a.arrendatarioVerificado === 1

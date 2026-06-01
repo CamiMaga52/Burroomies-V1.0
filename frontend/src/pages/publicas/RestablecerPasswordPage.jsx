@@ -111,7 +111,7 @@ const RestablecerPasswordPage = () => {
       const data = await response.json()
 
       if (response.ok) {
-        alert('Código reenviado a tu correo')
+        alert('Código reenviado a tu correo electrónico')
       } else {
         setError(data.error || 'Error al reenviar')
       }

@@ -92,7 +92,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     try {
       const result = await validarCampo(campo, valor)
       if (result.existe) {
-        const msgs = { username: 'El username ya está registrado', correo: 'El correo ya está registrado', curp: 'El CURP ya está registrado', boleta: 'La boleta ya está registrada' }
+        const msgs = { username: 'El nombre de usuario ya está registrado', correo: 'El correo electrónico ya está registrado', curp: 'El CURP ya está registrado', boleta: 'La boleta ya está registrada' }
         setErrors(prev => ({ ...prev, [campo]: msgs[campo] }))
         return false
       } else { setErrors(prev => ({ ...prev, [campo]: null })); return true }
@@ -137,7 +137,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     if (!formData.apellidoPaterno) errs.apellidoPaterno = 'Obligatorio'
     if (!formData.apellidoMaterno) errs.apellidoMaterno = 'Obligatorio'
     if (!formData.correo) errs.correo = 'Obligatorio'
-    else if (!validarDominio(formData.correo)) errs.correo = 'Usa Gmail, Hotmail, Outlook, Yahoo o correo IPN'
+    else if (!validarDominio(formData.correo)) errs.correo = 'Solo se aceptan estos dominios: Gmail, Hotmail, Outlook, Yahoo o correo IPN'
     if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener 10 dígitos'
     if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener 18 caracteres'
     if (!formData.fechaNacimiento) errs.fechaNacimiento = 'Obligatorio'
@@ -187,7 +187,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
           <p className="admin-form-section">Datos Personales</p>
 
           <div className="admin-form-field">
-            <label className="admin-form-label">Username *</label>
+            <label className="admin-form-label">Nombre de usuario *</label>
             <input
               className={`admin-form-input${errors.username ? ' is-error' : ''}`}
               name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} maxLength={30}
@@ -226,7 +226,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">Correo *</label>
+              <label className="admin-form-label">Correo electrónico*</label>
               <input
                 className={`admin-form-input${errors.correo ? ' is-error' : ''}`}
                 type="email" name="correo" value={formData.correo} onChange={handleChange} onBlur={handleBlur} maxLength={60}

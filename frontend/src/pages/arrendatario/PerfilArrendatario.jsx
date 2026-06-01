@@ -291,7 +291,7 @@ const PerfilArrendatario = () => {
                   <InfoRow label="Nombre" value={usuario.usuarioNom} />
                   <InfoRow label="Apellido Paterno" value={usuario.usuarioApePat} />
                   <InfoRow label="Apellido Materno" value={usuario.usuarioApeMat || '—'} />
-                  <InfoRow label="Correo" value={usuario.usuarioCorreo} bloqueado />
+                  <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                   <InfoRow label="Teléfono" value={usuario.usuarioTel || '—'} />
                   <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
                   <InfoRow label="Fecha de Nacimiento" value={usuario.usuarioFechaNac ? new Date(usuario.usuarioFechaNac).toLocaleDateString('es-MX') : '—'} bloqueado />
@@ -301,7 +301,7 @@ const PerfilArrendatario = () => {
                   <h3 style={sectionTitleStyle}>🎓 Información Académica</h3>
                   
                   <InfoRow label="Boleta" value={perfil.arrendatarioBoleta} bloqueado />
-                  <InfoRow label="Username" value={`${perfil.arrendatarioUser}`} />
+                  <InfoRow label="Nombre de usuario" value={`${perfil.arrendatarioUser}`} />
                   <InfoRow label="Carrera" value={carrera.carreraNombre || '—'} />
                 </div>
 
@@ -355,7 +355,7 @@ const PerfilArrendatario = () => {
                   
                   <div style={{ marginBottom: '15px' }}>
                     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
-                      Username
+                      Nombre de usuario
                     </label>
                     <input
                       type="text"
@@ -380,7 +380,7 @@ const PerfilArrendatario = () => {
                     <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
                        Información no editable:
                     </p>
-                    <InfoRow label="Correo" value={usuario.usuarioCorreo} bloqueado />
+                    <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                     <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
                     <InfoRow label="Boleta" value={perfil.arrendatarioBoleta} bloqueado />
                     <InfoRow label="Fecha de Nacimiento" value={usuario.usuarioFechaNac ? new Date(usuario.usuarioFechaNac).toLocaleDateString('es-MX') : '—'} bloqueado />

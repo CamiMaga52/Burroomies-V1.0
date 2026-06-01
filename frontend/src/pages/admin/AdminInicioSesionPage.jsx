@@ -60,7 +60,7 @@ const AdminInicioSesionPage = () => {
           <div className="login-body">
             <form onSubmit={handleSubmit}>
               <div className="login-group">
-                <label className="login-label">Usuario</label>
+                <label className="login-label">Nombre de usuario</label>
                 <div className="login-input-wrapper">
                   <input
                     className="login-input"

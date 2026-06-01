@@ -85,8 +85,8 @@ router.get('/:id/pdf', async (req, res) => {
     });
 
     // ── CONSTANTES ───────────────────────────────────────────────────────────
-    const AZUL       = '#1a3a5c';
-    const AZUL_MED   = '#2e6da4';
+    const AZUL       = '#3b1a6e';
+    const AZUL_MED   = '#6d28d9';
     const GRIS       = '#555555';
     const NEGRO      = '#1e1e1e';
     const ML         = 50;
@@ -123,7 +123,7 @@ router.get('/:id/pdf', async (req, res) => {
     doc.save().rect(0, 72, 595, 4).fill(AZUL_MED).restore();
 
     doc.fontSize(17).font('Helvetica-Bold').fillColor('#ffffff')
-       .text('CONTRATO DE ARRENDAMIENTO', ML, 16, { align: 'center', width: ANCHO });
+       .text('CONVENIO DE ARRENDAMIENTO', ML, 16, { align: 'center', width: ANCHO });
     doc.fontSize(8.5).font('Helvetica').fillColor('#a8c8e8')
        .text('RentIPN  ·  Plataforma de Arrendamiento para Estudiantes del IPN', ML, 44, { align: 'center', width: ANCHO });
 
@@ -285,59 +285,121 @@ router.get('/:id/pdf', async (req, res) => {
     const mitad = ML + ANCHO / 2;
     const anchoFirma = (ANCHO / 2) - 20;
 
-    // Línea arrendador
+    // ── Firma arrendador (nombre → rol)
     doc.save().moveTo(ML, doc.y).lineTo(ML + anchoFirma, doc.y).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
-    // Línea arrendatario
+    // ── Firma arrendatario (nombre → rol)
     doc.save().moveTo(mitad + 10, doc.y).lineTo(mitad + 10 + anchoFirma, doc.y).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
 
     doc.moveDown(0.3);
-
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
-       .text('EL ARRENDADOR', ML, doc.y, { width: anchoFirma, align: 'center' });
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
-       .text('EL ARRENDATARIO', mitad + 10, doc.y - doc.currentLineHeight(), { width: anchoFirma, align: 'center' });
-
-    doc.moveDown(0.2);
 
     doc.fontSize(8).font('Helvetica').fillColor(GRIS)
        .text(nomArrendador, ML, doc.y, { width: anchoFirma, align: 'center' });
     doc.fontSize(8).font('Helvetica').fillColor(GRIS)
        .text(nomArrendatario, mitad + 10, doc.y - doc.currentLineHeight(), { width: anchoFirma, align: 'center' });
 
-    doc.moveDown(1.5); // espacio para huella / sello
-
-    // Línea testigo (centrada)
-    const anchoTestigo = 180;
-    const xTestigo = ML + (ANCHO / 2) - (anchoTestigo / 2);
-    doc.save().moveTo(xTestigo, doc.y).lineTo(xTestigo + anchoTestigo, doc.y).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
-    doc.moveDown(0.3);
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
-       .text('TESTIGO', xTestigo, doc.y, { width: anchoTestigo, align: 'center' });
     doc.moveDown(0.2);
+
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
+       .text('EL ARRENDADOR', ML, doc.y, { width: anchoFirma, align: 'center' });
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
+       .text('EL ARRENDATARIO', mitad + 10, doc.y - doc.currentLineHeight(), { width: anchoFirma, align: 'center' });
+
+    doc.moveDown(1.8);
+
+    // ── AVALES (2) con recuadro de dirección ────────────────────────────────
+    if (doc.y > 650) doc.addPage();
+
+    const anchoAval = (ANCHO / 2) - 15;
+    const xAval1 = ML;
+    const xAval2 = mitad + 5;
+
+    // Encabezado sección avales
+    doc.save().rect(ML - 8, doc.y - 2, ANCHO + 16, 16).fill(AZUL).restore();
+    doc.fontSize(9).font('Helvetica-Bold').fillColor('#ffffff')
+       .text('AVALES', ML, doc.y, { width: ANCHO, align: 'center' });
+    doc.fillColor(NEGRO);
+    doc.moveDown(0.8);
+
+    const yAvales = doc.y;
+
+    // ── Aval 1
+    doc.save().moveTo(xAval1, yAvales).lineTo(xAval1 + anchoAval, yAvales).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
+    doc.moveDown(0.3);
     doc.fontSize(8).font('Helvetica').fillColor(GRIS)
-       .text('Nombre y firma del testigo', xTestigo, doc.y, { width: anchoTestigo, align: 'center' });
+       .text('Nombre completo', xAval1, doc.y, { width: anchoAval, align: 'center' });
+    doc.moveDown(0.2);
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
+       .text('AVAL 1', xAval1, doc.y, { width: anchoAval, align: 'center' });
+    doc.moveDown(0.6);
+    // Recuadro dirección aval 1
+    const yDirAval1 = doc.y;
+    doc.save().rect(xAval1, yDirAval1, anchoAval, 42).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    doc.fontSize(7.5).font('Helvetica-Bold').fillColor(AZUL_MED)
+       .text('Dirección:', xAval1 + 5, yDirAval1 + 4, { width: anchoAval - 10 });
+    doc.fontSize(7.5).font('Helvetica').fillColor(GRIS)
+       .text('Calle, Núm., Colonia, Municipio, Estado, C.P.', xAval1 + 5, yDirAval1 + 16, { width: anchoAval - 10 });
 
-    // ── AVISO LEGAL ──────────────────────────────────────────────────────────
+    // ── Aval 2
+    doc.save().moveTo(xAval2, yAvales).lineTo(xAval2 + anchoAval, yAvales).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
+    doc.y = yAvales;
+    doc.moveDown(0.3);
+    doc.fontSize(8).font('Helvetica').fillColor(GRIS)
+       .text('Nombre completo', xAval2, doc.y, { width: anchoAval, align: 'center' });
+    doc.moveDown(0.2);
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
+       .text('AVAL 2', xAval2, doc.y, { width: anchoAval, align: 'center' });
+    doc.moveDown(0.6);
+    // Recuadro dirección aval 2
+    const yDirAval2 = yDirAval1;
+    doc.save().rect(xAval2, yDirAval2, anchoAval, 42).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    doc.fontSize(7.5).font('Helvetica-Bold').fillColor(AZUL_MED)
+       .text('Dirección:', xAval2 + 5, yDirAval2 + 4, { width: anchoAval - 10 });
+    doc.fontSize(7.5).font('Helvetica').fillColor(GRIS)
+       .text('Calle, Núm., Colonia, Municipio, Estado, C.P.', xAval2 + 5, yDirAval2 + 16, { width: anchoAval - 10 });
+
+    // Avanzar cursor después de los recuadros
+    doc.y = yDirAval1 + 50;
+
+    // ── AVISO LEGAL MEJORADO ─────────────────────────────────────────────────
+    if (doc.y > 680) doc.addPage();
     doc.moveDown(1);
-    doc.save().moveTo(ML, doc.y).lineTo(MR, doc.y).strokeColor('#cccccc').lineWidth(0.8).stroke().restore();
-    doc.moveDown(0.4);
 
-    doc.fontSize(8.5).font('Helvetica-Bold').fillColor(AZUL)
-       .text('AVISO IMPORTANTE:', ML, doc.y, { align: 'center', width: ANCHO });
-    doc.moveDown(0.25);
+    // Recuadro aviso legal con fondo morado muy claro
+    const yAviso = doc.y;
+    doc.save().rect(ML - 8, yAviso - 4, ANCHO + 16, 130).fill('#f3eeff').restore();
+    doc.save().rect(ML - 8, yAviso - 4, 4, 130).fill(AZUL_MED).restore();
+
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(AZUL)
+       .text('⚠  AVISO IMPORTANTE — DOCUMENTO MERAMENTE INFORMATIVO', ML + 4, yAviso + 2, { width: ANCHO });
+    doc.moveDown(0.35);
     doc.fontSize(7.5).font('Helvetica-Oblique').fillColor(GRIS)
        .text(
-         'Este documento es generado automáticamente por la plataforma RentIPN y tiene carácter meramente INFORMATIVO. ' +
-         'NO constituye un documento legal vinculante ni reemplaza un contrato formal de arrendamiento ante las autoridades competentes. ' +
-         'RentIPN no se hace responsable de las negociaciones, acuerdos o disputas que surjan entre las partes. ' +
-         'Se recomienda a ambas partes consultar con un profesional legal para la formalización de su relación contractual.',
-         ML, doc.y, { align: 'justify', width: ANCHO }
+         'Este documento es generado automáticamente por la plataforma RentIPN a partir de los datos registrados en el sistema, ' +
+         'y tiene carácter EXCLUSIVAMENTE INFORMATIVO. Por sí solo NO tiene validez legal ni constituye un contrato de arrendamiento ' +
+         'formalmente celebrado ante las autoridades competentes. Para otorgarle plena validez jurídica, este convenio DEBE ser ' +
+         'revisado, complementado y ratificado por un abogado o fedatario público (Notario o Corredor Público).',
+         ML + 4, doc.y, { align: 'justify', width: ANCHO - 4 }
+       );
+    doc.moveDown(0.4);
+    doc.fontSize(7.5).font('Helvetica-Bold').fillColor(AZUL_MED)
+       .text('Marco legal de referencia de las cláusulas:', ML + 4, doc.y, { width: ANCHO });
+    doc.moveDown(0.2);
+    doc.fontSize(7).font('Helvetica').fillColor(GRIS)
+       .text(
+         'Clausulas 1-3 (Objeto, Duracion, Renta): Arts. 2398-2490 CCF - Contrato de Arrendamiento.\n' +
+         'Clausula 4 (Deposito): Art. 2412 CCF - Obligaciones del arrendador.\n' +
+         'Clausulas 5-6 (Uso y Mantenimiento): Arts. 2425-2432 CCF - Obligaciones del arrendatario.\n' +
+         'Clausula 9 (Modificaciones): Art. 2441 CCF - Prohibicion de alteraciones sin consentimiento.\n' +
+         'Clausula 12 (Rescision): Arts. 2483-2490 CCF - Causas de terminacion del arrendamiento.\n' +
+         'Clausula 13 (Fiscal): Arts. 114 y ss. Ley del ISR - Ingresos por arrendamiento.\n' +
+         'Clausula 15 (Jurisdiccion): Art. 23 Codigo Federal de Procedimientos Civiles.',
+         ML + 4, doc.y, { width: ANCHO - 4 }
        );
 
-    doc.moveDown(0.4);
+    doc.moveDown(1.2);
     doc.fontSize(7).font('Helvetica').fillColor('#888888')
        .text(
-         `Documento generado el ${new Date().toLocaleDateString('es-MX')} a las ${new Date().toLocaleTimeString('es-MX')} - RentIPN © ${new Date().getFullYear()}`,
+         `Documento generado el ${new Date().toLocaleDateString('es-MX')} a las ${new Date().toLocaleTimeString('es-MX')} — RentIPN © ${new Date().getFullYear()}`,
          ML, doc.y, { align: 'center', width: ANCHO }
        );
 

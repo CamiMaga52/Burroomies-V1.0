@@ -32,7 +32,7 @@ const FaqPage = () => {
     },
     {
       pregunta: '¿Qué restricciones tengo si no verifico mi identidad?',
-      respuesta: 'Como estudiante sin identidad verificada, no podrás ver los datos de contacto de los arrendadores (teléfono y correo) ni ser registrado en un arrendamiento por un arrendador. Debes subir tu constancia de estudios para acceder a estas funciones.'
+      respuesta: 'Como estudiante sin identidad verificada, no podrás ver los datos de contacto de los arrendadores (teléfono y correo electrónico) ni ser registrado en un arrendamiento por un arrendador. Debes subir tu constancia de estudios para acceder a estas funciones.'
     },
 
     // ===== BÚSQUEDA Y PROPIEDADES =====
@@ -56,7 +56,7 @@ const FaqPage = () => {
     // ===== CONTACTO Y ARRENDAMIENTOS =====
     {
       pregunta: '¿Cómo contacto a un arrendador?',
-      respuesta: 'Cuando encuentres una propiedad de tu interés, en la publicación verás los datos de contacto del arrendador (teléfono y correo). Necesitas tener tu identidad verificada para ver estos datos.'
+      respuesta: 'Cuando encuentres una propiedad de tu interés, en la publicación verás los datos de contacto del arrendador (teléfono y correo electrónico). Necesitas tener tu identidad verificada para ver estos datos.'
     },
     {
       pregunta: '¿Se manejan contratos o pagos dentro de la plataforma?',
@@ -86,7 +86,7 @@ const FaqPage = () => {
     },
     {
       pregunta: '¿Qué información incluye el contrato PDF?',
-      respuesta: 'El PDF incluye: número de contrato, fecha de inicio, tiempo en renta, monto mensual, datos completos del arrendador y arrendatario (nombre, correo, teléfono), dirección completa de la propiedad, y 15 cláusulas que cubren aspectos como duración, renta, depósito, uso del inmueble, mantenimiento, servicios, visitas, modificaciones, rescisión, obligaciones fiscales y jurisdicción.'
+      respuesta: 'El PDF incluye: número de contrato, fecha de inicio, tiempo en renta, monto mensual, datos completos del arrendador y arrendatario (nombre, correo electrónico, teléfono), dirección completa de la propiedad, y 15 cláusulas que cubren aspectos como duración, renta, depósito, uso del inmueble, mantenimiento, servicios, visitas, modificaciones, rescisión, obligaciones fiscales y jurisdicción.'
     },
     {
       pregunta: '¿RentIPN se hace responsable de los contratos?',
@@ -262,7 +262,7 @@ const FaqPage = () => {
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold' }}>Tu correo:</label>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: 'bold' }}>Tu correo electrónico:</label>
                 <input
                   type="email"
                   name="email"

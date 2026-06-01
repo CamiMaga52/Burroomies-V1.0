@@ -143,10 +143,21 @@ const RegistroArrendador = ({ volver }) => {
       case 'correo': v = restringirCorreo(value); break
       case 'numExt':
       case 'numInt': v = restringirNumero(value); break
+      case 'fechaNacimiento': {
+        const hoy = new Date()
+        const nac = new Date(value)
+        const edad = hoy.getFullYear() - nac.getFullYear()
+        const cumplio = hoy.getMonth() > nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() >= nac.getDate())
+        if (edad < 18 || (edad === 18 && !cumplio))
+          setErrors(prev => ({ ...prev, fechaNacimiento: 'Debes ser mayor de 18 años para registrarte como arrendador' }))
+        else
+          setErrors(prev => ({ ...prev, fechaNacimiento: null }))
+        break
+      }
       default: break
     }
     setFormData(prev => ({ ...prev, [name]: v }))
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
+    if (name !== 'fechaNacimiento' && errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
     if (name in CAMPOS_UNICOS) verificarCampoEnTiempoReal(name, v)
   }
 
@@ -230,8 +241,8 @@ const RegistroArrendador = ({ volver }) => {
     else if (formData.apellidoPaterno.length < 2) e.apellidoPaterno = 'Mínimo 2 caracteres'
     if (formData.apellidoMaterno && formData.apellidoMaterno.length < 2)
       e.apellidoMaterno = 'Mínimo 2 caracteres'
-    if (!formData.correo) e.correo = 'El correo es obligatorio'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo no válido'
+    if (!formData.correo) e.correo = 'El correo electrónico es obligatorio'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo electrónico no válido'
     if (!formData.telefono) e.telefono = 'El teléfono es obligatorio'
     else if (formData.telefono.length !== 10) e.telefono = 'Debe tener 10 dígitos'
     if (!formData.curp) e.curp = 'El CURP es obligatorio'
@@ -287,7 +298,7 @@ const RegistroArrendador = ({ volver }) => {
     const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
     const dominio = formData.correo.split('@')[1]?.toLowerCase()
     if (!DOMINIOS.includes(dominio)) {
-      setErrors({ correo: 'El dominio del correo no está permitido' })
+      setErrors({ correo: 'El dominio del correo electrónico no está permitido' })
       return
     }
 
@@ -472,7 +483,18 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid">
                 <div className="form-group">
                   <label className="form-label">Fecha de nacimiento <span>*</span></label>
-                  <input className="form-input" type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
+                  <input
+                    className="form-input"
+                    type="date"
+                    name="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                    max={(() => {
+                      const d = new Date();
+                      d.setFullYear(d.getFullYear() - 18);
+                      return d.toISOString().split('T')[0];
+                    })()}
+                  />
                   <span className="form-hint">Debes ser mayor de 18 años</span>
                   {errors.fechaNacimiento && <div className="form-error">{errors.fechaNacimiento}</div>}
                 </div>
