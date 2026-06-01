@@ -124,7 +124,15 @@ Queda prohibido:
 • Intentar vulnerar el funcionamiento de la plataforma.`
     },
     {
-      subtitulo: '4. Veracidad de las Publicaciones',
+      subtitulo: '4. Uso Exclusivo para Publicidad de Vivienda',
+      texto: `RentIPN es una plataforma destinada EXCLUSIVAMENTE a la publicación y búsqueda de viviendas en arrendamiento. Cualquier publicación que no corresponda a este propósito (incluyendo, sin limitarse a: servicios, productos, publicidad comercial, ofertas de trabajo, o cualquier otro contenido ajeno al arrendamiento habitacional) será eliminada de la plataforma sin previo aviso ni justificación.
+
+En caso de que un usuario reincida en este tipo de publicaciones, su cuenta podrá ser suspendida o eliminada definitivamente, sin posibilidad de recuperación.
+
+RentIPN se reserva el derecho de determinar si una publicación cumple con el propósito de la plataforma.`
+    },
+    {
+      subtitulo: '5. Veracidad de las Publicaciones',
       texto: `RentIPN no verifica físicamente las propiedades publicadas por los arrendadores. El sistema no garantiza ni se hace responsable de:
 • La exactitud de las fotografías, descripciones, precios o condiciones de los inmuebles publicados.
 • La disponibilidad real de los inmuebles al momento de ser contactados.
@@ -134,7 +142,7 @@ Queda prohibido:
 El arrendador es el único responsable de la veracidad, actualización y exactitud de la información que publica. RentIPN se reserva el derecho de retirar publicaciones que reciban reportes fundados de información falsa o engañosa.`
     },
     {
-      subtitulo: '5. Deslinde por Conflictos entre Usuarios',
+      subtitulo: '6. Deslinde por Conflictos entre Usuarios',
       texto: `RentIPN no es mediador, árbitro ni parte en las relaciones entre arrendadores y arrendatarios. El sistema no se hace responsable de:
 • Conflictos derivados del incumplimiento de acuerdos de renta, ya sean verbales o escritos.
 • Daños al inmueble, pérdida de depósitos, falta de pago u otras disputas económicas.
@@ -144,11 +152,11 @@ El arrendador es el único responsable de la veracidad, actualización y exactit
 Para cualquier conflicto legal derivado de un arrendamiento, las partes deberán acudir a las instancias legales correspondientes. RentIPN puede colaborar proporcionando registros del sistema cuando una autoridad competente lo requiera formalmente.`
     },
     {
-      subtitulo: '6. Propiedad Intelectual',
+      subtitulo: '7. Propiedad Intelectual',
       texto: `El diseño, código fuente, logotipos y contenidos del sistema son propiedad de RentIPN o de sus licenciantes. No se permite su reproducción, distribución o modificación sin autorización expresa por escrito. Los anuncios publicados por los usuarios son responsabilidad de quien los publica.`
     },
     {
-      subtitulo: '7. Limitación de Responsabilidad',
+      subtitulo: '8. Limitación de Responsabilidad',
       texto: `RentIPN opera como intermediario tecnológico de publicidad. No se hace responsable de:
 • La veracidad de los anuncios publicados por los usuarios.
 • Los acuerdos económicos o legales celebrados entre arrendadores y arrendatarios.
@@ -157,7 +165,7 @@ Para cualquier conflicto legal derivado de un arrendamiento, las partes deberán
 • Interrupciones del servicio por causas ajenas al sistema (fallas de infraestructura, mantenimiento, etc.).`
     },
     {
-      subtitulo: '8. Suspensión y Cancelación',
+      subtitulo: '9. Suspensión y Cancelación',
       texto: `El sistema se reserva el derecho de suspender o cancelar cuentas que:
 • Incumplan estos términos de uso.
 • Proporcionen documentos falsos o alterados.
@@ -167,7 +175,7 @@ Para cualquier conflicto legal derivado de un arrendamiento, las partes deberán
 Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 días posteriores al registro serán eliminadas automáticamente.`
     },
     {
-      subtitulo: '9. Proceso de verificación de Identidad',
+      subtitulo: '10. Proceso de verificación de Identidad',
       texto: `El sistema verifica la identidad de los usuarios mediante el siguiente proceso:
 
 1. El usuario sube su documento oficial (constancia de estudios IPN para estudiantes, CURP para arrendadores) en formato PDF durante el registro.
@@ -181,7 +189,7 @@ Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 día
 • Mientras la cuenta no esté verificada, el estudiante no puede contactar arrendadores ni ser ligado a un arrendamiento.`
     },
     {
-      subtitulo: '10. Sistema de Reseñas',
+      subtitulo: '11. Sistema de Reseñas',
       texto: `El módulo de reseñas opera bajo las siguientes reglas:
 
 • Pueden publicar reseñas los estudiantes verificados que hayan finalizado un arrendamiento.
@@ -191,11 +199,11 @@ Las cuentas de estudiantes que no verifiquen su identidad en un plazo de 60 día
 • Los arrendadores no pueden eliminar reseñas de sus propiedades.`
     },
     {
-      subtitulo: '11. Restricción Geográfica',
+      subtitulo: '12. Restricción Geográfica',
       texto: `Las viviendas publicadas deben estar ubicadas en los códigos postales colindantes a la UPALM IPN definidos por el sistema. Estos CPs están basados en la división territorial de SEPOMEX y pueden consultarse en la sección "Zonas Cercanas" de la plataforma. Las publicaciones fuera de estas zonas serán rechazadas.`
     },
     {
-      subtitulo: '12. Obligaciones Fiscales de los Arrendadores',
+      subtitulo: '13. Obligaciones Fiscales de los Arrendadores',
       texto: `RentIPN es una plataforma de publicidad y NO actúa como agente retenedor ni intermediario fiscal ante el Servicio de Administración Tributaria (SAT) ni ante ninguna otra autoridad hacendaria.
 
 El arrendador reconoce y acepta expresamente que:
@@ -207,7 +215,7 @@ El arrendador reconoce y acepta expresamente que:
 Se recomienda a los arrendadores consultar a un contador o asesor fiscal para cumplir correctamente con sus obligaciones ante el SAT.`
     },
     {
-      subtitulo: '13. Aceptación de Términos y Deslinde de Responsabilidad',
+      subtitulo: '14. Aceptación de Términos y Deslinde de Responsabilidad',
       texto: `Al completar el proceso de registro en RentIPN, el usuario declara haber leído, comprendido y aceptado en su totalidad los presentes Términos y Condiciones de Uso, así como el Aviso de Privacidad correspondiente a su rol.
 
 Esta aceptación tiene carácter vinculante y produce los siguientes efectos:
@@ -219,11 +227,11 @@ Esta aceptación tiene carácter vinculante y produce los siguientes efectos:
 La aceptación de estos términos queda registrada con fecha, hora e identificador de cuenta al momento del registro.`
     },
     {
-      subtitulo: '14. Legislación Aplicable',
+      subtitulo: '15. Legislación Aplicable',
       texto: `Estos términos se rigen por las leyes de los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP) y la Ley del Impuesto sobre la Renta (LISR). Para cualquier controversia, las partes se someten a la jurisdicción de los tribunales competentes de la Ciudad de México.`
     },
     {
-      subtitulo: '15. Contacto',
+      subtitulo: '16. Contacto',
       texto: `Para reportes, quejas o aclaraciones: rent.ipn.contacto@gmail.com`
     }
   ],

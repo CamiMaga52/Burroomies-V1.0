@@ -1,108 +1,87 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { getAvisoPrivacidad, getTerminosUso } from '../../services/legalContent'
 
-// ─── Estilos del modal ───────────────────────────────────────────────────────
+const PURPLE       = '#3b1a6e'
+const PURPLE2      = '#6d28d9'
+const PURPLE_LIGHT = '#f3eeff'
+const PURPLE_BORDER = '#ddd6fe'
 
 const estilos = {
   overlay: {
-    position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    zIndex: 9999,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '1rem',
-    backdropFilter: 'blur(2px)',
+    position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.55)',
+    zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+    padding: '1rem', backdropFilter: 'blur(2px)',
   },
   modal: {
-    backgroundColor: '#fff',
-    borderRadius: '12px',
-    maxWidth: '680px',
-    width: '100%',
-    maxHeight: '80vh',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-    overflow: 'hidden',
+    backgroundColor: '#fff', borderRadius: '12px', maxWidth: '680px', width: '100%',
+    maxHeight: '82vh', display: 'flex', flexDirection: 'column',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.25)', overflow: 'hidden',
   },
   header: {
-    padding: '1.25rem 1.5rem',
-    borderBottom: '1px solid #e5e7eb',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f9fafb',
+    padding: '0',
+    borderBottom: `1px solid ${PURPLE_BORDER}`,
     flexShrink: 0,
+    background: `linear-gradient(135deg, ${PURPLE} 0%, ${PURPLE2} 100%)`,
   },
-  titulo: {
-    margin: 0,
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    color: '#111827',
+  headerInner: {
+    padding: '1.1rem 1.5rem',
+    display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem',
+  },
+  headerTexto: { flex: 1 },
+  headerEtiqueta: {
+    fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.1em',
+    textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: '0.2rem',
+  },
+  titulo: { margin: 0, fontSize: '1rem', fontWeight: 700, color: '#fff' },
+  badgeRol: {
+    display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+    backgroundColor: 'rgba(255,255,255,0.15)', color: '#fff',
+    border: '1px solid rgba(255,255,255,0.25)',
+    borderRadius: '999px', padding: '0.2rem 0.6rem',
+    fontSize: '0.72rem', fontWeight: 600, marginTop: '0.4rem',
   },
   cerrar: {
-    background: 'none',
-    border: 'none',
-    fontSize: '1.4rem',
-    cursor: 'pointer',
-    color: '#6b7280',
-    lineHeight: 1,
-    padding: '0.2rem 0.4rem',
-    borderRadius: '4px',
+    background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
+    fontSize: '1rem', cursor: 'pointer', color: '#fff',
+    lineHeight: 1, padding: '0.3rem 0.5rem', borderRadius: '6px', flexShrink: 0,
   },
-  cuerpo: {
-    overflowY: 'auto',
-    padding: '1.5rem',
-    flex: 1,
+  cuerpo: { overflowY: 'auto', padding: '1.25rem 1.5rem', flex: 1 },
+
+  // Sección específica del rol
+  cardRol: {
+    backgroundColor: PURPLE_LIGHT,
+    border: `1.5px solid ${PURPLE_BORDER}`,
+    borderLeft: `4px solid ${PURPLE2}`,
+    borderRadius: '8px',
+    padding: '0.9rem 1rem',
+    marginBottom: '1rem',
   },
-  seccion: {
-    marginBottom: '1.25rem',
+  cardRolEtiqueta: {
+    fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em',
+    textTransform: 'uppercase', color: PURPLE2, marginBottom: '0.3rem',
   },
-  subtitulo: {
-    fontSize: '0.875rem',
-    fontWeight: 700,
-    color: '#374151',
-    marginBottom: '0.4rem',
-  },
-  parrafo: {
-    fontSize: '0.85rem',
-    color: '#4b5563',
-    lineHeight: 1.7,
-    whiteSpace: 'pre-line',
-    margin: 0,
-  },
+  cardRolTitulo: { fontSize: '0.82rem', fontWeight: 700, color: PURPLE, marginBottom: '0.4rem' },
+  cardRolTexto: { fontSize: '0.8rem', color: '#4b5563', lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 },
+
+  divider: { borderTop: `1px solid #f3f4f6`, margin: '0.75rem 0' },
+  seccion: { marginBottom: '1rem' },
+  subtitulo: { fontSize: '0.8rem', fontWeight: 700, color: PURPLE, marginBottom: '0.3rem' },
+  parrafo: { fontSize: '0.8rem', color: '#4b5563', lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 },
+
   footer: {
-    padding: '1rem 1.5rem',
-    borderTop: '1px solid #e5e7eb',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexShrink: 0,
-  },
-  enlaceCompleto: {
-    fontSize: '0.78rem',
-    color: '#2563eb',
-    textDecoration: 'underline',
+    padding: '0.9rem 1.5rem', borderTop: `1px solid ${PURPLE_BORDER}`,
+    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexShrink: 0,
+    backgroundColor: '#fafafa',
   },
   btnCerrar: {
-    backgroundColor: '#2563eb',
-    color: '#fff',
-    border: 'none',
-    padding: '0.5rem 1.25rem',
-    borderRadius: '8px',
-    fontSize: '0.875rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-  }
+    backgroundColor: PURPLE2, color: '#fff', border: 'none',
+    padding: '0.5rem 1.4rem', borderRadius: '8px',
+    fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer',
+  },
 }
-
-// ─── Componente ──────────────────────────────────────────────────────────────
 
 /**
  * LegalModal — muestra Aviso de Privacidad o Términos y Condiciones.
- *
  * Props:
  *   tipo     → 'privacidad' | 'terminos'
  *   rol      → 'estudiante' | 'arrendador'  (default: 'estudiante')
@@ -113,9 +92,10 @@ const LegalModal = ({ tipo, rol = 'estudiante', onCerrar }) => {
     ? getAvisoPrivacidad(rol)
     : getTerminosUso(rol)
 
-  const rutaCompleta = tipo === 'privacidad'
-    ? `/legal/aviso-privacidad?rol=${rol}`
-    : `/legal/terminos-uso?rol=${rol}`
+  // Índice de la sección específica del rol según el helper
+  const idxRol = tipo === 'privacidad' ? 2 : 1
+  const seccionRol     = doc.contenido[idxRol]
+  const seccionesComunes = doc.contenido.filter((_, i) => i !== idxRol)
 
   // Cerrar con Escape
   useEffect(() => {
@@ -124,7 +104,7 @@ const LegalModal = ({ tipo, rol = 'estudiante', onCerrar }) => {
     return () => window.removeEventListener('keydown', handler)
   }, [onCerrar])
 
-  // Bloquear scroll del body mientras el modal está abierto
+  // Bloquear scroll del body
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -134,15 +114,34 @@ const LegalModal = ({ tipo, rol = 'estudiante', onCerrar }) => {
     <div style={estilos.overlay} onClick={(e) => { if (e.target === e.currentTarget) onCerrar() }}>
       <div style={estilos.modal} role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
 
-        {/* Cabecera */}
+        {/* Cabecera morada */}
         <div style={estilos.header}>
-          <h2 id="modal-titulo" style={estilos.titulo}>{doc.titulo}</h2>
-          <button style={estilos.cerrar} onClick={onCerrar} aria-label="Cerrar">✕</button>
+          <div style={estilos.headerInner}>
+            <div style={estilos.headerTexto}>
+              <p style={estilos.headerEtiqueta}>RentIPN — Documento Legal</p>
+              <h2 id="modal-titulo" style={estilos.titulo}>{doc.titulo}</h2>
+              <span style={estilos.badgeRol}>
+                {rol === 'estudiante' ? '🎓 Versión Estudiante IPN' : '🏠 Versión Arrendador'}
+              </span>
+            </div>
+            <button style={estilos.cerrar} onClick={onCerrar} aria-label="Cerrar">✕</button>
+          </div>
         </div>
 
         {/* Contenido */}
         <div style={estilos.cuerpo}>
-          {doc.contenido.map((seccion, i) => (
+
+          {/* Sección exclusiva del rol — destacada arriba */}
+          <div style={estilos.cardRol}>
+            <p style={estilos.cardRolEtiqueta}>📌 Exclusivo para {rol === 'estudiante' ? 'Estudiantes' : 'Arrendadores'}</p>
+            <div style={estilos.cardRolTitulo}>{seccionRol.subtitulo}</div>
+            <p style={estilos.cardRolTexto}>{seccionRol.texto}</p>
+          </div>
+
+          <div style={estilos.divider} />
+
+          {/* Secciones comunes */}
+          {seccionesComunes.map((seccion, i) => (
             <div key={i} style={estilos.seccion}>
               <div style={estilos.subtitulo}>{seccion.subtitulo}</div>
               <p style={estilos.parrafo}>{seccion.texto}</p>
@@ -150,7 +149,7 @@ const LegalModal = ({ tipo, rol = 'estudiante', onCerrar }) => {
           ))}
         </div>
 
-        {/* Pie — enlace a página completa + botón cerrar */}
+        {/* Pie */}
         <div style={estilos.footer}>
           <button style={estilos.btnCerrar} onClick={onCerrar}>Entendido</button>
         </div>

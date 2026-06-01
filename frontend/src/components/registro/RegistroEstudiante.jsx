@@ -362,6 +362,11 @@ const RegistroEstudiante = ({ volver }) => {
     }
 
     setEnviando(true);
+    if (!postergarSeleccionado && !constanciaFile) {
+      setToast({ message: 'Debes subir tu constancia de estudios o activar la opción de verificar después.', type: 'warning' });
+      setEnviando(false);
+      return;
+    }
     const unicidad = await validarUnicidad();
     if (unicidad.existe) {
       setErrors({ ...errors, [unicidad.campo]: unicidad.mensaje });

@@ -18,6 +18,17 @@ const VerificarIdentidad = () => {
       return
     }
 
+    if (constanciaFile.type !== 'application/pdf') {
+      setError('Solo se aceptan archivos en formato PDF.')
+      return
+    }
+
+    if (constanciaFile.size > 2 * 1024 * 1024) {
+      const mb = (constanciaFile.size / (1024 * 1024)).toFixed(1)
+      setError(`El archivo pesa ${mb} MB. El máximo permitido es 2 MB.`)
+      return
+    }
+
     const userId = localStorage.getItem('userId')
     if (!userId) {
       navigate('/usuarios/inicio-sesion')
@@ -41,7 +52,16 @@ const VerificarIdentidad = () => {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || 'Error al verificar')
+        const msg = data.error || 'Error al procesar'
+        const qr = msg.toLowerCase().includes('qr') || msg.toLowerCase().includes('leer') || msg.toLowerCase().includes('escanear')
+        const coincide = msg.toLowerCase().includes('coincid') || msg.toLowerCase().includes('datos') || msg.toLowerCase().includes('nombre') || msg.toLowerCase().includes('curp') || msg.toLowerCase().includes('boleta')
+        if (qr) {
+          setError('No se pudo leer el código QR del PDF. Asegúrate de que el documento sea legible y esté vigente.')
+        } else if (coincide) {
+          setError('Los datos del documento no coinciden con los de tu registro. Verifica que sea tu constancia correcta.')
+        } else {
+          setError(msg)
+        }
         if (data.detalles) setErroresDetalle(data.detalles)
         return
       }

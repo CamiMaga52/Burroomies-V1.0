@@ -7,6 +7,12 @@ import ModalConfirmacion from '../../components/common/ModalConfirmacion'
 import { getArrendamientosArrendador, finalizarArrendamiento, descargarContratoPDF } from '../../services/arrendamientoService'
 import '../../styles/Arrendador.css'
 
+const diasDesdeInicio = (fecha) => {
+  const hoy = new Date()
+  const inicio = new Date(fecha)
+  return Math.floor((hoy - inicio) / (1000 * 60 * 60 * 24))
+}
+
 const MisArrendamientosArrendador = () => {
   const navigate = useNavigate()
   const [arrendamientos, setArrendamientos] = useState([])
@@ -33,7 +39,7 @@ const MisArrendamientosArrendador = () => {
       await finalizarArrendamiento(modalConfirmacion.id)
       setModalConfirmacion({ abierto: false, id: null })
       cargarArrendamientos()
-    } catch { alert('Error al finalizar arrendamiento') }
+    } catch { setError('Error al finalizar el arrendamiento. Intenta de nuevo.') }
   }
 
   if (cargando) return (
@@ -123,14 +129,27 @@ const MisArrendamientosArrendador = () => {
                       📄 Ver PDF
                     </button>
 
-                    {a.arrendamientoValArrendador === 0 && (
-                      <button
-                        className="arr-btn-danger arr-btn-sm"
-                        onClick={() => setModalConfirmacion({ abierto: true, id: a.idArrendamiento })}
-                      >
-                        Finalizar
-                      </button>
-                    )}
+                    {a.arrendamientoValArrendador === 0 && (() => {
+                      const dias = diasDesdeInicio(a.arrendamientoFechaInicio)
+                      const puedeFinalizarr = dias >= 7
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                          <button
+                            className="arr-btn-danger arr-btn-sm"
+                            disabled={!puedeFinalizarr}
+                            style={{ opacity: puedeFinalizarr ? 1 : 0.45, cursor: puedeFinalizarr ? 'pointer' : 'not-allowed' }}
+                            onClick={() => puedeFinalizarr && setModalConfirmacion({ abierto: true, id: a.idArrendamiento })}
+                          >
+                            Finalizar
+                          </button>
+                          {!puedeFinalizarr && (
+                            <span style={{ fontSize: '11px', color: 'var(--text-light)', textAlign: 'right' }}>
+                              Disponible en {7 - dias} día{7 - dias !== 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>

@@ -90,12 +90,29 @@ const CrearVivienda = () => {
     setServiciosSeleccionados(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
+  const MAX_FOTO_MB = 2
+  const MAX_FOTO_BYTES = MAX_FOTO_MB * 1024 * 1024
+
   const handleFotosChange = (e) => {
     const files = Array.from(e.target.files)
     const validos = ['image/jpeg', 'image/png', 'image/webp']
-    if (files.some(f => !validos.includes(f.type))) { setError('Solo se permiten imágenes JPG, PNG o WebP'); return }
-    if (files.some(f => f.size > 5 * 1024 * 1024)) { setError('Cada foto no puede superar 5 MB'); return }
+
+    const tipoInvalido = files.find(f => !validos.includes(f.type))
+    if (tipoInvalido) {
+      setError(`"${tipoInvalido.name}" no es válido. Solo se permiten imágenes JPG, PNG o WebP.`)
+      return
+    }
+
+    const pesoExcedido = files.find(f => f.size > MAX_FOTO_BYTES)
+    if (pesoExcedido) {
+      const mb = (pesoExcedido.size / (1024 * 1024)).toFixed(1)
+      setError(`"${pesoExcedido.name}" pesa ${mb} MB. El máximo permitido por foto es ${MAX_FOTO_MB} MB.`)
+      return
+    }
+
     if (files.length + fotos.length > 10) { setError('Máximo 10 fotos permitidas'); return }
+
+    setError('')
     setFotos(prev => [...prev, ...files])
     if (errors.fotos) setErrors({ ...errors, fotos: null })
     setPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))])
@@ -415,7 +432,7 @@ const CrearVivienda = () => {
               <div className="arr-form-card-header-icon">📷</div>
               <div>
                 <h3>Fotos ({fotos.length}/10)</h3>
-                <p>Mínimo 3 fotos — JPG, PNG o WebP</p>
+                <p>Mínimo 3 fotos — JPG, PNG o WebP · Máx. 2 MB por foto</p>
               </div>
             </div>
             <div className="arr-form-card-body">
@@ -427,7 +444,7 @@ const CrearVivienda = () => {
                   onChange={handleFotosChange}
                 />
                 <span className="arr-upload-label">📤 Seleccionar imágenes</span>
-                <span className="arr-upload-hint">Haz clic para abrir el selector de archivos</span>
+                <span className="arr-upload-hint">Haz clic para abrir el selector · Máx. 2 MB por imagen</span>
               </label>
               {errors.fotos && <span className="arr-form-error" style={{ marginTop: '0.5rem', display: 'block' }}>{errors.fotos}</span>}
               {previews.length > 0 && (

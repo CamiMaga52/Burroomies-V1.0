@@ -32,6 +32,7 @@ const EncuestaFinalizacion = () => {
   const [calGeneral, setCalGeneral] = useState(0)
   const [resena, setResena] = useState('')
 
+  const [fechaInicio, setFechaInicio] = useState(null)
   const [modal, setModal] = useState({ isOpen: false, message: '' })
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const EncuestaFinalizacion = () => {
         adicionales: servicios.some(s => s.servicioCategoria === 'Adicional')
       })
       setListaServicios(servicios)
+      setFechaInicio(data.arrendamientoFechaInicio || null)
 
     } catch (error) {
       setError('No se pudo cargar la información')
@@ -74,6 +76,13 @@ const EncuestaFinalizacion = () => {
   }
 
   const handleEnviarEncuesta = async () => {
+    if (fechaInicio) {
+      const dias = Math.floor((new Date() - new Date(fechaInicio)) / (1000 * 60 * 60 * 24))
+      if (dias < 7) {
+        mostrarModal(`Aún no puedes finalizar el arrendamiento. Podrás hacerlo en ${7 - dias} día${7 - dias !== 1 ? 's' : ''}.`)
+        return
+      }
+    }
     if (calGeneral === 0) {
       mostrarModal('La calificación general es obligatoria')
       return
@@ -91,6 +100,10 @@ const EncuestaFinalizacion = () => {
       return
     }
 
+    if (resena.trim().length < 10) {
+      mostrarModal('Debes escribir una reseña de al menos 10 caracteres antes de enviar.')
+      return
+    }
     if (resena.trim()) {
       const resenaLower = resena.toLowerCase()
       if (GROSERIAS.some(g => resenaLower.includes(g))) {
@@ -411,7 +424,7 @@ const EncuestaFinalizacion = () => {
           marginBottom: '20px'
         }}>
           <h3 style={{ fontSize: '16px', marginBottom: '15px', color: '#333' }}>
-            💬 ¿Quieres dejar una reseña sobre tu experiencia?
+            💬 Escribe una reseña sobre tu experiencia <span style={{ color: '#dc3545' }}>*</span>
           </h3>
 
           <textarea
@@ -435,6 +448,7 @@ const EncuestaFinalizacion = () => {
           <p style={{ textAlign: 'right', fontSize: '12px', color: resena.length >= 240 ? '#dc3545' : '#999', marginTop: '5px' }}>
             {resena.length}/250
           </p>
+          <p style={{ fontSize: '12px', color: '#999', marginTop: '3px' }}>Mínimo 10 caracteres</p>
         </div>
 
         {/* BOTÓN ENVIAR */}

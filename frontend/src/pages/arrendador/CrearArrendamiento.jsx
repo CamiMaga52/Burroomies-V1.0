@@ -148,7 +148,7 @@ const CrearArrendamiento = () => {
                       <span className="arr-badge arr-badge-success" style={{ marginLeft: '0.5rem' }}>✓ Verificado</span>
                     </p>
                     <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', margin: 0 }}>
-                      @{arrendatarioSeleccionado.arrendatarioUser} · {arrendatarioSeleccionado.usuario?.usuarioCorreo} · Boleta: {arrendatarioSeleccionado.arrendatarioBoleta}
+                      {arrendatarioSeleccionado.arrendatarioUser} · {arrendatarioSeleccionado.usuario?.usuarioCorreo} · Boleta: {arrendatarioSeleccionado.arrendatarioBoleta}
                     </p>
                   </div>
                   <button

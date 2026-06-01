@@ -109,7 +109,15 @@ const UsuariosInicioSesionPage = () => {
       }
 
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión. Intenta de nuevo.')
+      const status = err.response?.status
+      const msg    = err.response?.data?.error || ''
+      if (status === 404 || msg.toLowerCase().includes('no encontrado') || msg.toLowerCase().includes('no registrado') || msg.toLowerCase().includes('not found')) {
+        setError('Este correo no está registrado en el sistema. Verifica que sea el correcto o regístrate.')
+      } else if (status === 401 || msg.toLowerCase().includes('contraseña') || msg.toLowerCase().includes('incorrecta')) {
+        setError('Contraseña incorrecta. Verifica tus datos e intenta de nuevo.')
+      } else {
+        setError(msg || 'Error al iniciar sesión. Intenta de nuevo.')
+      }
     } finally {
       setCargando(false)
     }

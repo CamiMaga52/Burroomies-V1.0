@@ -20,9 +20,12 @@ const BuscarVivienda = () => {
   const [filtrosVisibles, setFiltrosVisibles] = useState(false)
   const busquedaTimer = useRef(null)
 
+  const [ordenFecha,      setOrdenFecha]      = useState('reciente')   // siempre activo
+  const [ordenPrecio,     setOrdenPrecio]     = useState('precio_asc') // siempre activo
+  const [ordenValoracion, setOrdenValoracion] = useState(null)         // opcional
+
   const [filtros, setFiltros] = useState({
     busqueda: '',
-    ordenarPor: 'reciente',
     precioMin: '',
     precioMax: '',
     tipo: '',
@@ -35,7 +38,7 @@ const BuscarVivienda = () => {
   })
 
   useEffect(() => { cargarServicios() }, [])
-  useEffect(() => { cargarPropiedades() }, [filtros])
+  useEffect(() => { cargarPropiedades() }, [filtros, ordenFecha, ordenPrecio, ordenValoracion])
 
   const cargarServicios = async () => {
     try {
@@ -50,8 +53,12 @@ const BuscarVivienda = () => {
       setError(null)
       setMensajeRelajado(null)
 
+      // Combinar órdenes: valoración tiene prioridad si está activa, luego fecha, luego precio
+      const ordenarPor = ordenValoracion || ordenFecha
       const params = {
         ...filtros,
+        ordenarPor,
+        ordenPrecio,
         serviciosBasicos: filtros.serviciosBasicos.join(','),
         serviciosEntretenimiento: filtros.serviciosEntretenimiento.join(','),
         serviciosAdicionales: filtros.serviciosAdicionales.join(',')
@@ -84,7 +91,9 @@ const BuscarVivienda = () => {
     busquedaTimer.current = setTimeout(() => setFiltro('busqueda', valor), 400)
   }
 
-  const handleOrden = (valor) => setFiltro('ordenarPor', valor)
+  const handleOrdenFecha = (val) => setOrdenFecha(val)
+  const handleOrdenPrecio = (val) => setOrdenPrecio(val)
+  const handleOrdenValoracion = (val) => setOrdenValoracion(prev => prev === val ? null : val)
 
   const handleServicioChange = (categoria, servicioId) => {
     const campo = `servicios${categoria}`
@@ -99,10 +108,13 @@ const BuscarVivienda = () => {
 
   const limpiarFiltros = () => {
     setFiltros({
-      busqueda: '', ordenarPor: 'reciente', precioMin: '', precioMax: '',
+      busqueda: '', precioMin: '', precioMax: '',
       tipo: '', precioPor: '', lugaresMin: 1,
       serviciosBasicos: [], serviciosEntretenimiento: [], serviciosAdicionales: [], pagina: 1
     })
+    setOrdenFecha('reciente')
+    setOrdenPrecio('precio_asc')
+    setOrdenValoracion(null)
     setMensajeRelajado(null)
   }
 
@@ -116,17 +128,29 @@ const BuscarVivienda = () => {
     filtros.serviciosBasicos.length > 0 || filtros.serviciosEntretenimiento.length > 0 ||
     filtros.serviciosAdicionales.length > 0
 
-  const btnOrden = (val) => ({
-    padding: '7px 14px',
-    fontSize: '13px',
-    border: '1px solid',
-    borderColor: filtros.ordenarPor === val ? '#1a237e' : '#ddd',
-    backgroundColor: filtros.ordenarPor === val ? '#1a237e' : 'white',
-    color: filtros.ordenarPor === val ? 'white' : '#555',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontWeight: filtros.ordenarPor === val ? 'bold' : 'normal',
-    transition: 'all 0.15s'
+  const btnFecha = (val) => ({
+    padding: '7px 14px', fontSize: '13px', border: '1px solid',
+    borderColor: ordenFecha === val ? '#3b1a6e' : '#ddd',
+    backgroundColor: ordenFecha === val ? '#3b1a6e' : 'white',
+    color: ordenFecha === val ? 'white' : '#555',
+    borderRadius: '5px', cursor: 'pointer',
+    fontWeight: ordenFecha === val ? 'bold' : 'normal', transition: 'all 0.15s'
+  })
+  const btnPrecio = (val) => ({
+    padding: '7px 14px', fontSize: '13px', border: '1px solid',
+    borderColor: ordenPrecio === val ? '#3b1a6e' : '#ddd',
+    backgroundColor: ordenPrecio === val ? '#3b1a6e' : 'white',
+    color: ordenPrecio === val ? 'white' : '#555',
+    borderRadius: '5px', cursor: 'pointer',
+    fontWeight: ordenPrecio === val ? 'bold' : 'normal', transition: 'all 0.15s'
+  })
+  const btnValoracion = (val) => ({
+    padding: '7px 14px', fontSize: '13px', border: '1px solid',
+    borderColor: ordenValoracion === val ? '#6d28d9' : '#ddd',
+    backgroundColor: ordenValoracion === val ? '#6d28d9' : 'white',
+    color: ordenValoracion === val ? 'white' : '#555',
+    borderRadius: '5px', cursor: 'pointer',
+    fontWeight: ordenValoracion === val ? 'bold' : 'normal', transition: 'all 0.15s'
   })
 
   return (
@@ -155,25 +179,31 @@ const BuscarVivienda = () => {
               )}
             </div>
 
-            {/* ORDENAR — Fecha */}
+            {/* ORDENAR — Fecha (siempre activo) */}
             <p style={labelSeccion}>Fecha</p>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
-              <button style={btnOrden('reciente')} onClick={() => handleOrden('reciente')}>Más reciente</button>
-              <button style={btnOrden('antiguo')} onClick={() => handleOrden('antiguo')}>Más antiguo</button>
+              <button style={btnFecha('reciente')} onClick={() => handleOrdenFecha('reciente')}>Más reciente</button>
+              <button style={btnFecha('antiguo')} onClick={() => handleOrdenFecha('antiguo')}>Más antiguo</button>
             </div>
 
-            {/* ORDENAR — Precio */}
+            {/* ORDENAR — Precio (siempre activo) */}
             <p style={labelSeccion}>Precio</p>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
-              <button style={btnOrden('precio_asc')} onClick={() => handleOrden('precio_asc')}>↑ Ascendente</button>
-              <button style={btnOrden('precio_desc')} onClick={() => handleOrden('precio_desc')}>↓ Descendente</button>
+              <button style={btnPrecio('precio_asc')} onClick={() => handleOrdenPrecio('precio_asc')}>↑ Ascendente</button>
+              <button style={btnPrecio('precio_desc')} onClick={() => handleOrdenPrecio('precio_desc')}>↓ Descendente</button>
             </div>
 
-            {/* ORDENAR — Valoración */}
-            <p style={labelSeccion}>Valoración</p>
+            {/* ORDENAR — Valoración (opcional, se puede desactivar) */}
+            <p style={labelSeccion}>
+              Valoración
+              {ordenValoracion && (
+                <span style={{ marginLeft: '6px', fontSize: '10px', color: '#6d28d9', fontWeight: 600, cursor: 'pointer' }}
+                  onClick={() => setOrdenValoracion(null)}>✕ quitar</span>
+              )}
+            </p>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '18px' }}>
-              <button style={btnOrden('calificacion')} onClick={() => handleOrden('calificacion')}>⭐ Mayor calificación</button>
-              <button style={btnOrden('calificacion_asc')} onClick={() => handleOrden('calificacion_asc')}>👎 Menor calificación</button>
+              <button style={btnValoracion('calificacion')} onClick={() => handleOrdenValoracion('calificacion')}>⭐ Mayor</button>
+              <button style={btnValoracion('calificacion_asc')} onClick={() => handleOrdenValoracion('calificacion_asc')}>👎 Menor</button>
             </div>
 
             <div style={separador} />

@@ -307,58 +307,75 @@ router.get('/:id/pdf', async (req, res) => {
     doc.moveDown(1.8);
 
     // ── AVALES (2) con recuadro de dirección ────────────────────────────────
-    if (doc.y > 650) doc.addPage();
+    if (doc.y > 600) doc.addPage();
 
     const anchoAval = (ANCHO / 2) - 15;
     const xAval1 = ML;
     const xAval2 = mitad + 5;
+    const alturaDir = 125; // recuadro dirección más alto con campos listados
 
     // Encabezado sección avales
     doc.save().rect(ML - 8, doc.y - 2, ANCHO + 16, 16).fill(AZUL).restore();
     doc.fontSize(9).font('Helvetica-Bold').fillColor('#ffffff')
        .text('AVALES', ML, doc.y, { width: ANCHO, align: 'center' });
     doc.fillColor(NEGRO);
-    doc.moveDown(0.8);
+    doc.moveDown(1.8); // espacio generoso entre título y línea de firma
 
     const yAvales = doc.y;
 
-    // ── Aval 1
+    // ── Aval 1 ───────────────────────────────────────────
     doc.save().moveTo(xAval1, yAvales).lineTo(xAval1 + anchoAval, yAvales).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
-    doc.moveDown(0.3);
+    doc.moveDown(0.35);
     doc.fontSize(8).font('Helvetica').fillColor(GRIS)
        .text('Nombre completo', xAval1, doc.y, { width: anchoAval, align: 'center' });
-    doc.moveDown(0.2);
+    doc.moveDown(0.25);
     doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
        .text('AVAL 1', xAval1, doc.y, { width: anchoAval, align: 'center' });
-    doc.moveDown(0.6);
+    doc.moveDown(0.8);
+
     // Recuadro dirección aval 1
     const yDirAval1 = doc.y;
-    doc.save().rect(xAval1, yDirAval1, anchoAval, 42).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    doc.save().rect(xAval1, yDirAval1, anchoAval, alturaDir).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    // Título del recuadro con fondo morado suave
+    doc.save().rect(xAval1, yDirAval1, anchoAval, 14).fill('#ede9fe').restore();
     doc.fontSize(7.5).font('Helvetica-Bold').fillColor(AZUL_MED)
-       .text('Dirección:', xAval1 + 5, yDirAval1 + 4, { width: anchoAval - 10 });
-    doc.fontSize(7.5).font('Helvetica').fillColor(GRIS)
-       .text('Calle, Núm., Colonia, Municipio, Estado, C.P.', xAval1 + 5, yDirAval1 + 16, { width: anchoAval - 10 });
+       .text('Direccion del Aval', xAval1 + 5, yDirAval1 + 3, { width: anchoAval - 10 });
+    // Campos listados
+    const camposDir1 = ['Calle:', 'Numero exterior:', 'Numero interior:', 'Colonia:', 'Municipio:', 'Estado:', 'Codigo postal:'];
+    camposDir1.forEach((campo, i) => {
+      const yc = yDirAval1 + 18 + (i * 17);
+      doc.fontSize(7).font('Helvetica-Bold').fillColor(AZUL_MED).text(campo, xAval1 + 5, yc, { width: 90 });
+      doc.save().moveTo(xAval1 + 75, yc + 8).lineTo(xAval1 + anchoAval - 5, yc + 8).strokeColor('#cccccc').lineWidth(0.5).stroke().restore();
+    });
 
-    // ── Aval 2
-    doc.save().moveTo(xAval2, yAvales).lineTo(xAval2 + anchoAval, yAvales).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
+    // ── Aval 2 ───────────────────────────────────────────
     doc.y = yAvales;
-    doc.moveDown(0.3);
+    doc.save().moveTo(xAval2, yAvales).lineTo(xAval2 + anchoAval, yAvales).strokeColor('#aaaaaa').lineWidth(0.8).stroke().restore();
+    doc.moveDown(0.35);
     doc.fontSize(8).font('Helvetica').fillColor(GRIS)
        .text('Nombre completo', xAval2, doc.y, { width: anchoAval, align: 'center' });
-    doc.moveDown(0.2);
+    doc.moveDown(0.25);
     doc.fontSize(9).font('Helvetica-Bold').fillColor(NEGRO)
        .text('AVAL 2', xAval2, doc.y, { width: anchoAval, align: 'center' });
-    doc.moveDown(0.6);
+    doc.moveDown(0.8);
+
     // Recuadro dirección aval 2
     const yDirAval2 = yDirAval1;
-    doc.save().rect(xAval2, yDirAval2, anchoAval, 42).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    doc.save().rect(xAval2, yDirAval2, anchoAval, alturaDir).strokeColor(AZUL_MED).lineWidth(0.7).stroke().restore();
+    // Título del recuadro con fondo morado suave
+    doc.save().rect(xAval2, yDirAval2, anchoAval, 14).fill('#ede9fe').restore();
     doc.fontSize(7.5).font('Helvetica-Bold').fillColor(AZUL_MED)
-       .text('Dirección:', xAval2 + 5, yDirAval2 + 4, { width: anchoAval - 10 });
-    doc.fontSize(7.5).font('Helvetica').fillColor(GRIS)
-       .text('Calle, Núm., Colonia, Municipio, Estado, C.P.', xAval2 + 5, yDirAval2 + 16, { width: anchoAval - 10 });
+       .text('Direccion del Aval', xAval2 + 5, yDirAval2 + 3, { width: anchoAval - 10 });
+    // Campos listados
+    const camposDir2 = ['Calle:', 'Numero exterior:', 'Numero interior:', 'Colonia:', 'Municipio:', 'Estado:', 'Codigo postal:'];
+    camposDir2.forEach((campo, i) => {
+      const yc = yDirAval2 + 18 + (i * 17);
+      doc.fontSize(7).font('Helvetica-Bold').fillColor(AZUL_MED).text(campo, xAval2 + 5, yc, { width: 90 });
+      doc.save().moveTo(xAval2 + 75, yc + 8).lineTo(xAval2 + anchoAval - 5, yc + 8).strokeColor('#cccccc').lineWidth(0.5).stroke().restore();
+    });
 
     // Avanzar cursor después de los recuadros
-    doc.y = yDirAval1 + 50;
+    doc.y = yDirAval1 + alturaDir + 12;
 
     // ── AVISO LEGAL MEJORADO ─────────────────────────────────────────────────
     if (doc.y > 680) doc.addPage();
@@ -370,7 +387,7 @@ router.get('/:id/pdf', async (req, res) => {
     doc.save().rect(ML - 8, yAviso - 4, 4, 130).fill(AZUL_MED).restore();
 
     doc.fontSize(9).font('Helvetica-Bold').fillColor(AZUL)
-       .text('⚠  AVISO IMPORTANTE — DOCUMENTO MERAMENTE INFORMATIVO', ML + 4, yAviso + 2, { width: ANCHO });
+       .text('AVISO IMPORTANTE — DOCUMENTO MERAMENTE INFORMATIVO', ML + 4, yAviso + 2, { width: ANCHO });
     doc.moveDown(0.35);
     doc.fontSize(7.5).font('Helvetica-Oblique').fillColor(GRIS)
        .text(
