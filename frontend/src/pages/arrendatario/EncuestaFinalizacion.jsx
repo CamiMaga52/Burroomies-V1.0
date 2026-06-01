@@ -430,7 +430,7 @@ const EncuestaFinalizacion = () => {
           <textarea
             value={resena}
             onChange={(e) => {
-              const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9 .,;:!?¡¿'"()\-\n]/g, '')
+              const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ .,;:!?¡¿'"()\-\n]/g, '')
               if (val.length <= 250) setResena(val)
             }}
             placeholder="Cuéntanos tu experiencia viviendo aquí..."

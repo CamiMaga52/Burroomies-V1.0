@@ -58,7 +58,7 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
     if (name === 'usuarioApePat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'usuarioApeMat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'usuarioTel') v = value.replace(/[^0-9]/g, '').slice(0, 10)
-    if (name === 'usuarioCurp') v = value.toUpperCase().slice(0, 18)
+    if (name === 'usuarioCurp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
     if (name === 'arrendatarioBoleta') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     setFormData(prev => ({ ...prev, [name]: v }))
     if (name === 'escuelaId') {
@@ -72,10 +72,17 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.usuarioNom) errs.usuarioNom = 'Obligatorio'
-    if (!formData.usuarioApePat) errs.usuarioApePat = 'Obligatorio'
-    if (formData.usuarioTel && formData.usuarioTel.length !== 10) errs.usuarioTel = 'Debe tener 10 dígitos'
-    if (!isVerified && formData.usuarioCurp && formData.usuarioCurp.length !== 18) errs.usuarioCurp = 'Debe tener 18 caracteres'
+    if (!formData.usuarioNom || formData.usuarioNom.trim().length < 2) errs.usuarioNom = 'Mínimo 2 caracteres'
+    if (!formData.usuarioApePat || formData.usuarioApePat.trim().length < 2) errs.usuarioApePat = 'Mínimo 2 caracteres'
+    if (formData.usuarioTel && formData.usuarioTel.length !== 10) errs.usuarioTel = 'Debe tener exactamente 10 dígitos'
+    if (formData.usuarioFechaNac) {
+      const hoy = new Date(); const nac = new Date(formData.usuarioFechaNac)
+      let edad = hoy.getFullYear() - nac.getFullYear()
+      if (hoy < new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate())) edad--
+      if (edad < 17) errs.usuarioFechaNac = 'El estudiante debe tener al menos 17 años'
+    }
+    if (!isVerified && formData.usuarioCurp && formData.usuarioCurp.length !== 18) errs.usuarioCurp = 'Debe tener exactamente 18 caracteres'
+    if (!isVerified && formData.arrendatarioBoleta && formData.arrendatarioBoleta.length !== 10) errs.arrendatarioBoleta = 'La boleta debe tener exactamente 10 dígitos'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
     setSaving(true); setError('')
@@ -171,6 +178,7 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
               <input
                 className="admin-form-input"
                 type="date" name="usuarioFechaNac" value={formData.usuarioFechaNac} onChange={handleChange}
+              max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 17); return d.toISOString().split('T')[0] })()}
               />
             </div>
           </div>
@@ -207,7 +215,7 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
             <input
               className="admin-form-input"
               name="arrendatarioBoleta" value={formData.arrendatarioBoleta} onChange={handleChange}
-              disabled={isVerified} maxLength={12}
+              disabled={isVerified} maxLength={10}
             />
           </div>
         </form>

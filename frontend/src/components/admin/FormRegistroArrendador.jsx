@@ -94,14 +94,22 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
+    // Solo letras y espacios — nombres/apellidos
     if (name === 'nombres') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
     if (name === 'apellidoPaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'apellidoMaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    // Teléfono: solo números, exactamente 10
     if (name === 'telefono') v = value.replace(/[^0-9]/g, '').slice(0, 10)
-    if (name === 'curp') v = value.toUpperCase().slice(0, 18)
-    if (name === 'rfc') v = value.toUpperCase().slice(0, 14)
-    if (name === 'calle') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
+    // CURP: letras y números en mayúsculas, exactamente 18
+    if (name === 'curp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
+    // RFC: letras y números en mayúsculas, 12-13
+    if (name === 'rfc') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 13)
+    // Calle: letras, números, espacios y algunos símbolos de dirección
+    if (name === 'calle') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s.#\-]/g, '').slice(0, 80)
+    // Números ext/int: alfanumérico
     if (name === 'numExt' || name === 'numInt') v = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+    // Correo: sin espacios
+    if (name === 'correo') v = value.replace(/\s/g, '').slice(0, 80)
     setFormData(prev => ({ ...prev, [name]: v }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
   }
@@ -137,22 +145,33 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.nombres) errs.nombres = 'Obligatorio'
-    if (!formData.apellidoPaterno) errs.apellidoPaterno = 'Obligatorio'
-    if (!formData.apellidoMaterno) errs.apellidoMaterno = 'Obligatorio'
+    // Nombres y apellidos — mínimo 2 letras
+    if (!formData.nombres || formData.nombres.trim().length < 2) errs.nombres = 'Mínimo 2 caracteres'
+    if (!formData.apellidoPaterno || formData.apellidoPaterno.trim().length < 2) errs.apellidoPaterno = 'Mínimo 2 caracteres'
+    if (!formData.apellidoMaterno || formData.apellidoMaterno.trim().length < 2) errs.apellidoMaterno = 'Mínimo 2 caracteres'
+    // Correo — formato y dominio
     if (!formData.correo) errs.correo = 'Obligatorio'
-    else if (!validarDominio(formData.correo)) errs.correo = 'Solo se aceptan estos dominios: Gmail, Hotmail, Outlook, Yahoo o correo IPN'
-    if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener 10 dígitos'
-    if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener 18 caracteres'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) errs.correo = 'Formato de correo inválido'
+    else if (!validarDominio(formData.correo)) errs.correo = 'Dominio no permitido. Usa Gmail, Hotmail, Outlook, Yahoo o IPN'
+    // Teléfono — exactamente 10 dígitos
+    if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener exactamente 10 dígitos'
+    // CURP — exactamente 18 alfanuméricos
+    if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener exactamente 18 caracteres'
+    // Fecha de nacimiento — mayor de 18
     if (!formData.fechaNacimiento) errs.fechaNacimiento = 'Obligatorio'
     else if (calcularEdad(formData.fechaNacimiento) < 18) errs.fechaNacimiento = 'El arrendador debe ser mayor de 18 años'
-    if (!formData.rfc || formData.rfc.length < 12) errs.rfc = 'RFC inválido (12-14 caracteres)'
+    // RFC — 12 o 13 caracteres
+    if (!formData.rfc || formData.rfc.length < 12 || formData.rfc.length > 13) errs.rfc = 'RFC inválido (debe tener 12 o 13 caracteres)'
+    // CP y dirección
     if (!formData.cp || formData.cp.length !== 5) errs.cp = 'Debe tener 5 dígitos'
-    if (!formData.calle) errs.calle = 'Obligatorio'
-    if (!formData.numExt) errs.numExt = 'Obligatorio'
+    if (!formData.colonia) errs.cp = (errs.cp || '') + ' — Selecciona una colonia del listado'
+    if (!formData.calle || formData.calle.trim().length < 3) errs.calle = 'Mínimo 3 caracteres'
+    if (!formData.numExt || formData.numExt.trim().length < 1) errs.numExt = 'Obligatorio'
+    // Contraseña
     if (!formData.password) errs.password = 'Obligatorio'
     else if (!validarPassword(formData.password)) errs.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo'
-    if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden'
+    if (!formData.confirmPassword) errs.confirmPassword = 'Confirma tu contraseña'
+    else if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
     const checks = await Promise.all([
@@ -265,6 +284,7 @@ const FormRegistroArrendador = ({ onClose, onSuccess }) => {
             <input
               className={`admin-form-input${errors.fechaNacimiento ? ' is-error' : ''}`}
               type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange}
+              max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 18); return d.toISOString().split('T')[0] })()}
               style={{ width: 'auto' }}
             />
             {errors.fechaNacimiento && <span className="admin-form-error">{errors.fechaNacimiento}</span>}

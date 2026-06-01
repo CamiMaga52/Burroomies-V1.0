@@ -116,6 +116,20 @@ const PerfilArrendador = () => {
   }
 
   const handleGuardar = async () => {
+    const nom = nombres.trim()
+    const ape = apellidoPaterno.trim()
+    const tel = telefono.trim()
+    const cal = calle.trim()
+    const ext = numExt.trim()
+    const cpv = cp.trim()
+
+    if (nom.length < 2) { setError('El nombre debe tener al menos 2 caracteres.'); return }
+    if (ape.length < 2) { setError('El apellido paterno debe tener al menos 2 caracteres.'); return }
+    if (tel.length !== 10) { setError('El teléfono debe tener exactamente 10 dígitos.'); return }
+    if (cal.length < 3) { setError('La calle debe tener al menos 3 caracteres.'); return }
+    if (ext.length < 1) { setError('El número exterior es obligatorio.'); return }
+    if (cpv.length !== 5) { setError('El código postal debe tener 5 dígitos.'); return }
+
     setGuardando(true)
     setError('')
     setMensajeExito('')

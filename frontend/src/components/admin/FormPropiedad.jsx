@@ -29,11 +29,15 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
     const { name, value } = e.target
     let v = value
     if (name === 'propiedadTitulo')
-      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 45)
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 43)
     if (name === 'propiedadDescripcion')
-      v = value.slice(0, 300)
-    if (name === 'propiedadLugares')
+      v = value.slice(0, 200)
+    if (name === 'propiedadLugares') {
       v = value.replace(/[^0-9]/g, '').slice(0, 2)
+      const n = parseInt(v)
+      if (!isNaN(n) && n > 10) v = '10'
+      if (!isNaN(n) && n < 1) v = '1'
+    }
     if (name === 'propiedadPrecio') {
       v = value.replace(/[^0-9.]/g, '')
       const parts = v.split('.')
@@ -48,11 +52,15 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.propiedadTitulo) errs.propiedadTitulo = 'Obligatorio'
-    if (!formData.propiedadDescripcion) errs.propiedadDescripcion = 'Obligatorio'
+    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length < 3) errs.propiedadTitulo = 'Mínimo 3 caracteres'
+    else if (formData.propiedadTitulo.trim().length > 43) errs.propiedadTitulo = 'Máximo 43 caracteres'
+    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 10) errs.propiedadDescripcion = 'Mínimo 10 caracteres'
+    else if (formData.propiedadDescripcion.trim().length > 200) errs.propiedadDescripcion = 'Máximo 200 caracteres'
     if (!formData.propiedadTipo) errs.propiedadTipo = 'Selecciona un tipo'
     if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) errs.propiedadLugares = 'Debe ser al menos 1'
-    if (!formData.propiedadPrecio || parseFloat(formData.propiedadPrecio) <= 0) errs.propiedadPrecio = 'Debe ser mayor a 0'
+    else if (parseInt(formData.propiedadLugares) > 10) errs.propiedadLugares = 'Máximo 10 lugares'
+    if (!formData.propiedadPrecio || parseFloat(formData.propiedadPrecio) < 1000) errs.propiedadPrecio = 'El precio mínimo es $1,000'
+    else if (parseFloat(formData.propiedadPrecio) > 25000) errs.propiedadPrecio = 'El precio máximo es $25,000'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
     setSaving(true); setError('')
@@ -130,7 +138,7 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
               <label className="admin-form-label">Lugares *</label>
               <input
                 className={`admin-form-input${errors.propiedadLugares ? ' is-error' : ''}`}
-                type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={1} max={50}
+                type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={1} max={10}
               />
               {errors.propiedadLugares && <span className="admin-form-error">{errors.propiedadLugares}</span>}
             </div>
@@ -138,9 +146,10 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
               <label className="admin-form-label">Precio mensual (MXN) *</label>
               <input
                 className={`admin-form-input${errors.propiedadPrecio ? ' is-error' : ''}`}
-                type="number" name="propiedadPrecio" value={formData.propiedadPrecio} onChange={handleChange} min={0} step="0.01"
+                type="number" name="propiedadPrecio" value={formData.propiedadPrecio} onChange={handleChange} min={1000} max={25000} step="0.01"
               />
               {errors.propiedadPrecio && <span className="admin-form-error">{errors.propiedadPrecio}</span>}
+              <span className="admin-form-hint">Entre $1,000 y $25,000 MXN</span>
             </div>
           </div>
         </form>

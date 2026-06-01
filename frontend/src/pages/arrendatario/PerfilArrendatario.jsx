@@ -103,21 +103,30 @@ const PerfilArrendatario = () => {
   }
 
   const handleUsernameChange = (e) => {
-    const valor = e.target.value.replace(/\s/g, '').toLowerCase()
+    const valor = e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase().slice(0, 20)
     setUsername(valor)
-    if (valor.length >= 3) {
-      verificarUsername(valor)
-    } else {
+    if (valor.length < 3) {
       setUsernameError('Mínimo 3 caracteres')
       setUsernameDisponible(false)
+    } else if (valor.length > 20) {
+      setUsernameError('Máximo 20 caracteres')
+      setUsernameDisponible(false)
+    } else {
+      verificarUsername(valor)
     }
   }
 
   const handleGuardar = async () => {
-    if (!usernameDisponible) {
-      mostrarModal('error', 'Error', 'Corrige los errores antes de guardar')
-      return
-    }
+    const nom = nombres.trim()
+    const ape = apellidoPaterno.trim()
+    const tel = telefono.trim()
+    const usr = username.trim()
+
+    if (nom.length < 2) { mostrarModal('error', 'Datos incompletos', 'El nombre debe tener al menos 2 caracteres.'); return }
+    if (ape.length < 2) { mostrarModal('error', 'Datos incompletos', 'El apellido paterno debe tener al menos 2 caracteres.'); return }
+    if (tel.length !== 10) { mostrarModal('error', 'Datos incompletos', 'El teléfono debe tener exactamente 10 dígitos.'); return }
+    if (usr.length < 3) { mostrarModal('error', 'Datos incompletos', 'El nombre de usuario debe tener al menos 3 caracteres.'); return }
+    if (!usernameDisponible) { mostrarModal('error', 'Error', 'Corrige los errores antes de guardar'); return }
 
     try {
       setGuardando(true)

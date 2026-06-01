@@ -2,6 +2,22 @@ import React, { useState } from 'react'
 import NavbarInicio from '../../components/common/NavbarSimple'
 import FooterInicio from '../../components/common/FooterInicio'
 
+// ── Dominios permitidos ───────────────────────────────────────────────────────
+const DOMINIOS = ['alumno.ipn.mx', 'ipn.mx', 'gmail.com', 'hotmail.com', 'hotmail.es',
+  'outlook.com', 'outlook.es', 'yahoo.com', 'yahoo.es', 'icloud.com',
+  'live.com', 'msn.com', 'protonmail.com']
+
+// ── Lista de palabras bloqueadas (groserías básicas) ─────────────────────────
+const GROSERIAS = ['puta', 'puto', 'pendejo', 'pendeja', 'pinche', 'cabron', 'cabrona',
+  'chinga', 'chingo', 'mierda', 'cojete', 'culo', 'verga', 'pene', 'coño',
+  'joder', 'marica', 'idiota', 'estupido', 'estupida', 'imbecil', 'wey',
+  'guey', 'mamada', 'chingada', 'hijodeputa', 'perra', 'perro']
+
+const contieneGroseria = (texto) => {
+  const lower = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  return GROSERIAS.some(g => lower.includes(g))
+}
+
 const FaqPage = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -11,6 +27,7 @@ const FaqPage = () => {
   const [enviando, setEnviando] = useState(false)
   const [mensajeEnviado, setMensajeEnviado] = useState(false)
   const [error, setError] = useState('')
+  const [errores, setErrores] = useState({})
 
     const preguntas = [
     // ===== REGISTRO Y VERIFICACIÓN =====
@@ -148,24 +165,79 @@ const FaqPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    let v = value
+
+    if (name === 'nombre') {
+      // Solo letras, espacios y acentos, máximo 60 caracteres
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
+    }
+    if (name === 'email') {
+      // Sin espacios, máximo 100 caracteres
+      v = value.replace(/\s/g, '').slice(0, 100)
+    }
+    if (name === 'mensaje') {
+      // Máximo 500 caracteres
+      v = value.slice(0, 500)
+    }
+
+    setFormData(prev => ({ ...prev, [name]: v }))
     setError('')
+    if (errores[name]) setErrores(prev => ({ ...prev, [name]: null }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setEnviando(true)
     setError('')
+    setErrores({})
 
-    if (!formData.nombre || !formData.email || !formData.mensaje) {
+    // Validar campos vacíos
+    if (!formData.nombre.trim() || !formData.email.trim() || !formData.mensaje.trim()) {
       setError('Por favor, llena todos los campos')
       setEnviando(false)
       return
     }
 
+    // Validar nombre: mínimo 3 caracteres
+    if (formData.nombre.trim().length < 3) {
+      setErrores(prev => ({ ...prev, nombre: 'El nombre debe tener al menos 3 caracteres' }))
+      setEnviando(false)
+      return
+    }
+
+    // Validar groserías en nombre
+    if (contieneGroseria(formData.nombre)) {
+      setErrores(prev => ({ ...prev, nombre: 'El nombre contiene palabras no permitidas' }))
+      setEnviando(false)
+      return
+    }
+
+    // Validar formato de correo
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
-      setError('Ingresa un correo electrónico válido')
+      setErrores(prev => ({ ...prev, email: 'Ingresa un correo electrónico válido' }))
+      setEnviando(false)
+      return
+    }
+
+    // Validar dominio permitido
+    const dominio = formData.email.split('@')[1]?.toLowerCase()
+    if (!DOMINIOS.includes(dominio)) {
+      setErrores(prev => ({ ...prev, email: `Dominio no permitido. Usa: ${DOMINIOS.slice(0, 5).join(', ')}...` }))
+      setEnviando(false)
+      return
+    }
+
+    // Validar mensaje: mínimo 10 caracteres
+    if (formData.mensaje.trim().length < 10) {
+      setErrores(prev => ({ ...prev, mensaje: 'El mensaje debe tener al menos 10 caracteres' }))
+      setEnviando(false)
+      return
+    }
+
+    // Validar groserías en mensaje
+    if (contieneGroseria(formData.mensaje)) {
+      setErrores(prev => ({ ...prev, mensaje: 'El mensaje contiene palabras no permitidas' }))
       setEnviando(false)
       return
     }
@@ -256,9 +328,12 @@ const FaqPage = () => {
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleChange}
-                  required
-                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
+                  maxLength={60}
+                  placeholder="Solo letras, mínimo 3 caracteres"
+                  style={{ width: '100%', padding: '0.5rem', border: `1px solid ${errores.nombre ? '#dc3545' : '#ddd'}`, borderRadius: '4px', boxSizing: 'border-box' }}
                 />
+                <span style={{ fontSize: '11px', color: '#999' }}>{formData.nombre.length}/60</span>
+                {errores.nombre && <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '2px' }}>{errores.nombre}</div>}
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
@@ -268,9 +343,12 @@ const FaqPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
-                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
+                  maxLength={100}
+                  placeholder="ejemplo@gmail.com"
+                  style={{ width: '100%', padding: '0.5rem', border: `1px solid ${errores.email ? '#dc3545' : '#ddd'}`, borderRadius: '4px', boxSizing: 'border-box' }}
                 />
+                <span style={{ fontSize: '11px', color: '#999' }}>Dominios aceptados: gmail, hotmail, outlook, yahoo, ipn.mx, entre otros</span>
+                {errores.email && <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '2px' }}>{errores.email}</div>}
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
@@ -279,11 +357,14 @@ const FaqPage = () => {
                   name="mensaje"
                   value={formData.mensaje}
                   onChange={handleChange}
+                  maxLength={500}
                   required
                   rows="4"
-                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}
-                  placeholder="Escribe tu pregunta o comentario aquí..."
+                  style={{ width: '100%', padding: '0.5rem', border: `1px solid ${errores.mensaje ? '#dc3545' : '#ddd'}`, borderRadius: '4px', boxSizing: 'border-box' }}
+                  placeholder="Escribe tu pregunta o comentario aquí... (mínimo 10 caracteres)"
                 />
+                <span style={{ fontSize: '11px', color: '#999' }}>{formData.mensaje.length}/500</span>
+                {errores.mensaje && <div style={{ color: '#dc3545', fontSize: '12px', marginTop: '2px' }}>{errores.mensaje}</div>}
               </div>
 
               <button

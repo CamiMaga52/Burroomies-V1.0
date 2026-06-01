@@ -75,15 +75,16 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
     let v = value
 
     if (name === 'propiedadTitulo')
-      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 45)
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 43)
 
     if (name === 'propiedadDescripcion')
-      v = value.slice(0, 300)
+      v = value.slice(0, 200)
 
     if (name === 'propiedadLugares') {
-      v = value.replace(/[^0-9]/g, '').slice(0, 2)
+      v = value.replace(/[^0-9]/g, '').slice(0, 1)
       const num = parseInt(v)
       if (!isNaN(num) && num < arrendamientosActivos) v = String(arrendamientosActivos)
+      if (!isNaN(num) && num > 8) v = '8'
     }
 
     if (name === 'propiedadPrecio') {
@@ -98,7 +99,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
       v = value.replace(/[^0-9]/g, '').slice(0, 5)
 
     if (name === 'direccionCalle')
-      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9s]/g, '').slice(0, 45)
+      v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s.#]/g, '').slice(0, 60)
 
     if (name === 'direccionNumExt' || name === 'direccionNumInt')
       v = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
@@ -140,6 +141,15 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
 
   const handleGuardar = async () => {
     const total = fotosExistentes.length + nuevasFotos.length
+    // Validar campos obligatorios
+    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length < 3) { setError('El título es obligatorio (mínimo 3 caracteres)'); return }
+    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 10) { setError('La descripción es obligatoria (mínimo 10 caracteres)'); return }
+    if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) { setError('Debe tener al menos 1 lugar'); return }
+    if (parseInt(formData.propiedadLugares) > 8) { setError('Máximo 8 lugares permitidos'); return }
+    if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) < 1000) { setError('El precio mínimo es $1,000 por mes'); return }
+    if (parseFloat(formData.propiedadPrecio) > 25000) { setError('El precio máximo es $25,000 por mes'); return }
+    if (!formData.direccionCalle || formData.direccionCalle.trim().length < 3) { setError('La calle es obligatoria'); return }
+    if (!formData.direccionNumExt) { setError('El número exterior es obligatorio'); return }
     if (total < 3) { setError('Debes tener mínimo 3 fotos'); return }
     if (total > 10) { setError('Máximo 10 fotos permitidas'); return }
     if (cpValido === false) { setError('El CP no es válido'); return }
@@ -280,7 +290,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                 </div>
                 <div className="arr-form-group">
                   <label className="arr-form-label">Lugares</label>
-                  <input type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={arrendamientosActivos > 0 ? arrendamientosActivos : 1} max="10" className="arr-form-input" />
+                  <input type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={arrendamientosActivos > 0 ? arrendamientosActivos : 1} max="8" className="arr-form-input" />
                   {arrendamientosActivos > 0 && (
                     <span className="arr-form-hint" style={{ color: 'var(--warning, #b45309)', fontSize: '0.75rem' }}>
                       Mínimo {arrendamientosActivos} ({arrendamientosActivos} arrendamiento{arrendamientosActivos > 1 ? 's' : ''} activo{arrendamientosActivos > 1 ? 's' : ''})
@@ -289,7 +299,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                 </div>
                 <div className="arr-form-group">
                   <label className="arr-form-label">Precio ($)</label>
-                  <input type="number" name="propiedadPrecio" value={formData.propiedadPrecio} onChange={handleChange} min="0" step="0.01" className="arr-form-input" />
+                  <input type="number" name="propiedadPrecio" value={formData.propiedadPrecio} onChange={handleChange} min="1000" max="25000" step="0.01" className="arr-form-input" />
                 </div>
                 <div className="arr-form-group">
                   <label className="arr-form-label">Precio por</label>

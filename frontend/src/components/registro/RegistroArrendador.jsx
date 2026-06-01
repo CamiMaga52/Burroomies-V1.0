@@ -303,7 +303,25 @@ const RegistroArrendador = ({ volver }) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-arrendador`, { method: 'POST', body: fd })
       const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Error al registrar')
+      if (!response.ok) {
+        const msg = data.error || ''
+        const m = msg.toLowerCase()
+        if (m.includes('coincid') || m.includes('nombre') || m.includes('apellido') || m.includes('no coincide') || m.includes('no match')) {
+          throw new Error('Los datos que ingresaste no coinciden con los del documento subido. Verifica que el nombre, apellidos y CURP sean correctos.')
+        } else if (m.includes('qr') || m.includes('leer') || m.includes('escanear') || m.includes('legible')) {
+          throw new Error('No se pudo leer el código QR del documento. Asegúrate de subir un PDF legible y vigente.')
+        } else if (m.includes('correo') || m.includes('email')) {
+          throw new Error('El correo electrónico ya está registrado o no es válido.')
+        } else if (m.includes('curp')) {
+          throw new Error('La CURP ya está registrada o no es válida.')
+        } else if (m.includes('rfc')) {
+          throw new Error('El RFC ya está registrado o no es válido.')
+        } else if (m.includes('datos') || m.includes('incompleto')) {
+          throw new Error('Algunos datos son incorrectos o están incompletos. Revisa el formulario.')
+        } else {
+          throw new Error(msg || 'No se pudo completar el registro. Verifica tus datos e intenta de nuevo.')
+        }
+      }
       navigate('/verificar-correo', {
         state: {
           correo: formData.correo,

@@ -87,8 +87,9 @@ const BuscarVivienda = () => {
   const setFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor, pagina: 1 }))
 
   const handleBusqueda = (valor) => {
+    const limpio = valor.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\s\-]/g, '')
     if (busquedaTimer.current) clearTimeout(busquedaTimer.current)
-    busquedaTimer.current = setTimeout(() => setFiltro('busqueda', valor), 400)
+    busquedaTimer.current = setTimeout(() => setFiltro('busqueda', limpio), 400)
   }
 
   const handleOrdenFecha = (val) => setOrdenFecha(val)
@@ -210,17 +211,27 @@ const BuscarVivienda = () => {
 
             {/* RANGO DE PRECIO - Inputs numéricos */}
             <p style={labelSeccion}>Rango de precio (MXN)</p>
-            <p style={{ fontSize: '11px', color: '#999', marginBottom: '10px' }}>
-              Rango: ${precioMinGlobal.toLocaleString('es-MX')} - ${precioMaxGlobal.toLocaleString('es-MX')}
-            </p>
+            <p style={{ fontSize: '11px', color: '#999', marginBottom: '10px' }}>Rango permitido: $1,000 - $25,000 MXN</p>
             <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Mínimo</label>
                 <input
                   type="number"
-                  placeholder={`$${precioMinGlobal.toLocaleString('es-MX')}`}
+                  placeholder="$1,000"
                   value={filtros.precioMin}
-                  onChange={(e) => setFiltro('precioMin', e.target.value)}
+                  min={1000}
+                  max={25000}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value)
+                    if (e.target.value === '') { setFiltro('precioMin', ''); return }
+                    if (isNaN(v) || v < 0) return
+                    if (v > 25000) return
+                    setFiltro('precioMin', v < 1000 ? e.target.value : v)
+                  }}
+                  onBlur={(e) => {
+                    const v = parseInt(e.target.value)
+                    if (!isNaN(v) && v < 1000) setFiltro('precioMin', 1000)
+                  }}
                   style={{
                     width: '100%',
                     padding: '8px 10px',
@@ -236,9 +247,21 @@ const BuscarVivienda = () => {
                 <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Máximo</label>
                 <input
                   type="number"
-                  placeholder={`$${precioMaxGlobal.toLocaleString('es-MX')}`}
+                  placeholder="$25,000"
                   value={filtros.precioMax}
-                  onChange={(e) => setFiltro('precioMax', e.target.value)}
+                  min={1000}
+                  max={25000}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value)
+                    if (e.target.value === '') { setFiltro('precioMax', ''); return }
+                    if (isNaN(v) || v < 0) return
+                    if (v > 25000) return
+                    setFiltro('precioMax', v < 1000 ? e.target.value : v)
+                  }}
+                  onBlur={(e) => {
+                    const v = parseInt(e.target.value)
+                    if (!isNaN(v) && v < 1000) setFiltro('precioMax', 1000)
+                  }}
                   style={{
                     width: '100%',
                     padding: '8px 10px',
@@ -315,7 +338,7 @@ const BuscarVivienda = () => {
                 {filtros.lugaresMin || 1}
               </span>
               <button
-                onClick={() => setFiltro('lugaresMin', (filtros.lugaresMin || 1) + 1)}
+                onClick={() => setFiltro('lugaresMin', Math.min(8, (filtros.lugaresMin || 1) + 1))}
                 style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid #ddd', backgroundColor: 'white', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >+</button>
             </div>
@@ -397,7 +420,7 @@ const BuscarVivienda = () => {
               type="text"
               placeholder="Buscar por título, descripción o código postal..."
               defaultValue={filtros.busqueda}
-              onChange={(e) => handleBusqueda(e.target.value)}
+              onChange={(e) => { e.target.value = e.target.value.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\s\-]/g, ''); handleBusqueda(e.target.value) }}
               style={{
                 width: '100%',
                 padding: '11px 12px 11px 38px',

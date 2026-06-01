@@ -312,14 +312,14 @@ router.get('/:id/pdf', async (req, res) => {
     const anchoAval = (ANCHO / 2) - 15;
     const xAval1 = ML;
     const xAval2 = mitad + 5;
-    const alturaDir = 125; // recuadro dirección más alto con campos listados
+    const alturaDir = 160; // recuadro dirección más alto con campos listados
 
     // Encabezado sección avales
     doc.save().rect(ML - 8, doc.y - 2, ANCHO + 16, 16).fill(AZUL).restore();
     doc.fontSize(9).font('Helvetica-Bold').fillColor('#ffffff')
        .text('AVALES', ML, doc.y, { width: ANCHO, align: 'center' });
     doc.fillColor(NEGRO);
-    doc.moveDown(1.8); // espacio generoso entre título y línea de firma
+    doc.moveDown(2.5); // espacio generoso entre título y línea de firma
 
     const yAvales = doc.y;
 

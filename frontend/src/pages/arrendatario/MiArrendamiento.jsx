@@ -319,6 +319,32 @@ const MiArrendamiento = () => {
                   </p>
                 </div>
 
+
+                {/* Servicios */}
+                {propiedad?.servicios?.length > 0 && (
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '15px', marginBottom: '10px', color: '#333' }}>🛎️ Servicios incluidos</h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {propiedad.servicios.map(s => (
+                        <span
+                          key={s.idServicio}
+                          style={{
+                            padding: '4px 12px',
+                            backgroundColor: '#eef2ff',
+                            color: '#3730a3',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: 500,
+                            border: '1px solid #c7d2fe'
+                          }}
+                        >
+                          {s.servicioNombre}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Botón descargar contrato */}
                 <button 
                   onClick={handleDescargarContrato}

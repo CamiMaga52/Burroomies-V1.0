@@ -53,14 +53,13 @@ const CrearVivienda = () => {
     else if (name === 'propiedadDescripcion') { v = value.replace(/^[0-9]+/, ''); v = v.slice(0, 200) }
     else if (name === 'propiedadLugares') {
       v = value.replace(/[^0-9]/g, '')
-      if (v) { const n = parseInt(v); if (n < 1) v = '1'; if (n > 10) v = '10' }
+      if (v) { const n = parseInt(v); if (n < 1) v = '1'; if (n > 8) v = '8' }
     } else if (name === 'propiedadPrecio') {
       v = value.replace(/[^0-9.]/g, '')
       const parts = v.split('.')
       if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
       if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
       if (v && parseFloat(v) > 25000) v = '25000'
-      if (v && parseFloat(v) < 1 && v !== '') v = v
     } else if (name === 'cp') {
       v = value.replace(/[^0-9]/g, '').slice(0, 5)
     } else if (name === 'direccionCalle') v = value.slice(0, 100)
@@ -141,8 +140,9 @@ const CrearVivienda = () => {
     }
     if (!formData.propiedadTipo) errs.propiedadTipo = 'Selecciona un tipo de propiedad'
     if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) errs.propiedadLugares = 'Debe tener al menos 1 lugar'
-    else if (parseInt(formData.propiedadLugares) > 10) errs.propiedadLugares = 'Máximo 10 lugares'
-    if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) < 1000) errs.propiedadPrecio = 'El precio mínimo es $1,000'
+    else if (parseInt(formData.propiedadLugares) > 8) errs.propiedadLugares = 'Máximo 8 lugares permitidos'
+    if (!formData.propiedadPrecio || isNaN(formData.propiedadPrecio) || parseFloat(formData.propiedadPrecio) < 1000) errs.propiedadPrecio = 'El precio debe ser entre $1,000 y $25,000'
+    else if (parseFloat(formData.propiedadPrecio) > 25000) errs.propiedadPrecio = 'El precio máximo es $25,000'
     if (!formData.propiedadPrecioPor) errs.propiedadPrecioPor = 'Selecciona el tipo de precio'
     if (!formData.cp || formData.cp.length !== 5) errs.cp = 'El código postal debe tener 5 dígitos'
     else if (cpValido !== true) errs.cp = 'Debes buscar y validar el CP antes de continuar'
@@ -218,7 +218,7 @@ const CrearVivienda = () => {
                   value={formData.propiedadTitulo}
                   onChange={handleChange}
                   placeholder="Ej: Loft moderno cerca de ESCOM"
-                  maxLength={100}
+                  maxLength={43}
                   className={inputCls('propiedadTitulo')}
                 />
                 {errors.propiedadTitulo && <span className="arr-form-error">{errors.propiedadTitulo}</span>}
@@ -258,7 +258,7 @@ const CrearVivienda = () => {
                     value={formData.propiedadLugares}
                     onChange={handleChange}
                     min="1"
-                    max="10"
+                    max="8"
                     className={inputCls('propiedadLugares')}
                   />
                   {errors.propiedadLugares && <span className="arr-form-error">{errors.propiedadLugares}</span>}
@@ -283,15 +283,16 @@ const CrearVivienda = () => {
                   min="1000"
                   max="25000"
                   step="0.01"
-                  placeholder="mínimo 1000, máximo 25000"
+                  placeholder="Ej: 3500 (mínimo $1,000 — máximo $25,000)"
                   className={inputCls('propiedadPrecio')}
                 />
                 {errors.propiedadPrecio && <span className="arr-form-error">{errors.propiedadPrecio}</span>}
+                <span className="arr-form-hint">Entre $1,000 y $25,000 MXN por mes</span>
               </div>
             </div>
           </div>
 
-          {/* Dirección */}
+          {/* Dirección */} 
           <div className="arr-form-card">
             <div className="arr-form-card-header">
               <div className="arr-form-card-header-icon">📍</div>

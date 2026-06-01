@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
 
 // Páginas públicas
 import HomePage from './pages/publicas/HomePage'
@@ -153,6 +153,7 @@ function App() {
         <Route path="/admin/propiedades" element={
           <ProtectedAdminRoute><AdminPropiedadesPage /></ProtectedAdminRoute>
         } />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -50,9 +50,9 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
     if (name === 'usuarioApePat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'usuarioApeMat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'usuarioTel') v = value.replace(/[^0-9]/g, '').slice(0, 10)
-    if (name === 'usuarioCurp') v = value.toUpperCase().slice(0, 18)
-    if (name === 'arrendadorRFC') v = value.toUpperCase().slice(0, 14)
-    if (name === 'direccionCalle') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
+    if (name === 'usuarioCurp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
+    if (name === 'arrendadorRFC') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 13)
+    if (name === 'direccionCalle') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s.#\-]/g, '').slice(0, 80)
     if (name === 'direccionNumExt' || name === 'direccionNumInt') v = value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
     setFormData(prev => ({ ...prev, [name]: v }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
@@ -78,11 +78,17 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.usuarioNom) errs.usuarioNom = 'Obligatorio'
-    if (!formData.usuarioApePat) errs.usuarioApePat = 'Obligatorio'
-    if (formData.usuarioTel && formData.usuarioTel.length !== 10) errs.usuarioTel = 'Debe tener 10 dígitos'
-    if (!isVerified && formData.usuarioCurp && formData.usuarioCurp.length !== 18) errs.usuarioCurp = 'Debe tener 18 caracteres'
-    if (!isVerified && formData.arrendadorRFC && formData.arrendadorRFC.length < 12) errs.arrendadorRFC = 'RFC inválido (12-13 car.)'
+    if (!formData.usuarioNom || formData.usuarioNom.trim().length < 2) errs.usuarioNom = 'Mínimo 2 caracteres'
+    if (!formData.usuarioApePat || formData.usuarioApePat.trim().length < 2) errs.usuarioApePat = 'Mínimo 2 caracteres'
+    if (formData.usuarioTel && formData.usuarioTel.length !== 10) errs.usuarioTel = 'Debe tener exactamente 10 dígitos'
+    if (formData.usuarioFechaNac) {
+      const hoy = new Date(); const nac = new Date(formData.usuarioFechaNac)
+      let edad = hoy.getFullYear() - nac.getFullYear()
+      if (hoy < new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate())) edad--
+      if (edad < 18) errs.usuarioFechaNac = 'El arrendador debe ser mayor de 18 años'
+    }
+    if (!isVerified && formData.usuarioCurp && formData.usuarioCurp.length !== 18) errs.usuarioCurp = 'Debe tener exactamente 18 caracteres'
+    if (!isVerified && formData.arrendadorRFC && (formData.arrendadorRFC.length < 12 || formData.arrendadorRFC.length > 13)) errs.arrendadorRFC = 'RFC debe tener 12 o 13 caracteres'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
     setSaving(true); setError('')
@@ -177,7 +183,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
               <label className="admin-form-label">RFC (12-13 car.)</label>
               <input
                 className={`admin-form-input${errors.arrendadorRFC ? ' is-error' : ''}`}
-                name="arrendadorRFC" value={formData.arrendadorRFC} onChange={handleChange} disabled={isVerified} maxLength={14}
+                name="arrendadorRFC" value={formData.arrendadorRFC} onChange={handleChange} disabled={isVerified} maxLength={13}
               />
               {errors.arrendadorRFC && <span className="admin-form-error">{errors.arrendadorRFC}</span>}
             </div>
@@ -188,6 +194,7 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
             <input
               className="admin-form-input"
               type="date" name="usuarioFechaNac" value={formData.usuarioFechaNac} onChange={handleChange}
+              max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 18); return d.toISOString().split('T')[0] })()}
               style={{ width: 'auto' }}
             />
           </div>

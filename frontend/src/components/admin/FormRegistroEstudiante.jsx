@@ -108,11 +108,19 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
+    // Username: letras, números y guión bajo, sin espacios, 3-20 chars
+    if (name === 'username') v = value.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20)
+    // Solo letras y espacios — nombres/apellidos
     if (name === 'nombres') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
     if (name === 'apellidoPaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
     if (name === 'apellidoMaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    // Correo: sin espacios
+    if (name === 'correo') v = value.replace(/\s/g, '').slice(0, 80)
+    // Teléfono: solo números, exactamente 10
     if (name === 'telefono') v = value.replace(/[^0-9]/g, '').slice(0, 10)
-    if (name === 'curp') v = value.toUpperCase().slice(0, 18)
+    // CURP: letras y números en mayúsculas, exactamente 18
+    if (name === 'curp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
+    // Boleta: solo números, exactamente 10
     if (name === 'boleta') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     setFormData(prev => ({ ...prev, [name]: v }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
@@ -132,22 +140,35 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.username) errs.username = 'Obligatorio'
-    if (!formData.nombres) errs.nombres = 'Obligatorio'
-    if (!formData.apellidoPaterno) errs.apellidoPaterno = 'Obligatorio'
-    if (!formData.apellidoMaterno) errs.apellidoMaterno = 'Obligatorio'
+    // Username — 3 a 20 chars, solo letras/números/guión bajo
+    if (!formData.username || formData.username.length < 3) errs.username = 'Mínimo 3 caracteres'
+    else if (formData.username.length > 20) errs.username = 'Máximo 20 caracteres'
+    else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) errs.username = 'Solo letras, números y guión bajo (_)'
+    // Nombres y apellidos — mínimo 2 letras
+    if (!formData.nombres || formData.nombres.trim().length < 2) errs.nombres = 'Mínimo 2 caracteres'
+    if (!formData.apellidoPaterno || formData.apellidoPaterno.trim().length < 2) errs.apellidoPaterno = 'Mínimo 2 caracteres'
+    if (!formData.apellidoMaterno || formData.apellidoMaterno.trim().length < 2) errs.apellidoMaterno = 'Mínimo 2 caracteres'
+    // Correo — formato y dominio
     if (!formData.correo) errs.correo = 'Obligatorio'
-    else if (!validarDominio(formData.correo)) errs.correo = 'Solo se aceptan estos dominios: Gmail, Hotmail, Outlook, Yahoo o correo IPN'
-    if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener 10 dígitos'
-    if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener 18 caracteres'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) errs.correo = 'Formato de correo inválido'
+    else if (!validarDominio(formData.correo)) errs.correo = 'Dominio no permitido. Usa Gmail, Hotmail, Outlook, Yahoo o IPN'
+    // Teléfono — exactamente 10 dígitos
+    if (!formData.telefono || formData.telefono.length !== 10) errs.telefono = 'Debe tener exactamente 10 dígitos'
+    // CURP — exactamente 18 alfanuméricos
+    if (!formData.curp || formData.curp.length !== 18) errs.curp = 'Debe tener exactamente 18 caracteres'
+    // Fecha de nacimiento — al menos 17 años
     if (!formData.fechaNacimiento) errs.fechaNacimiento = 'Obligatorio'
     else if (calcularEdad(formData.fechaNacimiento) < 17) errs.fechaNacimiento = 'El estudiante debe tener al menos 17 años'
+    // Datos académicos
     if (!formData.escuela) errs.escuela = 'Selecciona una escuela'
     if (!formData.carreraId) errs.carreraId = 'Selecciona una carrera'
-    if (!formData.boleta) errs.boleta = 'Obligatorio'
+    // Boleta — exactamente 10 dígitos
+    if (!formData.boleta || formData.boleta.length !== 10) errs.boleta = 'La boleta debe tener exactamente 10 dígitos'
+    // Contraseña
     if (!formData.password) errs.password = 'Obligatorio'
     else if (!validarPassword(formData.password)) errs.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo'
-    if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden'
+    if (!formData.confirmPassword) errs.confirmPassword = 'Confirma tu contraseña'
+    else if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Las contraseñas no coinciden'
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
     const checks = await Promise.all([
@@ -194,6 +215,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
             />
             {validando.username && <span className="admin-form-hint">Validando...</span>}
             {errors.username && <span className="admin-form-error">{errors.username}</span>}
+            {!errors.username && <span className="admin-form-hint">3-20 caracteres. Solo letras, números y _ (sin espacios)</span>}
           </div>
 
           <div className="grid-2">
@@ -260,6 +282,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
               <input
                 className={`admin-form-input${errors.fechaNacimiento ? ' is-error' : ''}`}
                 type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange}
+              max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 17); return d.toISOString().split('T')[0] })()}
               />
               {errors.fechaNacimiento && <span className="admin-form-error">{errors.fechaNacimiento}</span>}
             </div>
