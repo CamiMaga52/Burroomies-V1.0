@@ -6,6 +6,21 @@ import { getPropiedadesDisponibles } from '../../services/propiedadService'
 import { buscarArrendatario, crearArrendamiento } from '../../services/arrendamientoService'
 import '../../styles/Arrendador.css'
 
+// ─── Lista de groserías ──────────────────────────────────────────────────────
+const GROSERIAS = [
+  'puto', 'puta', 'chinga', 'chingada', 'chingado', 'madre', 'verga', 'cabron', 'cabrón',
+  'pendejo', 'pendeja', 'culero', 'culera', 'joto', 'jota', 'pinche', 'perra', 'perro',
+  'mierda', 'idiota', 'estupido', 'estupida', 'imbecil', 'imbécil', 'pendejada',
+  'chingon', 'chingón', 'mamada', 'mamon', 'mamón', 'nalgas', 'culo', 'pedo',
+  'huevon', 'huevón', 'wey', 'guey', 'buey', 'pinchi', 'pvt0', 'pvt4', 'pt0', 'pt4',
+  'm1erda', 'm13rda', 'ch1nga', 'ch1ng4', 'c4bron', 'c4br0n', 'p3nd3j0', 'p3nd3j4'
+]
+
+const contieneGroserias = (texto) => {
+  const palabras = texto.toLowerCase().split(/\s+/)
+  return palabras.some(palabra => GROSERIAS.includes(palabra))
+}
+
 const CrearArrendamiento = () => {
   const navigate = useNavigate()
   const [cargando, setCargando] = useState(false)
@@ -37,18 +52,29 @@ const CrearArrendamiento = () => {
       if (!idArrendador) { navigate('/usuarios/inicio-sesion'); return }
       const data = await getPropiedadesDisponibles(idArrendador)
       setPropiedades(data)
-    } catch { setError('Error al cargar propiedades') }
+    } catch { 
+      setError('Error al cargar propiedades') 
+    }
   }
 
   const handleBuscarArrendatario = async () => {
-    if (terminoBusqueda.length < 3) { setError('Ingresa al menos 3 caracteres para buscar'); return }
-    setBuscando(true); setError(''); setResultadosBusqueda([]); setSinResultados(false)
+    if (terminoBusqueda.length < 3) { 
+      setError('Ingresa al menos 3 caracteres para buscar')
+      return 
+    }
+    setBuscando(true)
+    setError('')
+    setResultadosBusqueda([])
+    setSinResultados(false)
     try {
       const data = await buscarArrendatario(terminoBusqueda)
       if (data.length === 0) setSinResultados(true)
       else setResultadosBusqueda(data)
-    } catch { setError('Error al buscar arrendatario') }
-    finally { setBuscando(false) }
+    } catch { 
+      setError('Error al buscar arrendatario') 
+    } finally { 
+      setBuscando(false) 
+    }
   }
 
   const handleSeleccionarArrendatario = (arrendatario) => {
@@ -58,55 +84,138 @@ const CrearArrendamiento = () => {
     }
     setArrendatarioSeleccionado(arrendatario)
     setFormData(prev => ({ ...prev, arrendatario_idArrendatario: arrendatario.idArrendatario }))
-    setResultadosBusqueda([]); setTerminoBusqueda(''); setError(''); setSinResultados(false)
+    setResultadosBusqueda([])
+    setTerminoBusqueda('')
+    setError('')
+    setSinResultados(false)
+    // Limpiar error
+    if (errors.arrendatario_idArrendatario) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors.arrendatario_idArrendatario
+        return newErrors
+      })
+    }
   }
 
   const handleSeleccionarPropiedad = (e) => {
     const idPropiedad = e.target.value
     const prop = propiedades.find(p => p.idPropiedad == idPropiedad)
     setPropiedadSeleccionada(prop || null)
-    setFormData(prev => ({ ...prev, propiedad_idPropiedad: idPropiedad, arrendamientoRenta: prop?.propiedadPrecio ?? prev.arrendamientoRenta }))
-    if (errors.propiedad_idPropiedad) setErrors(prev => ({ ...prev, propiedad_idPropiedad: null }))
+    setFormData(prev => ({ 
+      ...prev, 
+      propiedad_idPropiedad: idPropiedad, 
+      arrendamientoRenta: prop?.propiedadPrecio ?? prev.arrendamientoRenta 
+    }))
+    if (errors.propiedad_idPropiedad) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors.propiedad_idPropiedad
+        return newErrors
+      })
+    }
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
+    let v = value
+    
+    // Restricción para descripción: máximo 100 caracteres
+    if (name === 'arrendamientoDescrip') {
+      v = value.slice(0, 100)
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: v }))
+    
+    // Limpiar error del campo al escribir
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   }
 
+  // ── Validación completa ──────────────────────────────────────────────────
   const validarFormulario = () => {
     const errs = {}
-    if (!arrendatarioSeleccionado) errs.arrendatario_idArrendatario = 'Debes seleccionar un arrendatario verificado'
-    if (!formData.propiedad_idPropiedad) errs.propiedad_idPropiedad = 'Debes seleccionar una vivienda'
+    
+    // Arrendatario
+    if (!arrendatarioSeleccionado) {
+      errs.arrendatario_idArrendatario = 'Debes seleccionar un arrendatario verificado'
+    }
+    
+    // Propiedad
+    if (!formData.propiedad_idPropiedad) {
+      errs.propiedad_idPropiedad = 'Debes seleccionar una vivienda'
+    }
+    
+    // Fecha de inicio
     if (!formData.arrendamientoFechaInicio) {
       errs.arrendamientoFechaInicio = 'La fecha de inicio es obligatoria'
     } else {
       const hoy = new Date()
       hoy.setHours(0, 0, 0, 0)
       const fechaSeleccionada = new Date(formData.arrendamientoFechaInicio + 'T00:00:00')
-      if (fechaSeleccionada < hoy) errs.arrendamientoFechaInicio = 'La fecha de inicio no puede ser una fecha pasada'
+      if (fechaSeleccionada < hoy) {
+        errs.arrendamientoFechaInicio = 'La fecha de inicio no puede ser una fecha pasada'
+      }
     }
-    if (!formData.arrendamientoRenta) errs.arrendamientoRenta = 'La renta es obligatoria'
-    else if (isNaN(formData.arrendamientoRenta) || parseFloat(formData.arrendamientoRenta) <= 0) errs.arrendamientoRenta = 'La renta debe ser un número mayor a 0'
-    if (!formData.arrendamientoDescrip || formData.arrendamientoDescrip.trim().length < 10) errs.arrendamientoDescrip = 'La descripción es obligatoria (mínimo 10 caracteres)'
+    
+    // Renta
+    if (!formData.arrendamientoRenta) {
+      errs.arrendamientoRenta = 'La renta es obligatoria'
+    } else if (isNaN(formData.arrendamientoRenta) || parseFloat(formData.arrendamientoRenta) <= 0) {
+      errs.arrendamientoRenta = 'La renta debe ser un número mayor a 0'
+    }
+    
+    // Descripción
+    if (!formData.arrendamientoDescrip || formData.arrendamientoDescrip.trim().length === 0) {
+      errs.arrendamientoDescrip = 'La descripción es obligatoria'
+    } else if (formData.arrendamientoDescrip.trim().length < 10) {
+      errs.arrendamientoDescrip = `La descripción debe tener mínimo 10 caracteres (tienes ${formData.arrendamientoDescrip.trim().length})`
+    } else if (formData.arrendamientoDescrip.trim().length > 100) {
+      errs.arrendamientoDescrip = 'La descripción no puede superar 100 caracteres'
+    } else if (contieneGroserias(formData.arrendamientoDescrip)) {
+      errs.arrendamientoDescrip = 'La descripción contiene palabras no permitidas'
+    }
+    
     return errs
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
     const erroresValidacion = validarFormulario()
+    
     if (Object.keys(erroresValidacion).length > 0) {
-      setErrors(erroresValidacion); setError('Por favor corrige los errores en el formulario'); return
+      setErrors(erroresValidacion)
+      setError('Por favor corrige los errores en el formulario')
+      // ── SCROLL AL PRIMER ERROR ──────────────────────────────────────────
+      setTimeout(() => {
+        const primerError = document.querySelector('.arr-form-error')
+        if (primerError) {
+          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+      return
     }
-    setCargando(true); setError(''); setMensaje(''); setErrors({})
+    
+    setCargando(true)
+    setError('')
+    setMensaje('')
+    setErrors({})
+    
     try {
       await crearArrendamiento(formData)
       setMensaje('Arrendamiento creado exitosamente')
       setTimeout(() => navigate('/arrendador/mis-arrendamientos'), 1500)
     } catch (err) {
       setError(err.response?.data?.error || 'Error al crear arrendamiento')
-    } finally { setCargando(false) }
+    } finally { 
+      setCargando(false) 
+    }
   }
 
   const formatearDireccion = (prop) => {
@@ -118,6 +227,8 @@ const CrearArrendamiento = () => {
     return d
   }
 
+  const inputCls = (field) => `arr-form-input${errors[field] ? ' is-error' : ''}`
+
   return (
     <div className="arr-page">
       <NavbarArrendador />
@@ -125,7 +236,7 @@ const CrearArrendamiento = () => {
         <div className="arr-page-header">
           <div>
             <h1 className="arr-page-title">Crear Arrendamiento</h1>
-            <p className="arr-page-hint">Registra un nuevo contrato de arrendamiento</p>
+            <p className="arr-page-hint">Registra un nuevo contrato de arrendamiento. Todos los campos con <span style={{ color: '#dc2626' }}>*</span> son obligatorios.</p>
           </div>
         </div>
 
@@ -135,7 +246,7 @@ const CrearArrendamiento = () => {
             <div className="arr-form-card-header">
               <div className="arr-form-card-header-icon">👤</div>
               <div>
-                <h3>1. Seleccionar Arrendatario</h3>
+                <h3>1. Seleccionar Arrendatario <span style={{ color: '#dc2626' }}>*</span></h3>
                 <p>El arrendatario debe tener identidad verificada</p>
               </div>
             </div>
@@ -148,13 +259,16 @@ const CrearArrendamiento = () => {
                       <span className="arr-badge arr-badge-success" style={{ marginLeft: '0.5rem' }}>✓ Verificado</span>
                     </p>
                     <p style={{ fontSize: '0.82rem', color: 'var(--text-light)', margin: 0 }}>
-                      {arrendatarioSeleccionado.arrendatarioUser} · {arrendatarioSeleccionado.usuario?.usuarioCorreo} · Boleta: {arrendatarioSeleccionado.arrendatarioBoleta}
+                      @{arrendatarioSeleccionado.arrendatarioUser} · {arrendatarioSeleccionado.usuario?.usuarioCorreo} · Boleta: {arrendatarioSeleccionado.arrendatarioBoleta}
                     </p>
                   </div>
                   <button
                     type="button"
                     className="arr-btn-danger arr-btn-sm"
-                    onClick={() => { setArrendatarioSeleccionado(null); setFormData(prev => ({ ...prev, arrendatario_idArrendatario: '' })) }}
+                    onClick={() => { 
+                      setArrendatarioSeleccionado(null)
+                      setFormData(prev => ({ ...prev, arrendatario_idArrendatario: '' })) 
+                    }}
                   >
                     Cambiar
                   </button>
@@ -179,9 +293,10 @@ const CrearArrendamiento = () => {
                       className="arr-btn-primary"
                       style={{ height: '44px', borderRadius: '12px', flexShrink: 0 }}
                     >
-                      {buscando ? 'Buscando...' : 'Buscar'}
+                      {buscando ? '⏳ Buscando...' : '🔍 Buscar'}
                     </button>
                   </div>
+                  <span className="arr-form-hint">Ingresa al menos 3 caracteres para buscar</span>
                   {errors.arrendatario_idArrendatario && (
                     <span className="arr-form-error">{errors.arrendatario_idArrendatario}</span>
                   )}
@@ -214,7 +329,7 @@ const CrearArrendamiento = () => {
                                 {a.usuario?.usuarioNom} {a.usuario?.usuarioApePat}
                               </span>
                               <span style={{ color: 'var(--text-light)', fontSize: '0.85rem', marginLeft: '0.4rem' }}>
-                                {a.arrendatarioUser}
+                                @{a.arrendatarioUser}
                               </span>
                             </div>
                             {a.arrendatarioVerificado === 1
@@ -237,13 +352,13 @@ const CrearArrendamiento = () => {
             <div className="arr-form-card-header">
               <div className="arr-form-card-header-icon">🏠</div>
               <div>
-                <h3>2. Seleccionar Vivienda</h3>
+                <h3>2. Seleccionar Vivienda <span style={{ color: '#dc2626' }}>*</span></h3>
                 <p>Solo se muestran propiedades con lugares disponibles</p>
               </div>
             </div>
             <div className="arr-form-card-body">
               <div className="arr-form-group">
-                <label className="arr-form-label">Vivienda <span>*</span></label>
+                <label className="arr-form-label">Vivienda <span style={{ color: '#dc2626' }}>*</span></label>
                 <select
                   name="propiedad_idPropiedad"
                   value={formData.propiedad_idPropiedad}
@@ -257,6 +372,7 @@ const CrearArrendamiento = () => {
                     </option>
                   ))}
                 </select>
+                <span className="arr-form-hint">Selecciona la propiedad que quieres rentar</span>
                 {errors.propiedad_idPropiedad && <span className="arr-form-error">{errors.propiedad_idPropiedad}</span>}
               </div>
 
@@ -287,42 +403,50 @@ const CrearArrendamiento = () => {
             </div>
             <div className="arr-form-card-body">
               <div className="arr-form-group">
-                <label className="arr-form-label">Fecha de inicio <span>*</span></label>
+                <label className="arr-form-label">Fecha de inicio <span style={{ color: '#dc2626' }}>*</span></label>
                 <input
                   type="date"
                   name="arrendamientoFechaInicio"
                   value={formData.arrendamientoFechaInicio}
                   onChange={handleChange}
-                  min={(() => { const h = new Date(); return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}` })()}
-                  className={`arr-form-input${errors.arrendamientoFechaInicio ? ' is-error' : ''}`}
+                  min={(() => { 
+                    const h = new Date()
+                    return `${h.getFullYear()}-${String(h.getMonth()+1).padStart(2,'0')}-${String(h.getDate()).padStart(2,'0')}` 
+                  })()}
+                  className={inputCls('arrendamientoFechaInicio')}
                 />
+                <span className="arr-form-hint">Selecciona la fecha de inicio del contrato (no puede ser pasada)</span>
                 {errors.arrendamientoFechaInicio && <span className="arr-form-error">{errors.arrendamientoFechaInicio}</span>}
               </div>
 
               <div className="arr-form-group">
-                <label className="arr-form-label">Renta mensual ($) <span>*</span></label>
+                <label className="arr-form-label">Renta mensual ($) <span style={{ color: '#dc2626' }}>*</span></label>
                 <input
                   type="number"
                   name="arrendamientoRenta"
                   value={formData.arrendamientoRenta}
                   readOnly
                   className="arr-form-input"
-                  style={{ background: 'var(--gray-50)' }}
+                  style={{ background: '#f9fafb', cursor: 'not-allowed' }}
                 />
-                <span className="arr-form-hint">El precio es fijo según la vivienda seleccionada</span>
+                <span className="arr-form-hint">🔒 El precio es fijo según la vivienda seleccionada</span>
                 {errors.arrendamientoRenta && <span className="arr-form-error">{errors.arrendamientoRenta}</span>}
               </div>
 
               <div className="arr-form-group">
-                <label className="arr-form-label">Descripción del arrendamiento <span>*</span></label>
+                <label className="arr-form-label">Descripción del arrendamiento <span style={{ color: '#dc2626' }}>*</span></label>
                 <textarea
                   name="arrendamientoDescrip"
                   value={formData.arrendamientoDescrip}
                   onChange={handleChange}
                   rows={3}
-                  placeholder="Ej: Contrato anual, incluye servicios de agua y luz... (mínimo 10 caracteres)"
-                  className="arr-form-textarea"
+                  maxLength={100}
+                  placeholder="Ej: Contrato anual, incluye servicios de agua y luz..."
+                  className={`arr-form-textarea${errors.arrendamientoDescrip ? ' is-error' : ''}`}
                 />
+                <span className="arr-form-hint">
+                  {formData.arrendamientoDescrip.length}/100 caracteres (mínimo 10). Puede contener letras, números y símbolos
+                </span>
                 {errors.arrendamientoDescrip && <span className="arr-form-error">{errors.arrendamientoDescrip}</span>}
               </div>
             </div>

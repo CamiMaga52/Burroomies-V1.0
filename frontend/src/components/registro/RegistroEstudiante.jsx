@@ -247,6 +247,7 @@ const RegistroEstudiante = ({ volver }) => {
 
   const restringirUsername    = (v) => v.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20);
   const restringirNombre      = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 50);
+  const restringirApellido    = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ]/g, '').slice(0, 25);
   const restringirTelefono    = (v) => v.replace(/[^0-9]/g, '').slice(0, 10);
   const restringirCURP        = (v) => v.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 18);
   const restringirBoleta      = (v) => v.replace(/[^0-9]/g, '').slice(0, 10);
@@ -257,9 +258,9 @@ const RegistroEstudiante = ({ volver }) => {
     let v = value;
     switch (name) {
       case 'username':                               v = restringirUsername(value); break;
-      case 'nombres':
+      case 'nombres':                                v = restringirNombre(value); break;
       case 'apellidoPaterno':
-      case 'apellidoMaterno':                        v = restringirNombre(value); break;
+      case 'apellidoMaterno':                        v = restringirApellido(value); break;
       case 'telefono':                               v = restringirTelefono(value); break;
       case 'curp':                                   v = restringirCURP(value); break;
       case 'boleta':                                 v = restringirBoleta(value); break;
@@ -284,13 +285,13 @@ const RegistroEstudiante = ({ volver }) => {
     else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) e.username = 'Solo letras, números y guión bajo';
 
     if (!formData.nombres) e.nombres = 'Los nombres son obligatorios';
-    else if (formData.nombres.length < 2) e.nombres = 'Mínimo 2 caracteres';
+    else if (formData.nombres.length < 3) e.nombres = 'Mínimo 3 caracteres';
 
     if (!formData.apellidoPaterno) e.apellidoPaterno = 'El apellido paterno es obligatorio';
-    else if (formData.apellidoPaterno.length < 2) e.apellidoPaterno = 'Mínimo 2 caracteres';
+    else if (formData.apellidoPaterno.length < 3) e.apellidoPaterno = 'Mínimo 3 caracteres';
 
-    if (formData.apellidoMaterno && formData.apellidoMaterno.length < 2)
-      e.apellidoMaterno = 'Mínimo 2 caracteres';
+    if (formData.apellidoMaterno && formData.apellidoMaterno.length < 3)
+      e.apellidoMaterno = 'Mínimo 3 caracteres';
 
     if (!formData.correo) e.correo = 'El correo electrónico es obligatorio';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo electrónico no válido';
@@ -305,6 +306,8 @@ const RegistroEstudiante = ({ volver }) => {
     if (!formData.fechaNacimiento) e.fechaNacimiento = 'La fecha de nacimiento es obligatoria';
     else if (calcularEdad(formData.fechaNacimiento) < 17)
       e.fechaNacimiento = 'Debes ser mayor o igual a 17 años';
+    else if (calcularEdad(formData.fechaNacimiento) > 100)
+      e.fechaNacimiento = 'Fecha de nacimiento no válida';
 
     if (!formData.escuela) e.escuela = 'Debes seleccionar una escuela';
     if (!formData.carreraId) e.carreraId = 'Debes seleccionar una carrera';
@@ -312,10 +315,10 @@ const RegistroEstudiante = ({ volver }) => {
     if (!formData.boleta) e.boleta = 'La boleta es obligatoria';
     else if (formData.boleta.length !== 10) e.boleta = 'La boleta debe tener 10 dígitos';
 
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,25}$/;
     if (!formData.password) e.password = 'La contraseña es obligatoria';
     else if (!pwRegex.test(formData.password))
-      e.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo (@$!%*?&)';
+      e.password = 'Mínimo 8 caracteres, máximo 25, mayúscula, minúscula, número y símbolo (@$!%*?&)';
 
     if (formData.password !== formData.confirmPassword)
       e.confirmPassword = 'Las contraseñas no coinciden';
@@ -351,13 +354,16 @@ const RegistroEstudiante = ({ volver }) => {
 
     const DOMINIOS = ['alumno.ipn.mx', 'ipn.mx', 'gmail.com', 'hotmail.com', 'hotmail.es', 'outlook.com', 'outlook.es', 'yahoo.com', 'yahoo.es', 'icloud.com', 'live.com', 'msn.com', 'protonmail.com'];
     const dominio = formData.correo.split('@')[1]?.toLowerCase();
-    if (!DOMINIOS.includes(dominio)) {
-      setErrors({ correo: 'El dominio del correo electrónico no está permitido' });
-      return;
+    if (formData.correo && !DOMINIOS.includes(dominio)) {
+      erroresFormato.correo = 'El dominio del correo electrónico no está permitido';
     }
 
     if (Object.keys(erroresFormato).length > 0) {
       setErrors(erroresFormato);
+      setTimeout(() => {
+        const primerError = document.querySelector('.form-error')
+        if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100);
       return;
     }
 
@@ -396,25 +402,7 @@ const RegistroEstudiante = ({ volver }) => {
         body: fd
       });
       const data = await response.json();
-      if (!response.ok) {
-        const msg = data.error || ''
-        const m = msg.toLowerCase()
-        if (m.includes('coincid') || m.includes('nombre') || m.includes('apellido') || m.includes('no coincide') || m.includes('no match')) {
-          throw new Error('Los datos que ingresaste no coinciden con los del documento subido. Verifica que el nombre, apellidos y CURP sean correctos.')
-        } else if (m.includes('qr') || m.includes('leer') || m.includes('escanear') || m.includes('legible')) {
-          throw new Error('No se pudo leer el código QR del documento. Asegúrate de subir un PDF legible y vigente.')
-        } else if (m.includes('correo') || m.includes('email')) {
-          throw new Error('El correo electrónico ya está registrado o no es válido.')
-        } else if (m.includes('curp')) {
-          throw new Error('La CURP ya está registrada o no es válida.')
-        } else if (m.includes('boleta')) {
-          throw new Error('La boleta ya está registrada o no es válida.')
-        } else if (m.includes('datos') || m.includes('incompleto')) {
-          throw new Error('Algunos datos son incorrectos o están incompletos. Revisa el formulario.')
-        } else {
-          throw new Error(msg || 'No se pudo completar el registro. Verifica tus datos e intenta de nuevo.')
-        }
-      };
+      if (!response.ok) throw new Error(data.error || 'Error al registrar');
       navigate('/verificar-correo', {
         state: {
           correo: formData.correo,
@@ -635,6 +623,11 @@ const RegistroEstudiante = ({ volver }) => {
                     name="fechaNacimiento"
                     value={formData.fechaNacimiento}
                     onChange={handleChange}
+                    min={(() => {
+                      const d = new Date();
+                      d.setFullYear(d.getFullYear() - 100);
+                      return d.toISOString().split('T')[0];
+                    })()}
                     max={(() => {
                       const d = new Date();
                       d.setFullYear(d.getFullYear() - 17);

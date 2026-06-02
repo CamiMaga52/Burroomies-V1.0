@@ -8,8 +8,6 @@ import Toast from '../ui/Toast'
 import burroLogo from '../../assets/burro.png'
 import '../../styles/Registro.css'
 
-
-
 // ─── Estilos para la sección de términos ─────────────────────────────────────
 const terminosStyles = {
   fila: {
@@ -94,28 +92,32 @@ const RegistroArrendador = ({ volver }) => {
   }
 
   const restringirNombre = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 50)
+  const restringirApellido = (v) => v.replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 25)
   const restringirTelefono = (v) => v.replace(/[^0-9]/g, '').slice(0, 10)
   const restringirCURP = (v) => v.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 18)
   const restringirRFC = (v) => v.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 13)
   const restringirCP = (v) => v.replace(/[^0-9]/g, '').slice(0, 5)
   const restringirCorreo = (v) => v.replace(/[^a-zA-Z0-9@._-]/g, '').slice(0, 60)
   const restringirNumero = (v) => v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)
+  const restringirCalle = (v) => v.replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ\s]/g, '').slice(0, 50)
 
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
     switch (name) {
-      case 'nombres':
+      case 'nombres': v = restringirNombre(value); break
       case 'apellidoPaterno':
-      case 'apellidoMaterno': v = restringirNombre(value); break
+      case 'apellidoMaterno': v = restringirApellido(value); break
       case 'telefono': v = restringirTelefono(value); break
       case 'curp': v = restringirCURP(value); break
       case 'rfc': v = restringirRFC(value); break
+      case 'calle': v = restringirCalle(value); break
       case 'cp': v = restringirCP(value); break
       case 'correo': v = restringirCorreo(value); break
       case 'numExt':
       case 'numInt': v = restringirNumero(value); break
       case 'fechaNacimiento': {
+        v = value
         const hoy = new Date()
         const nac = new Date(value)
         const edad = hoy.getFullYear() - nac.getFullYear()
@@ -123,19 +125,33 @@ const RegistroArrendador = ({ volver }) => {
         if (edad < 18 || (edad === 18 && !cumplio))
           setErrors(prev => ({ ...prev, fechaNacimiento: 'Debes ser mayor de 18 años para registrarte como arrendador' }))
         else
-          setErrors(prev => ({ ...prev, fechaNacimiento: null }))
+          setErrors(prev => {
+            const newErrors = { ...prev }
+            delete newErrors.fechaNacimiento
+            return newErrors
+          })
         break
       }
       default: break
     }
     setFormData(prev => ({ ...prev, [name]: v }))
-    if (name !== 'fechaNacimiento' && errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
+    if (name !== 'fechaNacimiento' && errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
     if (name in CAMPOS_UNICOS) verificarCampoEnTiempoReal(name, v)
   }
 
   const handleCheckbox = (e) => {
     setFormData(prev => ({ ...prev, aceptaTerminos: e.target.checked }))
-    if (errors.aceptaTerminos) setErrors(prev => ({ ...prev, aceptaTerminos: null }))
+    if (errors.aceptaTerminos) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.aceptaTerminos
+      return newErrors
+    })
   }
 
   // ── Verificación en tiempo real ────────────────────────────────────────────
@@ -201,47 +217,79 @@ const RegistroArrendador = ({ volver }) => {
     }))
     setMostrarSugerencias(false)
     setSugerenciasCP([])
-    if (errors.cp) setErrors(prev => ({ ...prev, cp: null }))
+    if (errors.cp) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.cp
+      return newErrors
+    })
   }
 
   // ── Validaciones ───────────────────────────────────────────────────────────
   const validacionesFormato = () => {
     const e = {}
+    
+    // Nombres
     if (!formData.nombres) e.nombres = 'Los nombres son obligatorios'
-    else if (formData.nombres.length < 2) e.nombres = 'Mínimo 2 caracteres'
+    else if (formData.nombres.length < 3) e.nombres = 'Mínimo 3 caracteres'
+    
+    // Apellido paterno
     if (!formData.apellidoPaterno) e.apellidoPaterno = 'El apellido paterno es obligatorio'
-    else if (formData.apellidoPaterno.length < 2) e.apellidoPaterno = 'Mínimo 2 caracteres'
-    if (formData.apellidoMaterno && formData.apellidoMaterno.length < 2)
-      e.apellidoMaterno = 'Mínimo 2 caracteres'
+    else if (formData.apellidoPaterno.length < 3) e.apellidoPaterno = 'Mínimo 3 caracteres'
+    
+    // Apellido materno (opcional)
+    if (formData.apellidoMaterno && formData.apellidoMaterno.length < 3)
+      e.apellidoMaterno = 'Mínimo 3 caracteres'
+    
+    // Correo
     if (!formData.correo) e.correo = 'El correo electrónico es obligatorio'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) e.correo = 'Correo electrónico no válido'
+    
+    // Teléfono
     if (!formData.telefono) e.telefono = 'El teléfono es obligatorio'
     else if (formData.telefono.length !== 10) e.telefono = 'Debe tener 10 dígitos'
+    
+    // CURP
     if (!formData.curp) e.curp = 'El CURP es obligatorio'
     else if (!/^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/.test(formData.curp))
       e.curp = 'CURP no válido (4 letras, 6 números, 6 letras, 2 alfanuméricos)'
+    
+    // RFC
     if (!formData.rfc) e.rfc = 'El RFC es obligatorio'
     else if (!/^[A-Z]{4}[0-9]{6}[A-Z0-9]{3}$/.test(formData.rfc))
       e.rfc = 'RFC no válido (4 letras, 6 números, 3 alfanuméricos)'
+    
+    // Fecha de nacimiento
     if (!formData.fechaNacimiento) e.fechaNacimiento = 'La fecha de nacimiento es obligatoria'
     else if (calcularEdad(formData.fechaNacimiento) < 18)
       e.fechaNacimiento = 'Debes ser mayor de 18 años para registrarte como arrendador'
+    else if (calcularEdad(formData.fechaNacimiento) > 100)
+      e.fechaNacimiento = 'Fecha de nacimiento no válida'
+    
+    // Dirección
     if (!formData.cp) e.cp = 'El código postal es obligatorio'
     else if (formData.cp.length !== 5) e.cp = 'El código postal debe tener 5 dígitos'
+    
     if (!formData.calle) e.calle = 'La calle es obligatoria'
     else if (formData.calle.length < 3) e.calle = 'Mínimo 3 caracteres'
+    
     if (!formData.numExt) e.numExt = 'El número exterior es obligatorio'
-    if (!formData.colonia) e.colonia = 'La colonia es obligatoria'
-    if (!formData.municipio) e.municipio = 'El municipio es obligatorio'
-    if (!formData.estado) e.estado = 'El estado es obligatorio'
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    
+    if (!formData.colonia) e.colonia = 'La colonia es obligatoria (busca por CP)'
+    if (!formData.municipio) e.municipio = 'El municipio es obligatorio (busca por CP)'
+    if (!formData.estado) e.estado = 'El estado es obligatorio (busca por CP)'
+    
+    // Contraseña
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,25}$/
     if (!formData.password) e.password = 'La contraseña es obligatoria'
     else if (!pwRegex.test(formData.password))
-      e.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo (@$!%*?&)'
+      e.password = 'Mínimo 8 caracteres, máximo 25, mayúscula, minúscula, número y símbolo (@$!%*?&)'
+    
     if (formData.password !== formData.confirmPassword)
       e.confirmPassword = 'Las contraseñas no coinciden'
+    
     if (!formData.aceptaTerminos)
       e.aceptaTerminos = 'Debes aceptar el aviso de privacidad y los términos de uso'
+    
     return e
   }
 
@@ -265,23 +313,49 @@ const RegistroArrendador = ({ volver }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const erroresFormato = validacionesFormato()
-    if (Object.keys(erroresFormato).length > 0) { setErrors(erroresFormato); return }
 
+    // Validación de dominio de correo
     const DOMINIOS = ['alumno.ipn.mx','ipn.mx','gmail.com','hotmail.com','hotmail.es','outlook.com','outlook.es','yahoo.com','yahoo.es','icloud.com','live.com','msn.com','protonmail.com']
     const dominio = formData.correo.split('@')[1]?.toLowerCase()
-    if (!DOMINIOS.includes(dominio)) {
-      setErrors({ correo: 'El dominio del correo electrónico no está permitido' })
+    if (formData.correo && !DOMINIOS.includes(dominio)) {
+      erroresFormato.correo = 'El dominio del correo electrónico no está permitido'
+    }
+
+    // Mostrar errores con scroll
+    if (Object.keys(erroresFormato).length > 0) {
+      setErrors(erroresFormato)
+      setTimeout(() => {
+        const primerError = document.querySelector('.form-error')
+        if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
       return
     }
 
-    if (!curpFile) { setErrors(prev => ({ ...prev, curpFile: 'Es obligatorio subir el documento CURP' })); return }
+    // Validar documento CURP
+    if (!curpFile) { 
+      setErrors(prev => ({ ...prev, curpFile: 'Es obligatorio subir el documento CURP' }))
+      setTimeout(() => {
+        const errorDoc = document.querySelector('.form-error')
+        if (errorDoc) errorDoc.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
+      return 
+    }
+    
     setEnviando(true)
+    
+    // Verificar unicidad
     const unicidad = await validarUnicidad()
     if (unicidad.existe) {
       setErrors({ ...errors, [unicidad.campo]: unicidad.mensaje })
       setEnviando(false)
+      setTimeout(() => {
+        const primerError = document.querySelector('.form-error')
+        if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 100)
       return
     }
+    
+    // Preparar FormData
     const fd = new FormData()
     fd.append('nombres', formData.nombres)
     fd.append('apellidoPaterno', formData.apellidoPaterno)
@@ -300,28 +374,14 @@ const RegistroArrendador = ({ volver }) => {
     fd.append('estado', formData.estado)
     fd.append('password', formData.password)
     fd.append('documentoCURP', curpFile)
+    
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-arrendador`, { method: 'POST', body: fd })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/registro-arrendador`, { 
+        method: 'POST', 
+        body: fd 
+      })
       const data = await response.json()
-      if (!response.ok) {
-        const msg = data.error || ''
-        const m = msg.toLowerCase()
-        if (m.includes('coincid') || m.includes('nombre') || m.includes('apellido') || m.includes('no coincide') || m.includes('no match')) {
-          throw new Error('Los datos que ingresaste no coinciden con los del documento subido. Verifica que el nombre, apellidos y CURP sean correctos.')
-        } else if (m.includes('qr') || m.includes('leer') || m.includes('escanear') || m.includes('legible')) {
-          throw new Error('No se pudo leer el código QR del documento. Asegúrate de subir un PDF legible y vigente.')
-        } else if (m.includes('correo') || m.includes('email')) {
-          throw new Error('El correo electrónico ya está registrado o no es válido.')
-        } else if (m.includes('curp')) {
-          throw new Error('La CURP ya está registrada o no es válida.')
-        } else if (m.includes('rfc')) {
-          throw new Error('El RFC ya está registrado o no es válido.')
-        } else if (m.includes('datos') || m.includes('incompleto')) {
-          throw new Error('Algunos datos son incorrectos o están incompletos. Revisa el formulario.')
-        } else {
-          throw new Error(msg || 'No se pudo completar el registro. Verifica tus datos e intenta de nuevo.')
-        }
-      }
+      if (!response.ok) throw new Error(data.error || 'Error al registrar')
       navigate('/verificar-correo', {
         state: {
           correo: formData.correo,
@@ -336,6 +396,7 @@ const RegistroArrendador = ({ volver }) => {
     }
   }
 
+  // ── Indicador de unicidad ──────────────────────────────────────────────────
   const IndicadorUnicidad = ({ campo }) => {
     const estado = unicidad[campo]
     if (!estado) return null
@@ -354,7 +415,6 @@ const RegistroArrendador = ({ volver }) => {
       <div className="registro-layout">
         {/* SIDEBAR */}
         <aside className="registro-sidebar">
-          {/* Botón Regresar - ARRIBA del logo */}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginBottom: '0.5rem' }}>
             <button 
               type="button" 
@@ -392,7 +452,7 @@ const RegistroArrendador = ({ volver }) => {
         <main className="registro-main">
           {/* Tabs */}
           <div className="tipo-tabs">
-            <span className="tipo-tab active"> Arrendador</span>
+            <span className="tipo-tab active">🏠 Arrendador</span>
           </div>
 
           {/* Cabecera */}
@@ -419,16 +479,19 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Nombres <span>*</span></label>
                   <input className="form-input" type="text" name="nombres" value={formData.nombres} onChange={handleChange} placeholder="Ej: Juan Carlos" maxLength={60} />
+                  <span className="form-hint">Solo letras y espacios. Mínimo 3 caracteres</span>
                   {errors.nombres && <div className="form-error">{errors.nombres}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Apellido paterno <span>*</span></label>
                   <input className="form-input" type="text" name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} placeholder="Ej: Hernández" maxLength={35}/>
+                  <span className="form-hint">Solo letras. Mínimo 3 caracteres</span>
                   {errors.apellidoPaterno && <div className="form-error">{errors.apellidoPaterno}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Apellido materno</label>
                   <input className="form-input" type="text" name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} placeholder="Ej: López (opcional)" maxLength={35}/>
+                  <span className="form-hint">Opcional. Solo letras</span>
                   {errors.apellidoMaterno && <div className="form-error">{errors.apellidoMaterno}</div>}
                 </div>
               </div>
@@ -440,6 +503,7 @@ const RegistroArrendador = ({ volver }) => {
                     <span className="icon">✉️</span>
                     <input className="form-input" type="email" name="correo" value={formData.correo} onChange={handleChange} placeholder="Ej: juan@ejemplo.com" maxLength={60}/>
                   </div>
+                  <span className="form-hint">Gmail, Hotmail, Outlook, Yahoo o IPN</span>
                   {errors.correo && <div className="form-error">{errors.correo}</div>}
                   <IndicadorUnicidad campo="correo" />
                 </div>
@@ -465,7 +529,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">RFC <span>*</span></label>
                   <input className="form-input" type="text" name="rfc" value={formData.rfc} onChange={handleChange} placeholder="Ej: HERS850101XXX" maxLength={13}/>
-                  <span className="form-hint">13 caracteres</span>
+                  <span className="form-hint">13 caracteres (4 letras, 6 números, 3 alfanuméricos)</span>
                   {errors.rfc && <div className="form-error">{errors.rfc}</div>}
                   <IndicadorUnicidad campo="rfc" />
                 </div>
@@ -480,6 +544,11 @@ const RegistroArrendador = ({ volver }) => {
                     name="fechaNacimiento"
                     value={formData.fechaNacimiento}
                     onChange={handleChange}
+                    min={(() => {
+                      const d = new Date();
+                      d.setFullYear(d.getFullYear() - 100);
+                      return d.toISOString().split('T')[0];
+                    })()}
                     max={(() => {
                       const d = new Date();
                       d.setFullYear(d.getFullYear() - 18);
@@ -508,7 +577,8 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group" style={{ position: 'relative' }}>
                   <label className="form-label">Código Postal <span>*</span></label>
                   <input className="form-input" type="text" name="cp" value={formData.cp} onChange={handleCPChange} placeholder="Ej: 07300" maxLength={5}/>
-                  {buscandoCP && <span className="form-hint">Buscando...</span>}
+                  {buscandoCP && <span className="form-hint">⏳ Buscando direcciones...</span>}
+                  <span className="form-hint">5 dígitos. Se autocompletará tu dirección</span>
                   {mostrarSugerencias && sugerenciasCP.length > 0 && (
                     <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #ccc', borderRadius: '8px', maxHeight: '200px', overflowY: 'auto', zIndex: 1000, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                       {sugerenciasCP.map((sug, i) => (
@@ -524,6 +594,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Calle <span>*</span></label>
                   <input className="form-input" type="text" name="calle" value={formData.calle} onChange={handleChange} placeholder="Ej: Av. Insurgentes" maxLength={50} />
+                  <span className="form-hint">Solo letras, números y espacios. Mínimo 3 caracteres</span>
                   {errors.calle && <div className="form-error">{errors.calle}</div>}
                 </div>
               </div>
@@ -532,15 +603,18 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Número exterior <span>*</span></label>
                   <input className="form-input" type="text" name="numExt" value={formData.numExt} onChange={handleChange} placeholder="Ej: 123" maxLength={10} />
+                  <span className="form-hint">Solo letras y números</span>
                   {errors.numExt && <div className="form-error">{errors.numExt}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Número interior</label>
                   <input className="form-input" type="text" name="numInt" value={formData.numInt} onChange={handleChange} placeholder="Ej: 3B (opcional)" maxLength={10} />
+                  <span className="form-hint">Opcional. Solo letras y números</span>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Colonia <span>*</span></label>
-                  <input className="form-input" type="text" name="colonia" value={formData.colonia} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" />
+                  <input className="form-input" type="text" name="colonia" value={formData.colonia} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed' }} />
+                  <span className="form-hint">🔒 Autocompletado por CP</span>
                   {errors.colonia && <div className="form-error">{errors.colonia}</div>}
                 </div>
               </div>
@@ -548,12 +622,14 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-2">
                 <div className="form-group">
                   <label className="form-label">Municipio <span>*</span></label>
-                  <input className="form-input" type="text" name="municipio" value={formData.municipio} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" />
+                  <input className="form-input" type="text" name="municipio" value={formData.municipio} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed' }} />
+                  <span className="form-hint">🔒 Autocompletado por CP</span>
                   {errors.municipio && <div className="form-error">{errors.municipio}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Estado <span>*</span></label>
-                  <input className="form-input" type="text" name="estado" value={formData.estado} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" />
+                  <input className="form-input" type="text" name="estado" value={formData.estado} onChange={handleChange} readOnly placeholder="Se autocompleta con el CP" style={{ backgroundColor: '#f9fafb', cursor: 'not-allowed' }} />
+                  <span className="form-hint">🔒 Autocompletado por CP</span>
                   {errors.estado && <div className="form-error">{errors.estado}</div>}
                 </div>
               </div>
@@ -575,7 +651,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Contraseña <span>*</span></label>
                   <div style={{ position: 'relative' }}>
-                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30}/>
+                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30} placeholder="Mínimo 8 caracteres"/>
                     <button
                     type="button"
                     className="login-password-toggle"
@@ -601,7 +677,7 @@ const RegistroArrendador = ({ volver }) => {
                 <div className="form-group">
                   <label className="form-label">Confirmar contraseña <span>*</span></label>
                   <div style={{ position: 'relative' }}>
-                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30} />
+                    <input className="form-input" type={mostrarPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ paddingRight: '2.5rem' }} maxLength={30} placeholder="Repite tu contraseña" />
                     <button
                       type="button"
                       className="login-password-toggle"

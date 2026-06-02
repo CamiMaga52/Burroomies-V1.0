@@ -54,54 +54,128 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
-    if (name === 'usuarioNom') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
-    if (name === 'usuarioApePat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
-    if (name === 'usuarioApeMat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    
+    // Aplicar restricciones de entrada
+    if (name === 'usuarioNom') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35)
+    if (name === 'usuarioApePat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 25)
+    if (name === 'usuarioApeMat') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 25)
     if (name === 'usuarioTel') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     if (name === 'usuarioCurp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
     if (name === 'arrendatarioBoleta') v = value.replace(/[^0-9]/g, '').slice(0, 10)
+    
     setFormData(prev => ({ ...prev, [name]: v }))
+    
     if (name === 'escuelaId') {
       setFormData(prev => ({ ...prev, escuelaId: v, carrera_idCarrera: '' }))
       cargarCarreras(v)
       return
     }
+    
+    // Limpiar error del campo al escribir
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.usuarioNom || formData.usuarioNom.trim().length < 2) errs.usuarioNom = 'Mínimo 2 caracteres'
-    if (!formData.usuarioApePat || formData.usuarioApePat.trim().length < 2) errs.usuarioApePat = 'Mínimo 2 caracteres'
-    if (formData.usuarioTel && formData.usuarioTel.length !== 10) errs.usuarioTel = 'Debe tener exactamente 10 dígitos'
-    if (formData.usuarioFechaNac) {
-      const hoy = new Date(); const nac = new Date(formData.usuarioFechaNac)
+    
+    // ── VALIDACIONES MEJORADAS ────────────────────────────
+    
+    // Nombres
+    if (!formData.usuarioNom || formData.usuarioNom.trim().length < 3) {
+      errs.usuarioNom = !formData.usuarioNom ? 'Los nombres son obligatorios' : 'Mínimo 3 caracteres'
+    }
+    
+    // Apellido paterno
+    if (!formData.usuarioApePat || formData.usuarioApePat.trim().length < 3) {
+      errs.usuarioApePat = !formData.usuarioApePat ? 'El apellido paterno es obligatorio' : 'Mínimo 3 caracteres'
+    }
+    
+    // Apellido materno (opcional)
+    if (formData.usuarioApeMat && formData.usuarioApeMat.trim().length < 3) {
+      errs.usuarioApeMat = 'Mínimo 3 caracteres'
+    }
+    
+    // Teléfono
+    if (!formData.usuarioTel) {
+      errs.usuarioTel = 'El teléfono es obligatorio'
+    } else if (formData.usuarioTel.length !== 10) {
+      errs.usuarioTel = 'Debe tener exactamente 10 dígitos'
+    }
+    
+    // Fecha de nacimiento
+    if (!formData.usuarioFechaNac) {
+      errs.usuarioFechaNac = 'La fecha de nacimiento es obligatoria'
+    } else {
+      const hoy = new Date()
+      const nac = new Date(formData.usuarioFechaNac)
       let edad = hoy.getFullYear() - nac.getFullYear()
       if (hoy < new Date(hoy.getFullYear(), nac.getMonth(), nac.getDate())) edad--
       if (edad < 17) errs.usuarioFechaNac = 'El estudiante debe tener al menos 17 años'
+      else if (edad > 100) errs.usuarioFechaNac = 'Fecha de nacimiento no válida'
     }
-    if (!isVerified && formData.usuarioCurp && formData.usuarioCurp.length !== 18) errs.usuarioCurp = 'Debe tener exactamente 18 caracteres'
-    if (!isVerified && formData.arrendatarioBoleta && formData.arrendatarioBoleta.length !== 10) errs.arrendatarioBoleta = 'La boleta debe tener exactamente 10 dígitos'
-    if (Object.keys(errs).length > 0) { setErrors(errs); return }
+    
+    // CURP (si no está verificado)
+    if (!isVerified) {
+      if (!formData.usuarioCurp) {
+        errs.usuarioCurp = 'El CURP es obligatorio'
+      } else if (!/^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/.test(formData.usuarioCurp)) {
+        errs.usuarioCurp = 'CURP inválido (4 letras, 6 números, 6 letras, 2 alfanuméricos)'
+      }
+    }
+    
+    // Escuela y carrera
+    if (!formData.escuelaId) errs.escuelaId = 'Selecciona una escuela'
+    if (!formData.carrera_idCarrera) errs.carrera_idCarrera = 'Selecciona una carrera'
+    
+    // Boleta (si no está verificado)
+    if (!isVerified) {
+      if (!formData.arrendatarioBoleta) {
+        errs.arrendatarioBoleta = 'La boleta es obligatoria'
+      } else if (formData.arrendatarioBoleta.length !== 10) {
+        errs.arrendatarioBoleta = 'La boleta debe tener exactamente 10 dígitos'
+      }
+    }
+    
+    // ── MOSTRAR ERRORES CON SCROLL ──────────────────────
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      // Scroll al primer error
+      setTimeout(() => {
+        const primerError = document.querySelector('.admin-form-error')
+        if (primerError) {
+          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+      return
+    }
 
-    setSaving(true); setError('')
+    // ── ENVÍO AL BACKEND (LÓGICA ORIGINAL) ─────────────
+    setSaving(true)
+    setError('')
+    
     const usuarioData = {
-      usuarioNom: formData.usuarioNom, usuarioApePat: formData.usuarioApePat,
-      usuarioApeMat: formData.usuarioApeMat, usuarioTel: formData.usuarioTel,
+      usuarioNom: formData.usuarioNom,
+      usuarioApePat: formData.usuarioApePat,
+      usuarioApeMat: formData.usuarioApeMat,
+      usuarioTel: formData.usuarioTel,
       usuarioFechaNac: formData.usuarioFechaNac,
       ...(!isVerified && { usuarioCurp: formData.usuarioCurp })
     }
+    
     const arrendatarioData = {
       arrendatarioBoleta: formData.arrendatarioBoleta,
       carrera_idCarrera: formData.carrera_idCarrera
     }
+    
     try {
       await updateArrendatario(arrendatario.idArrendatario, usuarioData, arrendatarioData)
       onSuccess()
     } catch (err) {
       setError(err.response?.data?.error || 'Error al guardar')
-    } finally { setSaving(false) }
+    } finally { 
+      setSaving(false) 
+    }
   }
 
   return (
@@ -129,23 +203,33 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
               <label className="admin-form-label">Nombres *</label>
               <input
                 className={`admin-form-input${errors.usuarioNom ? ' is-error' : ''}`}
-                name="usuarioNom" value={formData.usuarioNom} onChange={handleChange} maxLength={60}
+                name="usuarioNom" value={formData.usuarioNom} onChange={handleChange} maxLength={35}
+                placeholder="Ej: Juan Carlos"
               />
+              <span className="admin-form-hint">Solo letras y espacios. Mínimo 3 caracteres</span>
               {errors.usuarioNom && <span className="admin-form-error">{errors.usuarioNom}</span>}
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Ap. Paterno *</label>
               <input
                 className={`admin-form-input${errors.usuarioApePat ? ' is-error' : ''}`}
-                name="usuarioApePat" value={formData.usuarioApePat} onChange={handleChange} maxLength={35}
+                name="usuarioApePat" value={formData.usuarioApePat} onChange={handleChange} maxLength={25}
+                placeholder="Ej: Hernández"
               />
+              <span className="admin-form-hint">Solo letras. Mínimo 3 caracteres</span>
               {errors.usuarioApePat && <span className="admin-form-error">{errors.usuarioApePat}</span>}
             </div>
           </div>
 
           <div className="admin-form-field">
-            <label className="admin-form-label">Ap. Materno</label>
-            <input className="admin-form-input" name="usuarioApeMat" value={formData.usuarioApeMat} onChange={handleChange} maxLength={35} />
+            <label className="admin-form-label">Ap. Materno (opcional)</label>
+            <input 
+              className={`admin-form-input${errors.usuarioApeMat ? ' is-error' : ''}`}
+              name="usuarioApeMat" value={formData.usuarioApeMat} onChange={handleChange} maxLength={25}
+              placeholder="Ej: López"
+            />
+            <span className="admin-form-hint">Opcional. Solo letras</span>
+            {errors.usuarioApeMat && <span className="admin-form-error">{errors.usuarioApeMat}</span>}
           </div>
 
           <div className="grid-2">
@@ -155,31 +239,38 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
               <span className="admin-form-hint">No modificable</span>
             </div>
             <div className="admin-form-field">
-              <label className="admin-form-label">Teléfono (10 dígitos)</label>
+              <label className="admin-form-label">Teléfono * (10 dígitos)</label>
               <input
                 className={`admin-form-input${errors.usuarioTel ? ' is-error' : ''}`}
                 type="tel" name="usuarioTel" value={formData.usuarioTel} onChange={handleChange} maxLength={10}
+                placeholder="Ej: 5512345678"
               />
+              <span className="admin-form-hint">Solo números. Exactamente 10 dígitos</span>
               {errors.usuarioTel && <span className="admin-form-error">{errors.usuarioTel}</span>}
             </div>
           </div>
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">CURP (18 car.)</label>
+              <label className="admin-form-label">CURP * (18 caracteres)</label>
               <input
                 className={`admin-form-input${errors.usuarioCurp ? ' is-error' : ''}`}
                 name="usuarioCurp" value={formData.usuarioCurp} onChange={handleChange} disabled={isVerified} maxLength={18}
+                placeholder="Ej: HERS850101MDFRRN09"
               />
+              <span className="admin-form-hint">Formato: 4 letras, 6 números, 6 letras, 2 alfanuméricos</span>
               {errors.usuarioCurp && <span className="admin-form-error">{errors.usuarioCurp}</span>}
             </div>
             <div className="admin-form-field">
-              <label className="admin-form-label">Fecha de Nacimiento</label>
+              <label className="admin-form-label">Fecha de Nacimiento *</label>
               <input
-                className="admin-form-input"
+                className={`admin-form-input${errors.usuarioFechaNac ? ' is-error' : ''}`}
                 type="date" name="usuarioFechaNac" value={formData.usuarioFechaNac} onChange={handleChange}
-              max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 17); return d.toISOString().split('T')[0] })()}
+                max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 17); return d.toISOString().split('T')[0] })()}
+                min={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 100); return d.toISOString().split('T')[0] })()}
               />
+              <span className="admin-form-hint">Debe tener al menos 17 años</span>
+              {errors.usuarioFechaNac && <span className="admin-form-error">{errors.usuarioFechaNac}</span>}
             </div>
           </div>
 
@@ -187,36 +278,48 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">Escuela</label>
-              <select className="admin-form-input" name="escuelaId" value={formData.escuelaId} onChange={handleChange}>
-                <option value="">Selecciona</option>
+              <label className="admin-form-label">Escuela *</label>
+              <select 
+                className={`admin-form-input${errors.escuelaId ? ' is-error' : ''}`} 
+                name="escuelaId" value={formData.escuelaId} onChange={handleChange}
+              >
+                <option value="">Selecciona una escuela</option>
                 {unidades.map(u => (
-                  <option key={u.idUnidadAcademica} value={u.idUnidadAcademica}>{u.unidadAcademicaNombre}</option>
+                  <option key={u.idUnidadAcademica} value={u.idUnidadAcademica}>
+                    {u.unidadAcademicaNombre} ({u.unidadAcademicaClave})
+                  </option>
                 ))}
               </select>
+              {errors.escuelaId && <span className="admin-form-error">{errors.escuelaId}</span>}
             </div>
             <div className="admin-form-field">
-              <label className="admin-form-label">Carrera</label>
+              <label className="admin-form-label">Carrera *</label>
               <select
-                className="admin-form-input"
+                className={`admin-form-input${errors.carrera_idCarrera ? ' is-error' : ''}`}
                 name="carrera_idCarrera" value={formData.carrera_idCarrera} onChange={handleChange}
                 disabled={!formData.escuelaId || loading}
               >
-                <option value="">{loading ? 'Cargando...' : 'Selecciona'}</option>
+                <option value="">{loading ? 'Cargando carreras...' : 'Selecciona una carrera'}</option>
                 {carreras.map(c => (
-                  <option key={c.idCarrera} value={c.idCarrera}>{c.carreraNombre}</option>
+                  <option key={c.idCarrera} value={c.idCarrera}>
+                    {c.carreraNombre} ({c.carreraClave})
+                  </option>
                 ))}
               </select>
+              {errors.carrera_idCarrera && <span className="admin-form-error">{errors.carrera_idCarrera}</span>}
             </div>
           </div>
 
           <div className="admin-form-field">
-            <label className="admin-form-label">Boleta</label>
+            <label className="admin-form-label">Boleta *</label>
             <input
-              className="admin-form-input"
+              className={`admin-form-input${errors.arrendatarioBoleta ? ' is-error' : ''}`}
               name="arrendatarioBoleta" value={formData.arrendatarioBoleta} onChange={handleChange}
               disabled={isVerified} maxLength={10}
+              placeholder="Ej: 2024030001"
             />
+            <span className="admin-form-hint">10 dígitos, solo números</span>
+            {errors.arrendatarioBoleta && <span className="admin-form-error">{errors.arrendatarioBoleta}</span>}
           </div>
         </form>
       </div>

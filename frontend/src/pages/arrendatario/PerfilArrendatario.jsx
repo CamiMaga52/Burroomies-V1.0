@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import NavbarArrendatario from '../../components/common/NavbarArrendatario'
 import FooterInicio from '../../components/common/FooterInicio'
@@ -22,9 +22,16 @@ const PerfilArrendatario = () => {
   const [username, setUsername] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [usernameDisponible, setUsernameDisponible] = useState(true)
+  const [usernameVerificando, setUsernameVerificando] = useState(false)
+
+  // Errores por campo (nuevo)
+  const [errors, setErrors] = useState({})
 
   // Estado para modales
   const [modal, setModal] = useState({ isOpen: false, type: '', message: '', title: '' })
+
+  // Ref para debounce del username
+  const debounceTimer = useRef(null)
 
   useEffect(() => {
     cargarPerfil()
@@ -81,8 +88,27 @@ const PerfilArrendatario = () => {
     if (usernameNuevo === perfil?.arrendatarioUser) {
       setUsernameDisponible(true)
       setUsernameError('')
+      setUsernameVerificando(false)
       return
     }
+    
+    // Validación de formato antes de llamar al backend
+    if (usernameNuevo.length < 3) {
+      setUsernameDisponible(false)
+      setUsernameError('Mínimo 3 caracteres')
+      setUsernameVerificando(false)
+      return
+    }
+    
+    if (!/^[a-zA-Z0-9_]+$/.test(usernameNuevo)) {
+      setUsernameDisponible(false)
+      setUsernameError('Solo letras, números y guión bajo')
+      setUsernameVerificando(false)
+      return
+    }
+    
+    setUsernameVerificando(true)
+    setUsernameError('')
     
     try {
       const response = await api.post('/auth/validar-campo', {
@@ -99,34 +125,141 @@ const PerfilArrendatario = () => {
       }
     } catch (error) {
       console.error('Error al verificar username:', error)
+      setUsernameError('Error al verificar disponibilidad')
+      setUsernameDisponible(false)
+    } finally {
+      setUsernameVerificando(false)
     }
   }
 
   const handleUsernameChange = (e) => {
     const valor = e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase().slice(0, 20)
     setUsername(valor)
-    if (valor.length < 3) {
-      setUsernameError('Mínimo 3 caracteres')
-      setUsernameDisponible(false)
-    } else if (valor.length > 20) {
-      setUsernameError('Máximo 20 caracteres')
-      setUsernameDisponible(false)
-    } else {
-      verificarUsername(valor)
+    
+    // Limpiar error del campo
+    if (errors.username) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors.username
+        return newErrors
+      })
     }
+    
+    // Debounce para verificar (evita llamadas mientras escribe)
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    
+    if (valor === perfil?.arrendatarioUser) {
+      setUsernameDisponible(true)
+      setUsernameError('')
+      setUsernameVerificando(false)
+      return
+    }
+    
+    if (valor.length < 3) {
+      setUsernameDisponible(false)
+      setUsernameError('Mínimo 3 caracteres')
+      setUsernameVerificando(false)
+      return
+    }
+    
+    setUsernameVerificando(true)
+    debounceTimer.current = setTimeout(() => {
+      verificarUsername(valor)
+    }, 600)
   }
 
-  const handleGuardar = async () => {
+  // Funciones de restricción para cada campo
+  const handleNombresChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
+    setNombres(valor)
+    if (errors.nombres) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.nombres
+      return newErrors
+    })
+  }
+
+  const handleApellidoPaternoChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 35)
+    setApellidoPaterno(valor)
+    if (errors.apellidoPaterno) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.apellidoPaterno
+      return newErrors
+    })
+  }
+
+  const handleApellidoMaternoChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 35)
+    setApellidoMaterno(valor)
+    if (errors.apellidoMaterno) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.apellidoMaterno
+      return newErrors
+    })
+  }
+
+  const handleTelefonoChange = (e) => {
+    const valor = e.target.value.replace(/[^0-9]/g, '').slice(0, 10)
+    setTelefono(valor)
+    if (errors.telefono) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.telefono
+      return newErrors
+    })
+  }
+
+  const validarFormulario = () => {
+    const errs = {}
     const nom = nombres.trim()
     const ape = apellidoPaterno.trim()
+    const apeMat = apellidoMaterno.trim()
     const tel = telefono.trim()
     const usr = username.trim()
 
-    if (nom.length < 2) { mostrarModal('error', 'Datos incompletos', 'El nombre debe tener al menos 2 caracteres.'); return }
-    if (ape.length < 2) { mostrarModal('error', 'Datos incompletos', 'El apellido paterno debe tener al menos 2 caracteres.'); return }
-    if (tel.length !== 10) { mostrarModal('error', 'Datos incompletos', 'El teléfono debe tener exactamente 10 dígitos.'); return }
-    if (usr.length < 3) { mostrarModal('error', 'Datos incompletos', 'El nombre de usuario debe tener al menos 3 caracteres.'); return }
-    if (!usernameDisponible) { mostrarModal('error', 'Error', 'Corrige los errores antes de guardar'); return }
+    if (!nom || nom.length < 2) {
+      errs.nombres = !nom ? 'Los nombres son obligatorios' : 'Mínimo 2 caracteres'
+    }
+    
+    if (!ape || ape.length < 2) {
+      errs.apellidoPaterno = !ape ? 'El apellido paterno es obligatorio' : 'Mínimo 2 caracteres'
+    }
+    
+    if (apeMat && apeMat.length < 2) {
+      errs.apellidoMaterno = 'Mínimo 2 caracteres'
+    }
+    
+    if (!tel) {
+      errs.telefono = 'El teléfono es obligatorio'
+    } else if (tel.length !== 10) {
+      errs.telefono = 'Debe tener exactamente 10 dígitos'
+    }
+    
+    if (!usr || usr.length < 3) {
+      errs.username = !usr ? 'El nombre de usuario es obligatorio' : 'Mínimo 3 caracteres'
+    }
+    
+    if (!usernameDisponible && usr !== perfil?.arrendatarioUser) {
+      errs.username = usernameError || 'Nombre de usuario no disponible'
+    }
+    
+    return errs
+  }
+
+  const handleGuardar = async () => {
+    const errs = validarFormulario()
+    
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      // Scroll al primer error
+      setTimeout(() => {
+        const primerError = document.querySelector('.perfil-error')
+        if (primerError) {
+          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+      return
+    }
 
     try {
       setGuardando(true)
@@ -141,11 +274,11 @@ const PerfilArrendatario = () => {
           'x-arrendatario-id': arrendatarioId
         },
         body: JSON.stringify({
-          usuarioNom: nombres,
-          usuarioApePat: apellidoPaterno,
-          usuarioApeMat: apellidoMaterno,
-          usuarioTel: telefono,
-          arrendatarioUser: username
+          usuarioNom: nombres.trim(),
+          usuarioApePat: apellidoPaterno.trim(),
+          usuarioApeMat: apellidoMaterno.trim(),
+          usuarioTel: telefono.trim(),
+          arrendatarioUser: username.trim()
         })
       })
 
@@ -154,6 +287,7 @@ const PerfilArrendatario = () => {
       const data = await response.json()
       setPerfil(data.perfil)
       setEditando(false)
+      setErrors({})
       setMensajeExito('Perfil actualizado exitosamente')
       
       setTimeout(() => setMensajeExito(''), 3000)
@@ -173,6 +307,8 @@ const PerfilArrendatario = () => {
     setUsername(perfil?.arrendatarioUser || '')
     setUsernameError('')
     setUsernameDisponible(true)
+    setUsernameVerificando(false)
+    setErrors({})
     setEditando(false)
   }
 
@@ -288,7 +424,7 @@ const PerfilArrendatario = () => {
               <h2 style={{ marginTop: '15px', color: '#333' }}>
                 {usuario.usuarioNom} {usuario.usuarioApePat} {usuario.usuarioApeMat || ''}
               </h2>
-              <p style={{ color: '#666', margin: '5px 0' }}>{perfil.arrendatarioUser}</p>
+              <p style={{ color: '#666', margin: '5px 0' }}>@{perfil.arrendatarioUser}</p>
             </div>
 
             {/* Datos */}
@@ -310,7 +446,7 @@ const PerfilArrendatario = () => {
                   <h3 style={sectionTitleStyle}>🎓 Información Académica</h3>
                   
                   <InfoRow label="Boleta" value={perfil.arrendatarioBoleta} bloqueado />
-                  <InfoRow label="Nombre de usuario" value={`${perfil.arrendatarioUser}`} />
+                  <InfoRow label="Nombre de usuario" value={`@${perfil.arrendatarioUser}`} />
                   <InfoRow label="Carrera" value={carrera.carreraNombre || '—'} />
                 </div>
 
@@ -357,37 +493,83 @@ const PerfilArrendatario = () => {
                 <div style={infoSectionStyle}>
                   <h3 style={sectionTitleStyle}>✏️ Editar Información</h3>
                   
-                  <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60))} maxLength={60} />
-                  <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
-                  <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
-                  <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))} type="tel" maxLength={10} />
+                  <InputField 
+                    label="Nombres" 
+                    value={nombres} 
+                    onChange={handleNombresChange} 
+                    maxLength={60}
+                    placeholder="Ej: Juan Carlos"
+                    hint="Solo letras y espacios. Mínimo 2 caracteres"
+                    error={errors.nombres}
+                  />
+                  
+                  <InputField 
+                    label="Apellido Paterno" 
+                    value={apellidoPaterno} 
+                    onChange={handleApellidoPaternoChange} 
+                    maxLength={35}
+                    placeholder="Ej: Hernández"
+                    hint="Solo letras. Mínimo 2 caracteres"
+                    error={errors.apellidoPaterno}
+                  />
+                  
+                  <InputField 
+                    label="Apellido Materno (opcional)" 
+                    value={apellidoMaterno} 
+                    onChange={handleApellidoMaternoChange} 
+                    maxLength={35}
+                    placeholder="Ej: López"
+                    hint="Opcional. Solo letras"
+                    error={errors.apellidoMaterno}
+                  />
+                  
+                  <InputField 
+                    label="Teléfono" 
+                    value={telefono} 
+                    onChange={handleTelefonoChange} 
+                    type="tel" 
+                    maxLength={10}
+                    placeholder="Ej: 5512345678"
+                    hint="10 dígitos, solo números"
+                    error={errors.telefono}
+                  />
                   
                   <div style={{ marginBottom: '15px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
-                      Nombre de usuario
+                    <label style={labelStyle}>
+                      Nombre de usuario *
                     </label>
                     <input
                       type="text"
                       value={username}
                       onChange={handleUsernameChange}
+                      maxLength={20}
+                      placeholder="Ej: juan_perez"
                       style={{
                         width: '100%',
                         padding: '10px',
                         borderRadius: '5px',
-                        border: usernameError ? '2px solid #dc3545' : usernameDisponible ? '2px solid #28a745' : '1px solid #ddd',
+                        border: (errors.username || usernameError) ? '2px solid #dc3545' : 
+                                username === perfil?.arrendatarioUser ? '1px solid #ddd' :
+                                usernameDisponible && !usernameVerificando ? '2px solid #28a745' : '1px solid #ddd',
                         fontSize: '14px',
                         boxSizing: 'border-box'
                       }}
                     />
-                    {usernameError && <small style={{ color: '#dc3545' }}>{usernameError}</small>}
-                    {!usernameError && username !== perfil?.arrendatarioUser && usernameDisponible && (
-                      <small style={{ color: '#28a745' }}>✓ Disponible</small>
-                    )}
+                    <div style={{ marginTop: '4px' }}>
+                      {usernameVerificando && <small style={{ color: '#6b7280' }}>⏳ Verificando disponibilidad...</small>}
+                      {(errors.username || usernameError) && <small className="perfil-error" style={{ color: '#dc3545', display: 'block' }}>{errors.username || usernameError}</small>}
+                      {!errors.username && !usernameError && !usernameVerificando && username !== perfil?.arrendatarioUser && usernameDisponible && username.length >= 3 && (
+                        <small style={{ color: '#28a745', display: 'block' }}>✓ Disponible</small>
+                      )}
+                      {!errors.username && !usernameError && !usernameVerificando && (
+                        <small style={{ color: '#6b7280', display: 'block' }}>3-20 caracteres. Solo letras, números y guión bajo</small>
+                      )}
+                    </div>
                   </div>
 
                   <div style={{ marginTop: '20px' }}>
                     <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
-                       Información no editable:
+                      🔒 Información no editable:
                     </p>
                     <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                     <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
@@ -413,15 +595,15 @@ const PerfilArrendatario = () => {
                   </button>
                   <button 
                     onClick={handleGuardar}
-                    disabled={guardando || !usernameDisponible}
+                    disabled={guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando}
                     style={{
                       flex: 1,
                       padding: '12px',
-                      backgroundColor: guardando || !usernameDisponible ? '#ccc' : '#1a237e',
+                      backgroundColor: guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando ? '#ccc' : '#1a237e',
                       color: 'white',
                       border: 'none',
                       borderRadius: '5px',
-                      cursor: guardando || !usernameDisponible ? 'not-allowed' : 'pointer',
+                      cursor: guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando ? 'not-allowed' : 'pointer',
                       fontSize: '14px',
                       fontWeight: 'bold'
                     }}
@@ -561,30 +743,41 @@ const InfoRow = ({ label, value, bloqueado }) => (
       color: bloqueado ? '#999' : '#333',
       fontWeight: '500'
     }}>
-      {bloqueado ? ' ' : ''}{value}
+      {bloqueado ? '🔒 ' : ''}{value}
     </span>
   </div>
 )
 
-const InputField = ({ label, value, onChange, type = 'text', maxLength }) => (
+const labelStyle = {
+  display: 'block',
+  fontWeight: 'bold',
+  marginBottom: '5px',
+  fontSize: '14px',
+  color: '#333'
+}
+
+const InputField = ({ label, value, onChange, type = 'text', maxLength, placeholder, hint, error }) => (
   <div style={{ marginBottom: '15px' }}>
-    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
-      {label}
+    <label style={labelStyle}>
+      {label} {label.includes('(opcional)') ? '' : '*'}
     </label>
     <input
       type={type}
       value={value}
       onChange={onChange}
       maxLength={maxLength}
+      placeholder={placeholder}
       style={{
         width: '100%',
         padding: '10px',
         borderRadius: '5px',
-        border: '1px solid #ddd',
+        border: error ? '2px solid #dc3545' : '1px solid #ddd',
         fontSize: '14px',
         boxSizing: 'border-box'
       }}
     />
+    {error && <small className="perfil-error" style={{ color: '#dc3545', display: 'block', marginTop: '4px' }}>{error}</small>}
+    {!error && hint && <small style={{ color: '#6b7280', display: 'block', marginTop: '4px' }}>{hint}</small>}
   </div>
 )
 

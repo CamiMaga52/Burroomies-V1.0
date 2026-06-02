@@ -3,15 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import NavbarArrendador from '../../components/common/NavbarArrendador'
 import FooterInicio from '../../components/common/FooterInicio'
 import { getPerfilArrendador, actualizarPerfilArrendador } from '../../services/authService'
+import { buscarCP } from '../../services/cpService'
 
 const PerfilArrendador = () => {
   const navigate = useNavigate()
-  const [cargando, setCargando] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [mensajeExito, setMensajeExito] = useState('')
   const [editando, setEditando] = useState(false)
   const [guardando, setGuardando] = useState(false)
+  const [buscandoCP, setBuscandoCP] = useState(false)
+
+  // Errores por campo
+  const [errors, setErrors] = useState({})
 
   // Estado para modales
   const [modal, setModal] = useState({ isOpen: false, type: '', message: '', title: '' })
@@ -96,55 +100,186 @@ const PerfilArrendador = () => {
     }
   }
 
+  // ── Handlers con restricciones ──────────────────────────────────────────
+  const handleNombresChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
+    setNombres(valor)
+    if (errors.nombres) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.nombres
+      return newErrors
+    })
+  }
+
+  const handleApellidoPaternoChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 35)
+    setApellidoPaterno(valor)
+    if (errors.apellidoPaterno) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.apellidoPaterno
+      return newErrors
+    })
+  }
+
+  const handleApellidoMaternoChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 35)
+    setApellidoMaterno(valor)
+    if (errors.apellidoMaterno) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.apellidoMaterno
+      return newErrors
+    })
+  }
+
+  const handleTelefonoChange = (e) => {
+    const valor = e.target.value.replace(/[^0-9]/g, '').slice(0, 10)
+    setTelefono(valor)
+    if (errors.telefono) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.telefono
+      return newErrors
+    })
+  }
+
+  const handleCalleChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100)
+    setCalle(valor)
+    if (errors.calle) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.calle
+      return newErrors
+    })
+  }
+
+  const handleNumExtChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+    setNumExt(valor)
+    if (errors.numExt) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.numExt
+      return newErrors
+    })
+  }
+
+  const handleNumIntChange = (e) => {
+    const valor = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+    setNumInt(valor)
+  }
+
   const handleCPChange = async (e) => {
     const valorCP = e.target.value.replace(/\D/g, '').slice(0, 5)
     setCP(valorCP)
     
+    // Limpiar errores de CP
+    if (errors.cp) setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors.cp
+      return newErrors
+    })
+    
     if (valorCP.length === 5) {
+      setBuscandoCP(true)
       try {
-        const { buscarCP } = await import('../../services/propiedadService')
-        const data = await buscarCP(valorCP)
-        setColonia(data.colonia || '')
-        setMunicipio(data.municipio || '')
-        setEstado(data.estado || '')
+        const resultados = await buscarCP(valorCP)
+        if (resultados && resultados.length > 0) {
+          setColonia(resultados[0].d_asenta || '')
+          setMunicipio(resultados[0].D_mnpio || '')
+          setEstado(resultados[0].d_estado || '')
+        } else {
+          setColonia('')
+          setMunicipio('')
+          setEstado('')
+        }
       } catch (err) {
         setColonia('')
         setMunicipio('')
         setEstado('')
+      } finally {
+        setBuscandoCP(false)
       }
+    } else {
+      setColonia('')
+      setMunicipio('')
+      setEstado('')
     }
   }
 
-  const handleGuardar = async () => {
+  // ── Validación ──────────────────────────────────────────────────────────
+  const validarFormulario = () => {
+    const errs = {}
     const nom = nombres.trim()
     const ape = apellidoPaterno.trim()
+    const apeMat = apellidoMaterno.trim()
     const tel = telefono.trim()
     const cal = calle.trim()
     const ext = numExt.trim()
     const cpv = cp.trim()
 
-    if (nom.length < 2) { setError('El nombre debe tener al menos 2 caracteres.'); return }
-    if (ape.length < 2) { setError('El apellido paterno debe tener al menos 2 caracteres.'); return }
-    if (tel.length !== 10) { setError('El teléfono debe tener exactamente 10 dígitos.'); return }
-    if (cal.length < 3) { setError('La calle debe tener al menos 3 caracteres.'); return }
-    if (ext.length < 1) { setError('El número exterior es obligatorio.'); return }
-    if (cpv.length !== 5) { setError('El código postal debe tener 5 dígitos.'); return }
+    if (!nom || nom.length < 2) {
+      errs.nombres = !nom ? 'Los nombres son obligatorios' : 'Mínimo 2 caracteres'
+    }
+    
+    if (!ape || ape.length < 2) {
+      errs.apellidoPaterno = !ape ? 'El apellido paterno es obligatorio' : 'Mínimo 2 caracteres'
+    }
+    
+    if (apeMat && apeMat.length < 2) {
+      errs.apellidoMaterno = 'Mínimo 2 caracteres'
+    }
+    
+    if (!tel) {
+      errs.telefono = 'El teléfono es obligatorio'
+    } else if (tel.length !== 10) {
+      errs.telefono = 'Debe tener exactamente 10 dígitos'
+    }
+    
+    if (!cal || cal.length < 3) {
+      errs.calle = !cal ? 'La calle es obligatoria' : 'Mínimo 3 caracteres'
+    }
+    
+    if (!ext) {
+      errs.numExt = 'El número exterior es obligatorio'
+    }
+    
+    if (!cpv || cpv.length !== 5) {
+      errs.cp = !cpv ? 'El código postal es obligatorio' : 'Debe tener 5 dígitos'
+    }
+    
+    return errs
+  }
+
+  const handleGuardar = async () => {
+    const errs = validarFormulario()
+    
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      setError('')
+      // Scroll al primer error
+      setTimeout(() => {
+        const primerError = document.querySelector('.perfil-error')
+        if (primerError) {
+          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+      return
+    }
 
     setGuardando(true)
     setError('')
     setMensajeExito('')
+    setErrors({})
 
     try {
       const userId = localStorage.getItem('userId')
       const datos = {
-        usuarioNom: nombres,
-        usuarioApePat: apellidoPaterno,
-        usuarioApeMat: apellidoMaterno,
-        usuarioTel: telefono,
-        direccionCalle: calle,
-        direccionNumExt: numExt,
-        direccionNumInt: numInt,
-        cp: cp
+        usuarioNom: nombres.trim(),
+        usuarioApePat: apellidoPaterno.trim(),
+        usuarioApeMat: apellidoMaterno.trim(),
+        usuarioTel: telefono.trim(),
+        direccionCalle: calle.trim(),
+        direccionNumExt: numExt.trim(),
+        direccionNumInt: numInt.trim(),
+        cp: cp.trim()
       }
 
       await actualizarPerfilArrendador(userId, datos)
@@ -175,6 +310,8 @@ const PerfilArrendador = () => {
     setColonia(perfil.direccion?.cp?.d_asenta || '')
     setMunicipio(perfil.direccion?.cp?.D_mnpio || '')
     setEstado(perfil.direccion?.cp?.d_estado || '')
+    setErrors({})
+    setError('')
     setEditando(false)
   }
 
@@ -254,6 +391,7 @@ const PerfilArrendador = () => {
           </div>
         )}
 
+        {/* Error general */}
         {error && (
           <div style={{
             padding: '15px',
@@ -263,7 +401,7 @@ const PerfilArrendador = () => {
             marginBottom: '20px',
             textAlign: 'center'
           }}>
-            {error}
+            ❌ {error}
           </div>
         )}
 
@@ -364,14 +502,51 @@ const PerfilArrendador = () => {
               {/* Editar Datos Personales */}
               <div style={infoSectionStyle}>
                 <h3 style={sectionTitleStyle}>✏️ Editar Datos Personales</h3>
-                <InputField label="Nombre" value={nombres} onChange={(e) => setNombres(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60))} maxLength={60} />
-                <InputField label="Apellido Paterno" value={apellidoPaterno} onChange={(e) => setApellidoPaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
-                <InputField label="Apellido Materno" value={apellidoMaterno} onChange={(e) => setApellidoMaterno(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 35))} maxLength={35} />
-                <InputField label="Teléfono" value={telefono} onChange={(e) => setTelefono(e.target.value.replace(/[^0-9]/g, '').slice(0, 10))} type="tel" maxLength={10} />
+                
+                <InputField 
+                  label="Nombres *" 
+                  value={nombres} 
+                  onChange={handleNombresChange} 
+                  maxLength={60}
+                  placeholder="Ej: Juan Carlos"
+                  hint="Solo letras y espacios. Mínimo 2 caracteres"
+                  error={errors.nombres}
+                />
+                
+                <InputField 
+                  label="Apellido Paterno *" 
+                  value={apellidoPaterno} 
+                  onChange={handleApellidoPaternoChange} 
+                  maxLength={35}
+                  placeholder="Ej: Hernández"
+                  hint="Solo letras. Mínimo 2 caracteres"
+                  error={errors.apellidoPaterno}
+                />
+                
+                <InputField 
+                  label="Apellido Materno (opcional)" 
+                  value={apellidoMaterno} 
+                  onChange={handleApellidoMaternoChange} 
+                  maxLength={35}
+                  placeholder="Ej: López"
+                  hint="Opcional. Solo letras"
+                  error={errors.apellidoMaterno}
+                />
+                
+                <InputField 
+                  label="Teléfono *" 
+                  value={telefono} 
+                  onChange={handleTelefonoChange} 
+                  type="tel" 
+                  maxLength={10}
+                  placeholder="Ej: 5512345678"
+                  hint="10 dígitos, solo números"
+                  error={errors.telefono}
+                />
 
                 <div style={{ marginTop: '20px' }}>
                   <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
-                     Información no editable:
+                    🔒 Información no editable:
                   </p>
                   <InfoRow label="Correo electrónico" value={usuario.usuarioCorreo} bloqueado />
                   <InfoRow label="CURP" value={usuario.usuarioCurp} bloqueado />
@@ -383,18 +558,64 @@ const PerfilArrendador = () => {
               {/* Editar Dirección */}
               <div style={infoSectionStyle}>
                 <h3 style={sectionTitleStyle}>✏️ Editar Dirección</h3>
-                <InputField label="Calle" value={calle} onChange={(e) => setCalle(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]/g, '').slice(0, 100))} maxLength={100} />
+                
+                <InputField 
+                  label="Calle *" 
+                  value={calle} 
+                  onChange={handleCalleChange} 
+                  maxLength={100}
+                  placeholder="Ej: Av. Insurgentes Sur 123"
+                  hint="Solo letras, números y espacios. Mínimo 3 caracteres"
+                  error={errors.calle}
+                />
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                  <InputField label="Número Exterior" value={numExt} onChange={(e) => setNumExt(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10))} maxLength={10} />
-                  <InputField label="Número Interior" value={numInt} onChange={(e) => setNumInt(e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10))} maxLength={10} />
+                  <InputField 
+                    label="Número Exterior *" 
+                    value={numExt} 
+                    onChange={handleNumExtChange} 
+                    maxLength={10}
+                    placeholder="Ej: 123"
+                    hint="Solo letras y números"
+                    error={errors.numExt}
+                  />
+                  <InputField 
+                    label="Número Interior" 
+                    value={numInt} 
+                    onChange={handleNumIntChange} 
+                    maxLength={10}
+                    placeholder="Ej: 3B"
+                    hint="Opcional. Solo letras y números"
+                  />
                 </div>
 
-                <InputField label="Código Postal" value={cp} onChange={handleCPChange} />
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
+                    Código Postal *
+                  </label>
+                  <input
+                    type="text"
+                    value={cp}
+                    onChange={handleCPChange}
+                    maxLength={5}
+                    placeholder="Ej: 07300"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '5px',
+                      border: errors.cp ? '2px solid #dc3545' : '1px solid #ddd',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                  {buscandoCP && <small style={{ color: '#6b7280', display: 'block', marginTop: '4px' }}>⏳ Buscando dirección...</small>}
+                  {!buscandoCP && <small style={{ color: '#6b7280', display: 'block', marginTop: '4px' }}>5 dígitos. Se autocompletará colonia, municipio y estado</small>}
+                  {errors.cp && <small className="perfil-error" style={{ color: '#dc3545', display: 'block', marginTop: '4px' }}>{errors.cp}</small>}
+                </div>
                 
                 <div style={{ marginTop: '20px' }}>
                   <p style={{ fontWeight: 'bold', color: '#666', fontSize: '13px', marginBottom: '10px' }}>
-                     Autocompletado por CP:
+                    🔒 Autocompletado por CP:
                   </p>
                   <InfoRow label="Colonia" value={colonia || '—'} bloqueado />
                   <InfoRow label="Municipio" value={municipio || '—'} bloqueado />
@@ -562,12 +783,12 @@ const InfoRow = ({ label, value, bloqueado }) => (
       color: bloqueado ? '#999' : '#333',
       fontWeight: '500'
     }}>
-      {bloqueado ? ' ' : ''}{value}
+      {bloqueado ? '🔒 ' : ''}{value}
     </span>
   </div>
 )
 
-const InputField = ({ label, value, onChange, type = 'text', maxLength }) => (
+const InputField = ({ label, value, onChange, type = 'text', maxLength, placeholder, hint, error }) => (
   <div style={{ marginBottom: '15px' }}>
     <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
       {label}
@@ -577,15 +798,18 @@ const InputField = ({ label, value, onChange, type = 'text', maxLength }) => (
       value={value}
       onChange={onChange}
       maxLength={maxLength}
+      placeholder={placeholder}
       style={{
         width: '100%',
         padding: '10px',
         borderRadius: '5px',
-        border: '1px solid #ddd',
+        border: error ? '2px solid #dc3545' : '1px solid #ddd',
         fontSize: '14px',
         boxSizing: 'border-box'
       }}
     />
+    {error && <small className="perfil-error" style={{ color: '#dc3545', display: 'block', marginTop: '4px' }}>{error}</small>}
+    {!error && hint && <small style={{ color: '#6b7280', display: 'block', marginTop: '4px' }}>{hint}</small>}
   </div>
 )
 
