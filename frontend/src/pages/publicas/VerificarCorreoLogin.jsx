@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import NavbarInicio from '../../components/common/NavbarInicio'
+import NavbarRegistro from '../../components/common/NavbarRegistro'
 import FooterInicio from '../../components/common/FooterInicio'
 import { verificarCodigoLogin, reenviarCodigo, actualizarCorreo, validarCampo } from '../../services/authService'
 import '../../styles/VerificarCorreo.css'
@@ -135,7 +135,7 @@ const handleVerificar = async (e) => {
 
   return (
     <div className="verificar-correo-page">
-      <NavbarInicio />
+      <NavbarRegistro />
 
       <main className="verificar-correo-main">
         <div className="verificar-correo-card">
