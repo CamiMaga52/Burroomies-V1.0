@@ -212,68 +212,82 @@ const BuscarVivienda = () => {
             {/* RANGO DE PRECIO - Inputs numéricos */}
             <p style={labelSeccion}>Rango de precio (MXN)</p>
             <p style={{ fontSize: '11px', color: '#999', marginBottom: '10px' }}>Rango permitido: $1,000 - $25,000 MXN</p>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Mínimo</label>
-                <input
-                  type="number"
-                  placeholder="$1,000"
-                  value={filtros.precioMin}
-                  min={1000}
-                  max={25000}
-                  onChange={(e) => {
-                    const v = parseInt(e.target.value)
-                    if (e.target.value === '') { setFiltro('precioMin', ''); return }
-                    if (isNaN(v) || v < 0) return
-                    if (v > 25000) return
-                    setFiltro('precioMin', v < 1000 ? e.target.value : v)
-                  }}
-                  onBlur={(e) => {
-                    const v = parseInt(e.target.value)
-                    if (!isNaN(v) && v < 1000) setFiltro('precioMin', 1000)
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '8px 10px',
-                    fontSize: '13px',
-                    border: '1px solid #ddd',
-                    borderRadius: '5px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Máximo</label>
-                <input
-                  type="number"
-                  placeholder="$25,000"
-                  value={filtros.precioMax}
-                  min={1000}
-                  max={25000}
-                  onChange={(e) => {
-                    const v = parseInt(e.target.value)
-                    if (e.target.value === '') { setFiltro('precioMax', ''); return }
-                    if (isNaN(v) || v < 0) return
-                    if (v > 25000) return
-                    setFiltro('precioMax', v < 1000 ? e.target.value : v)
-                  }}
-                  onBlur={(e) => {
-                    const v = parseInt(e.target.value)
-                    if (!isNaN(v) && v < 1000) setFiltro('precioMax', 1000)
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '8px 10px',
-                    fontSize: '13px',
-                    border: '1px solid #ddd',
-                    borderRadius: '5px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
+            {(() => {
+              const min = parseInt(filtros.precioMin)
+              const max = parseInt(filtros.precioMax)
+              const errorPrecio = !isNaN(min) && !isNaN(max) && min > max
+              return (
+                <>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: errorPrecio ? '6px' : '18px' }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Mínimo</label>
+                      <input
+                        type="number"
+                        placeholder="$1,000"
+                        value={filtros.precioMin}
+                        min={1000}
+                        max={25000}
+                        onChange={(e) => {
+                          const v = parseInt(e.target.value)
+                          if (e.target.value === '') { setFiltro('precioMin', ''); return }
+                          if (isNaN(v) || v < 0) return
+                          if (v > 25000) return
+                          setFiltro('precioMin', v < 1000 ? e.target.value : v)
+                        }}
+                        onBlur={(e) => {
+                          const v = parseInt(e.target.value)
+                          if (!isNaN(v) && v < 1000) setFiltro('precioMin', 1000)
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          fontSize: '13px',
+                          border: `1px solid ${errorPrecio ? '#dc3545' : '#ddd'}`,
+                          borderRadius: '5px',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>Máximo</label>
+                      <input
+                        type="number"
+                        placeholder="$25,000"
+                        value={filtros.precioMax}
+                        min={1000}
+                        max={25000}
+                        onChange={(e) => {
+                          const v = parseInt(e.target.value)
+                          if (e.target.value === '') { setFiltro('precioMax', ''); return }
+                          if (isNaN(v) || v < 0) return
+                          if (v > 25000) return
+                          setFiltro('precioMax', v < 1000 ? e.target.value : v)
+                        }}
+                        onBlur={(e) => {
+                          const v = parseInt(e.target.value)
+                          if (!isNaN(v) && v < 1000) setFiltro('precioMax', 1000)
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          fontSize: '13px',
+                          border: `1px solid ${errorPrecio ? '#dc3545' : '#ddd'}`,
+                          borderRadius: '5px',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  {errorPrecio && (
+                    <p style={{ fontSize: '11px', color: '#dc3545', margin: '0 0 18px 0' }}>
+                      ⚠️ El precio mínimo no puede ser mayor que el máximo
+                    </p>
+                  )}
+                </>
+              )
+            })()}
 
             <div style={separador} />
 
