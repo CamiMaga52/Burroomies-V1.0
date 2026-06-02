@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import NavbarInicio from '../../components/common/NavbarArrendatario'
+import NavbarArrendatario from '../../components/common/NavbarArrendatario'
+import NavbarInicio from '../../components/common/NavbarInicio'
 import FooterInicio from '../../components/common/FooterInicio'
 import { verificarExpiracion } from '../../services/authService'
 import '../../styles/Arrendatario.css'
@@ -39,7 +40,7 @@ const VerificarExpiracion = () => {
   if (estado === 'cargando') {
     return (
       <div className="atr-page">
-        <NavbarInicio />
+        <NavbarArrendatario />
         <div className="atr-verify-wrapper">
           <div className="atr-loading">
             <p>Verificando tu cuenta...</p>
@@ -53,7 +54,7 @@ const VerificarExpiracion = () => {
   if (estado === 'eliminado') {
     return (
       <div className="atr-page">
-        <NavbarInicio />
+        <NavbarInicio /> {/* navbar público: localStorage ya fue limpiado */}
         <div className="atr-verify-wrapper">
           <div className="atr-verify-card atr-verify-card-bordered" style={{ borderColor: '#DC2626' }}>
             <div className="atr-verify-header atr-verify-header-danger">
@@ -139,9 +140,9 @@ const VerificarExpiracion = () => {
 
     return (
       <div className="atr-page">
-        <NavbarInicio />
+        <NavbarArrendatario />
         <div className="atr-verify-wrapper">
-          <div className="atr-verify-card">
+          <div className="atr-verify-card atr-verify-card-bordered" style={{ borderColor: color }}>
             <div className={`atr-verify-header ${headerClass}`}>
               <div className="atr-verify-header-icon">{headerIcon}</div>
               <div className="atr-verify-header-title">{headerTitle}</div>
