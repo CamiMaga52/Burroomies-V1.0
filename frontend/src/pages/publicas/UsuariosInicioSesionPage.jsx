@@ -73,20 +73,20 @@ const UsuariosInicioSesionPage = () => {
 
       // ── ARRENDATARIO ─────────────────────────────────────────────
       if (data.rol === 'arrendatario') {
-        localStorage.setItem('userId', data.userId)
-        localStorage.setItem('rol', data.rol)
-        localStorage.setItem('correo', data.correo)
-        localStorage.setItem('arrendatarioId', data.arrendatarioId)
-        localStorage.setItem('fechaRegistro', data.fechaRegistro)
-        localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
-        if (data.token) localStorage.setItem('token', data.token)
-        localStorage.setItem('usuarioFechaUIS', Date.now().toString())
-        if (data.arrendatarioFechaVerificacion) {
-          localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
-        }
 
-        // 1️⃣ Primero: verificar correo si no está verificado
+        // 1️⃣ Verificar correo primero (sin guardar en localStorage aún)
         if (!data.correoVerificado) {
+          localStorage.setItem('userId', data.userId)
+          localStorage.setItem('rol', data.rol)
+          localStorage.setItem('correo', data.correo)
+          localStorage.setItem('arrendatarioId', data.arrendatarioId)
+          localStorage.setItem('fechaRegistro', data.fechaRegistro)
+          localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
+          if (data.token) localStorage.setItem('token', data.token)
+          localStorage.setItem('usuarioFechaUIS', Date.now().toString())
+          if (data.arrendatarioFechaVerificacion) {
+            localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
+          }
           await reenviarCodigo(data.correo)
           navigate('/verificar-correo-login', {
             state: {
@@ -101,36 +101,58 @@ const UsuariosInicioSesionPage = () => {
           return
         }
 
-        localStorage.setItem('correoVerificado', '1')
-
-        // 2️⃣ Si ya verificó correo y su identidad está confirmada: entrar directo
+        // 2️⃣ Correo verificado + identidad verificada → entrar directo
         if (data.arrendatarioVerificado) {
+          localStorage.setItem('userId', data.userId)
+          localStorage.setItem('rol', data.rol)
+          localStorage.setItem('correo', data.correo)
+          localStorage.setItem('arrendatarioId', data.arrendatarioId)
+          localStorage.setItem('fechaRegistro', data.fechaRegistro)
+          localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
+          if (data.token) localStorage.setItem('token', data.token)
+          localStorage.setItem('usuarioFechaUIS', Date.now().toString())
+          localStorage.setItem('correoVerificado', '1')
+          if (data.arrendatarioFechaVerificacion) {
+            localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
+          }
           navigate('/arrendatario/buscar-vivienda')
           return
         }
 
-        // 3️⃣ Identidad NO verificada → consultar si los 60 días ya expiraron
-        try {
-          const respExp = await fetch(`${import.meta.env.VITE_API_URL}/auth/verificar-expiracion`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: data.userId })
-          })
-          const expData = await respExp.json()
+        // 3️⃣ Correo verificado pero identidad NO verificada → checar expiración ANTES de guardar sesión
+        const respExp = await fetch(`${import.meta.env.VITE_API_URL}/auth/verificar-expiracion`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: data.userId })
+        })
 
-          if (expData.expirado && expData.eliminado) {
-            // La cuenta fue eliminada en el backend → limpiar sesión y mostrar página de eliminación
-            localStorage.clear()
-            navigate('/cuenta-eliminada-verificacion')
-            return
-          }
-        } catch (expErr) {
-          // Si falla la consulta de expiración, no bloqueamos al usuario:
-          // lo mandamos a verificación pendiente de todas formas
-          console.error('Error al verificar expiración:', expErr)
+        if (!respExp.ok) {
+          // Si el backend falla, mostramos error en lugar de dejar pasar
+          setError('No se pudo verificar el estado de tu cuenta. Intenta de nuevo.')
+          return
         }
 
-        // 4️⃣ No expiró → está pendiente de verificar identidad
+        const expData = await respExp.json()
+
+        if (expData.expirado && expData.eliminado) {
+          // Cuenta eliminada → NO guardar nada en localStorage, ir directo a la página de eliminación
+          navigate('/cuenta-eliminada-verificacion')
+          return
+        }
+
+        // 4️⃣ No expiró → guardar sesión y mandar a verificación pendiente
+        localStorage.setItem('userId', data.userId)
+        localStorage.setItem('rol', data.rol)
+        localStorage.setItem('correo', data.correo)
+        localStorage.setItem('arrendatarioId', data.arrendatarioId)
+        localStorage.setItem('fechaRegistro', data.fechaRegistro)
+        localStorage.setItem('arrendatarioVerificado', data.arrendatarioVerificado)
+        if (data.token) localStorage.setItem('token', data.token)
+        localStorage.setItem('usuarioFechaUIS', Date.now().toString())
+        localStorage.setItem('correoVerificado', '1')
+        if (data.arrendatarioFechaVerificacion) {
+          localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
+        }
         navigate('/arrendatario/verificacion-pendiente')
       }
 
