@@ -185,7 +185,8 @@ INSERT INTO `usuario` (`idUsuario`, `usuarioNom`, `usuarioApePat`, `usuarioApeMa
 -- ============================================================
 -- CASO 4: Correo SÍ verificado, Identidad NO
 -- ============================================================
-(10, 'Camila', 'Rojas', 'Mendoza', 'camila.rojas@hotmail.com', '5501234567', 'ROMC011010MDFRRN10', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-10-10', '2026-04-10 15:30:00', '2025-10-10 17:40:00', 'BCD67890', 1, '2024-10-10 15:35:00'),
+(10, 'Anonimo', 'RentIPN', 'Usuario', 'rent.ipn.contacto@gmail.com', '5500000000', 'RIPN000000HDFRRN10', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1990-01-01', '2026-04-10 15:00:00', '2025-01-10 17:00:00', 'XYZ67890', 1, '2024-01-10 15:05:00'),
+(82, 'Camila', 'Rojas', 'Mendoza', 'camila.rojas@hotmail.com', '5501234567', 'ROMC011010MDFRRN10', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-10-10', '2026-04-10 15:30:00', '2025-10-10 17:40:00', 'BCD67890', 1, '2024-10-10 15:35:00'),
 (11, 'Andrés', 'Gómez', 'Silva', 'andres.gomez@gmail.com', '5511111111', 'GOSA971111HDFRRN11', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1997-11-11', '2026-04-15 08:45:00', '2026-04-15 10:55:00', 'EFG12345', 1, '2026-04-15 08:50:00'),
 (12, 'Isabella', 'Orozco', 'Pineda', 'isabella.orozco@outlook.com', '5522222222', 'ORPI981212MDFRRN12', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1998-12-12', '2026-04-12 17:00:00', '2025-12-12 19:10:00', 'HIJ67890', 1, '2024-12-12 17:05:00'),
 
@@ -293,7 +294,7 @@ INSERT INTO `arrendatario` (`idArrendatario`, `arrendatarioBoleta`, `arrendatari
 (7, '2023020007', 1, '2024-09-01 14:45:00', 'santi_perez', 7, 8),
 (8, '2024040008', 1, '2024-11-05 12:00:00', 'renata_flores', 8, 11),
 (9, '2023010009', 1, '2024-08-01 09:00:00', 'luis_torres', 9, 3),
-(10, '2024030010', 0, NULL, 'camila_rojas', 10, 6),
+(10, '2026010010',  1, '2026-03-01 08:00:00', 'RentIPN', 10, 6),
 (11, '2024020011', 0, NULL, 'andres_gomez', 11, 1),
 (12, '2024010012', 0, NULL, 'isabella_orozco', 12, 4),
 (13, '2024030013', 1, '2025-02-20 11:00:00', 'alejandro_ram', 13, 7),
@@ -335,7 +336,8 @@ INSERT INTO `arrendatario` (`idArrendatario`, `arrendatarioBoleta`, `arrendatari
 (47, '2024010067', 1, '2026-01-20 14:00:00', 'omar_qui', 67, 8),
 (48, '2025030068', 1, '2026-01-25 10:00:00', 'rebe_iba', 68, 11),
 (49, '2024020069', 1, '2026-02-05 09:00:00', 'patri_esc', 69, 3),
-(50, '2025040070', 1, '2026-02-10 11:00:00', 'ceci_ara', 70, 6);
+(50, '2025040070', 1, '2026-02-10 11:00:00', 'ceci_ara', 70, 6),
+(51, '2022020011', 0, NULL, 'camila_rojas', 82, 1);
 
 -- ============================================================
 -- 5. ARRENDADORES (IDs 1-30)
@@ -439,80 +441,235 @@ INSERT INTO `propiedad` (`idPropiedad`, `propiedadTitulo`, `propiedadDescripcion
 -- ============================================================
 -- 7. FOTOS (IDs 1-69)
 -- ============================================================
-
+-- ============================================================
+-- SCRIPT DE FOTOS - Mínimo 3 fotos por propiedad
+-- ============================================================
 INSERT INTO `fotos` (`idFotos`, `fotosURL`, `propiedad_idPropiedad`) VALUES
--- Fotos originales (IDs 1-29)
-(1, '/uploads/fotos/image_01.png', 1),
-(2, '/uploads/fotos/image_02.png', 1),
-(3, '/uploads/fotos/image_03.png', 2),
-(4, '/uploads/fotos/image_04.png', 2),
-(5, '/uploads/fotos/image_05.png', 3),
-(6, '/uploads/fotos/image_06.png', 4),
-(7, '/uploads/fotos/image_07.png', 4),
-(8, '/uploads/fotos/image_08.png', 5),
-(9, '/uploads/fotos/image_09.png', 6),
-(10, '/uploads/fotos/image_10.png', 7),
-(11, '/uploads/fotos/image_11.png', 7),
-(12, '/uploads/fotos/image_12.png', 8),
-(13, '/uploads/fotos/image_13.png', 9),
-(14, '/uploads/fotos/image_01.png', 10),
-(15, '/uploads/fotos/image_02.png', 10),
-(16, '/uploads/fotos/image_03.png', 11),
-(17, '/uploads/fotos/image_04.png', 12),
-(18, '/uploads/fotos/image_05.png', 13),
-(19, '/uploads/fotos/image_06.png', 14),
-(20, '/uploads/fotos/image_07.png', 15),
-(21, '/uploads/fotos/image_12.png', 16),
-(22, '/uploads/fotos/image_13.png', 16),
-(23, '/uploads/fotos/image_01.png', 17),
-(24, '/uploads/fotos/image_02.png', 17),
-(25, '/uploads/fotos/image_03.png', 18),
-(26, '/uploads/fotos/image_04.png', 18),
-(27, '/uploads/fotos/image_05.png', 19),
-(28, '/uploads/fotos/image_06.png', 20),
-(29, '/uploads/fotos/image_07.png', 20),
 
--- Nuevas fotos (IDs 30-69)
-(30, '/uploads/fotos/image_08.png', 21),
-(31, '/uploads/fotos/image_09.png', 21),
-(32, '/uploads/fotos/image_10.png', 22),
-(33, '/uploads/fotos/image_11.png', 22),
-(34, '/uploads/fotos/image_12.png', 23),
-(35, '/uploads/fotos/image_13.png', 23),
-(36, '/uploads/fotos/image_01.png', 24),
-(37, '/uploads/fotos/image_02.png', 24),
-(38, '/uploads/fotos/image_03.png', 25),
-(39, '/uploads/fotos/image_04.png', 26),
-(40, '/uploads/fotos/image_05.png', 26),
-(41, '/uploads/fotos/image_06.png', 27),
-(42, '/uploads/fotos/image_07.png', 28),
-(43, '/uploads/fotos/image_08.png', 28),
-(44, '/uploads/fotos/image_09.png', 29),
-(45, '/uploads/fotos/image_10.png', 30),
-(46, '/uploads/fotos/image_11.png', 30),
-(47, '/uploads/fotos/image_12.png', 31),
-(48, '/uploads/fotos/image_13.png', 31),
-(49, '/uploads/fotos/image_01.png', 32),
-(50, '/uploads/fotos/image_02.png', 33),
-(51, '/uploads/fotos/image_03.png', 33),
-(52, '/uploads/fotos/image_04.png', 34),
-(53, '/uploads/fotos/image_05.png', 34),
-(54, '/uploads/fotos/image_06.png', 35),
-(55, '/uploads/fotos/image_07.png', 36),
-(56, '/uploads/fotos/image_08.png', 36),
-(57, '/uploads/fotos/image_09.png', 37),
-(58, '/uploads/fotos/image_10.png', 38),
-(59, '/uploads/fotos/image_11.png', 39),
-(60, '/uploads/fotos/image_12.png', 39),
-(61, '/uploads/fotos/image_13.png', 40),
-(62, '/uploads/fotos/image_01.png', 40),
-(63, '/uploads/fotos/image_02.png', 41),
-(64, '/uploads/fotos/image_03.png', 42),
-(65, '/uploads/fotos/image_04.png', 42),
-(66, '/uploads/fotos/image_05.png', 43),
-(67, '/uploads/fotos/image_06.png', 44),
-(68, '/uploads/fotos/image_07.png', 44),
-(69, '/uploads/fotos/image_08.png', 45);
+-- Propiedad 1 (3 fotos)
+(1, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 1),
+(2, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 1),
+(3, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 1),
+
+-- Propiedad 2 (3 fotos)
+(4, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 2),
+(5, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 2),
+(6, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 2),
+
+-- Propiedad 3 (3 fotos)
+(7, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 3),
+(8, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 3),
+(9, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 3),
+
+-- Propiedad 4 (3 fotos)
+(10, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 4),
+(11, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 4),
+(12, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 4),
+
+-- Propiedad 5 (3 fotos)
+(13, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 5),
+(14, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 5),
+(15, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 5),
+
+-- Propiedad 6 (3 fotos)
+(16, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 6),
+(17, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 6),
+(18, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 6),
+
+-- Propiedad 7 (3 fotos)
+(19, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 7),
+(20, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 7),
+(21, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 7),
+
+-- Propiedad 8 (3 fotos)
+(22, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 8),
+(23, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 8),
+(24, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 8),
+
+-- Propiedad 9 (3 fotos)
+(25, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 9),
+(26, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 9),
+(27, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 9),
+
+-- Propiedad 10 (3 fotos)
+(28, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 10),
+(29, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 10),
+(30, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 10),
+
+-- Propiedad 11 (3 fotos)
+(31, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 11),
+(32, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 11),
+(33, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 11),
+
+-- Propiedad 12 (3 fotos)
+(34, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 12),
+(35, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 12),
+(36, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 12),
+
+-- Propiedad 13 (3 fotos)
+(37, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 13),
+(38, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 13),
+(39, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 13),
+
+-- Propiedad 14 (3 fotos)
+(40, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 14),
+(41, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 14),
+(42, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 14),
+
+-- Propiedad 15 (3 fotos)
+(43, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 15),
+(44, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 15),
+(45, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 15),
+
+-- Propiedad 16 (3 fotos)
+(46, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 16),
+(47, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 16),
+(48, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 16),
+
+-- Propiedad 17 (3 fotos)
+(49, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 17),
+(50, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 17),
+(51, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 17),
+
+-- Propiedad 18 (3 fotos)
+(52, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 18),
+(53, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 18),
+(54, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 18),
+
+-- Propiedad 19 (3 fotos)
+(55, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 19),
+(56, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 19),
+(57, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 19),
+
+-- Propiedad 20 (3 fotos)
+(58, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 20),
+(59, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 20),
+(60, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 20),
+
+-- Propiedad 21 (3 fotos)
+(61, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 21),
+(62, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 21),
+(63, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 21),
+
+-- Propiedad 22 (3 fotos)
+(64, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 22),
+(65, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 22),
+(66, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 22),
+
+-- Propiedad 23 (3 fotos)
+(67, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 23),
+(68, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 23),
+(69, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 23),
+
+-- Propiedad 24 (3 fotos)
+(70, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 24),
+(71, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 24),
+(72, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 24),
+
+-- Propiedad 25 (3 fotos)
+(73, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 25),
+(74, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 25),
+(75, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 25),
+
+-- Propiedad 26 (3 fotos)
+(76, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 26),
+(77, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 26),
+(78, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 26),
+
+-- Propiedad 27 (3 fotos)
+(79, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 27),
+(80, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 27),
+(81, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 27),
+
+-- Propiedad 28 (3 fotos)
+(82, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 28),
+(83, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 28),
+(84, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 28),
+
+-- Propiedad 29 (3 fotos)
+(85, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 29),
+(86, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 29),
+(87, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 29),
+
+-- Propiedad 30 (3 fotos)
+(88, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 30),
+(89, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 30),
+(90, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 30),
+
+-- Propiedad 31 (3 fotos)
+(91, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 31),
+(92, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 31),
+(93, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 31),
+
+-- Propiedad 32 (3 fotos)
+(94, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 32),
+(95, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 32),
+(96, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 32),
+
+-- Propiedad 33 (3 fotos)
+(97, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 33),
+(98, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 33),
+(99, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 33),
+
+-- Propiedad 34 (3 fotos)
+(100, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 34),
+(101, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 34),
+(102, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 34),
+
+-- Propiedad 35 (3 fotos)
+(103, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 35),
+(104, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 35),
+(105, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 35),
+
+-- Propiedad 36 (3 fotos)
+(106, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 36),
+(107, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 36),
+(108, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 36),
+
+-- Propiedad 37 (3 fotos)
+(109, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 37),
+(110, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 37),
+(111, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 37),
+
+-- Propiedad 38 (3 fotos)
+(112, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 38),
+(113, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 38),
+(114, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 38),
+
+-- Propiedad 39 (3 fotos)
+(115, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 39),
+(116, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 39),
+(117, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 39),
+
+-- Propiedad 40 (3 fotos)
+(118, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 40),
+(119, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 40),
+(120, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 40),
+
+-- Propiedad 41 (3 fotos)
+(121, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 41),
+(122, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 41),
+(123, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 41),
+
+-- Propiedad 42 (3 fotos)
+(124, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 42),
+(125, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 42),
+(126, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689975/rentipn/fotos/arrendador_temp_1779689971198_6.webp', 42),
+
+-- Propiedad 43 (3 fotos)
+(127, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_7.webp', 43),
+(128, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689976/rentipn/fotos/arrendador_temp_1779689971198_8.webp', 43),
+(129, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_9.webp', 43),
+
+-- Propiedad 44 (3 fotos)
+(130, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689978/rentipn/fotos/arrendador_temp_1779689971198_10.webp', 44),
+(131, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_1.webp', 44),
+(132, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689972/rentipn/fotos/arrendador_temp_1779689971198_2.webp', 44),
+
+-- Propiedad 45 (3 fotos)
+(133, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689973/rentipn/fotos/arrendador_temp_1779689971198_3.webp', 45),
+(134, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_4.webp', 45),
+(135, 'https://res.cloudinary.com/dewgq8mti/image/upload/v1779689974/rentipn/fotos/arrendador_temp_1779689971198_5.webp', 45);
 
 -- ============================================================
 -- 8. ARRENDAMIENTOS (IDs 1-40)
@@ -837,7 +994,7 @@ INSERT INTO `administrador` (`adminUser`, `adminContra`, `adminFechaInicioSesion
 
 UPDATE cp 
 SET cpAceptadoSistema = 1 
-WHERE d_codigo IN ('07700', '07720', '07755', '07730', '07739', '07300', '07340', '07330', '07320', '07708', '07754', '07740', '07750', '07369');
+WHERE d_codigo IN ('07700', '07720', '07755', '07730', '07739', '07300', '07340', '07330', '07320', '07708', '07754', '07740', '07750', '07369', '07710');
 
 -- ============================================================
 -- RESTAURAR CONFIGURACIONES
@@ -864,4 +1021,242 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 --   - 207 servicios en propiedades
 --   - 5 administradores
 --   - 14 códigos postales actualizados
+-- ============================================================
+
+-- ============================================================
+-- EXTENSIÓN DE DATOS PARA PRESENTACIÓN CON SINODALES
+-- Agrega usuarios faltantes por caso y más reseñas
+-- IDs de usuario nuevos: 81-106
+-- IDs de arrendatario nuevos: 51-68
+-- IDs de reseña nuevos: 96-155
+-- ============================================================
+
+USE dbRentIPN;
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+
+-- ============================================================
+-- NUEVOS USUARIOS (IDs 81-106)
+-- CONTRASEÑA: password123
+-- Hash: $2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi
+-- ============================================================
+
+INSERT INTO `usuario` (`idUsuario`, `usuarioNom`, `usuarioApePat`, `usuarioApeMat`, `usuarioCorreo`, `usuarioTel`, `usuarioCurp`, `usuarioContra`, `usuarioFechaNac`, `usuarioFechaRegis`, `usuarioFechaUIS`, `usuarioCodigo`, `usuarioCorreoVerificado`, `usuarioCodigoFecha`) VALUES
+
+-- ============================================================
+-- CASO 1 extra: Correo NO verificado, Identidad NO (con tiempo válido)
+-- IDs 81-83
+-- ============================================================
+(81, 'Fernanda Isabel', 'Guerrero', 'Nava',    'fernanda.guerrero@gmail.com',  '5511223344', 'GUNF010115MDFRRN81', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-01-15', '2026-05-10 09:00:00', '2026-05-10 09:00:00', 'C1X0081', 0, '2026-05-10 09:05:00'),
+(98, 'Rodrigo Emilio',  'Serrano',  'Ibáñez',  'rodrigo.serrano@hotmail.com',  '5522334455', 'SEIR000220HDFRRN82', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2000-02-20', '2026-05-12 10:00:00', '2026-05-12 10:00:00', 'C1X0082', 0, '2026-05-12 10:05:00'),
+(83, 'Valeria Sofía',   'Medina',   'Ríos',    'valeria.medina@outlook.com',   '5533445566', 'MERV030310MDFRRN83', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2003-03-10', '2026-05-14 11:00:00', '2026-05-14 11:00:00', 'C1X0083', 0, '2026-05-14 11:05:00'),
+
+-- ============================================================
+-- CASO 2 extra: Correo NO verificado, Identidad NO (códigos expirados)
+-- IDs 84-86
+-- ============================================================
+(84, 'Tomás Enrique',   'Pedroza',  'Salinas', 'tomas.pedroza@gmail.com',      '5544556677', 'PEST010415HDFRRN84', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-04-15', '2024-04-20 10:00:00', '2025-04-20 12:00:00', 'C2X0084', 0, '2024-04-20 10:05:00'),
+(85, 'Diana Lucía',     'Fuentes',  'Carmona', 'diana.fuentes@hotmail.com',    '5555667788', 'FUCD020520MDFRRN85', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2002-05-20', '2024-05-15 11:00:00', '2024-05-15 13:00:00', 'C2X0085', 0, '2024-05-15 11:05:00'),
+(86, 'Óscar Manuel',    'Bravo',    'Téllez',  'oscar.bravo@outlook.com',      '5566778899', 'BATO000625HDFRRN86', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2000-06-25', '2024-06-20 12:00:00', '2024-06-20 14:00:00', 'C2X0086', 0, '2024-06-20 12:05:00'),
+
+-- ============================================================
+-- CASO 3 extra: Correo NO verificado, Identidad SÍ verificada
+-- IDs 87-89
+-- ============================================================
+(87, 'Karla Beatriz',   'Alvarado', 'Peña',    'karla.alvarado@gmail.com',     '5577889900', 'ALPK010730MDFRRN87', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-07-30', '2026-05-01 09:00:00', '2025-07-20 10:00:00', 'C3X0087', 0, '2026-04-28 09:05:00'),
+(88, 'Sebastián',       'Vargas',   'Delgado', 'sebastian.vargas@hotmail.com', '5588990011', 'VADS990828HDFRRN88', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1999-08-28', '2026-04-28 14:00:00', '2025-08-15 11:00:00', 'C3X0088', 0, '2026-04-25 14:05:00'),
+(89, 'Paola Alejandra', 'Cisneros', 'Vega',    'paola.cisneros@outlook.com',   '5599001122', 'CIVP020920MDFRRN89', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2002-09-20', '2026-05-03 10:00:00', '2025-09-10 13:00:00', 'C3X0089', 0, '2026-05-01 10:05:00'),
+
+-- ============================================================
+-- CASO 4 extra: Correo SÍ verificado, Identidad NO
+-- IDs 90-92
+-- ============================================================
+(90, 'Ignacio',         'Ríos',     'Castellanos', 'ignacio.rios@gmail.com',   '5500112233', 'ROCI001012HDFRRN90', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2000-10-12', '2026-04-08 15:00:00', '2026-04-08 15:00:00', 'C4X0090', 1, '2026-04-08 15:05:00'),
+(91, 'Melissa',         'Zavala',   'Quiroz',     'melissa.zavala@hotmail.com','5511223345', 'ZAQM031115MDFRRN91', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2003-11-15', '2026-04-11 09:30:00', '2026-04-11 09:30:00', 'C4X0091', 1, '2026-04-11 09:35:00'),
+(92, 'Ernesto',         'Palma',    'Ibarra',     'ernesto.palma@outlook.com', '5522334456', 'PAIE011220HDFRRN92', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-12-20', '2026-04-14 11:00:00', '2026-04-14 11:00:00', 'C4X0092', 1, '2026-04-14 11:05:00'),
+
+-- ============================================================
+-- CASO 5 extra: Correo SÍ verificado, Identidad SÍ (fecha expirada)
+-- IDs 93-95
+-- ============================================================
+(93, 'Adriana',         'Montes',   'Gutiérrez', 'adriana.montes@gmail.com',  '5533445567', 'MOGA000115MDFRRN93', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2000-01-15', '2025-01-20 08:00:00', '2025-01-20 08:00:00', 'C5X0093', 1, '2025-01-20 08:05:00'),
+(94, 'Mauricio',        'Reyes',    'Sandoval',  'mauricio.reyes@hotmail.com','5544556678', 'RESM980218HDFRRN94', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1998-02-18', '2025-02-25 12:00:00', '2025-02-25 12:00:00', 'C5X0094', 1, '2025-02-25 12:05:00'),
+(95, 'Gabriela',        'Téllez',   'Romero',    'gabriela.tellez@outlook.com','5555667789','TERG010320MDFRRN95', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '2001-03-20', '2025-03-15 10:00:00', '2025-03-15 10:00:00', 'C5X0095', 1, '2025-03-15 10:05:00'),
+
+-- ============================================================
+-- CASO 7 extra: ARRENDADORES - Correo NO verificado
+-- IDs 96-97
+-- ============================================================
+(96, 'Héctor',         'Zavala',   'Campos',    'hector.zavala@gmail.com',   '5566778890', 'ZACH720415HDFRN96', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1972-04-15', '2024-02-15 08:00:00', '2024-02-15 08:00:00', 'VER096', 0, '2024-02-15 08:05:00'),
+(97, 'Lorena',          'Castañeda','Moreno',    'lorena.castaneda@hotmail.com','5577889901','CAML760520MDFRN97', '$2b$10$/tQlbx1TZgQMQ7Vt4LWwJOzqk66L0OaZ3Oh9a8odhLTZ/L.1i3Ibi', '1976-05-20', '2024-02-20 10:00:00', '2024-02-20 10:00:00', 'VER097', 0, '2024-02-20 10:05:00');
+
+-- ============================================================
+-- NUEVOS ARRENDATARIOS (IDs 51-65)
+-- ============================================================
+
+INSERT INTO `arrendatario` (`idArrendatario`, `arrendatarioBoleta`, `arrendatarioVerificado`, `arrendatarioFechaVerificación`, `arrendatarioUser`, `usuario_idUsuario`, `carrera_idCarrera`) VALUES
+
+-- CASO 1 extra (IDs 51-53)
+(66, '2026010081', 0, NULL, 'fer_guerrero',   81, 2),
+(52, '2026020082', 0, NULL, 'rodri_serrano',  82, 5),
+(53, '2026010083', 0, NULL, 'vale_medina',    83, 9),
+
+-- CASO 2 extra (IDs 54-56)
+(54, '2024010084', 0, NULL, 'tomas_ped',      84, 12),
+(55, '2024020085', 0, NULL, 'diana_fue',      85, 3),
+(56, '2024030086', 0, NULL, 'oscar_bra',      86, 6),
+
+-- CASO 3 extra (IDs 57-59)
+(57, '2024030087', 1, '2024-10-15 11:00:00', 'karla_alv',   87, 1),
+(58, '2023020088', 1, '2024-12-20 09:00:00', 'seba_vargas', 88, 4),
+(59, '2024040089', 1, '2025-01-10 14:00:00', 'paola_cis',   89, 7),
+
+-- CASO 4 extra (IDs 60-62)
+(60, '2026010090', 0, NULL, 'ignacio_rios',   90, 10),
+(61, '2026020091', 0, NULL, 'melissa_zav',    91, 13),
+(62, '2026010092', 0, NULL, 'ernes_pal',      92, 16),
+
+-- CASO 5 extra (IDs 63-65) — verificados con fecha expirada
+(63, '2025010093', 1, '2025-02-10 09:00:00', 'adri_mon',    93, 19),
+(64, '2025020094', 1, '2025-03-15 10:00:00', 'mauri_rey',   94, 22),
+(65, '2025030095', 1, '2025-04-20 11:00:00', 'gaby_tel',    95, 25);
+
+-- ============================================================
+-- NUEVOS ARRENDADORES (IDs 31-32) — CASO 7 extra
+-- ============================================================
+
+INSERT INTO `arrendador` (`idArrendador`, `arrendadorRFC`, `usuario_idUsuario`, `direccion_idDireccion`) VALUES
+(31, 'ZACH720415XXX', 96, 11),
+(32, 'CAML760520XXX', 97, 12);
+
+-- ============================================================
+-- NUEVAS RESEÑAS (IDs 96-155)
+-- Más reseñas distribuidas en propiedades 1-20 y 21-45
+-- ============================================================
+
+INSERT INTO `resena` (`idResena`, `resenaFechaCreacion`, `resenaDuracionRenta`, `resenaDescrip`, `resenaCalSerBasic`, `resenaCalSerComEnt`, `resenaCalSerAdicio`, `resenaCalGen`, `resenaSentimiento`, `propiedad_idPropiedad`, `arrendatario_idArrendatario`) VALUES
+
+-- Propiedad 1: Cuarto económico frente a ESCOM (+3 reseñas)
+(96,  '2025-03-10 09:00:00', 4, 'Habitación cómoda y muy bien ubicada. No hay pretexto para llegar tarde a clase estando tan cerca de ESCOM.', 4.5, NULL, 3.5, 4.2, 'Neutro',   1, 51),
+(97,  '2025-04-15 11:00:00', 5, 'Excelente relación precio-calidad. El escritorio y la silla son cómodos para estudiar largas horas. Recomendado.', 5.0, NULL, 4.0, 4.7, 'Positivo', 1, 52),
+(98,  '2025-05-20 10:00:00', 3, 'Limpísima y tranquila. El arrendador resuelve cualquier problema en menos de un día. Muy satisfecho.', 4.5, NULL, 4.0, 4.4, 'Positivo', 1, 53),
+
+-- Propiedad 2: Depto compartido en Lindavista (+3 reseñas)
+(99,  '2025-03-05 14:00:00', 6, 'Departamento espacioso y bien ubicado. Los gastos de agua y luz incluidos ayudan mucho a controlar el presupuesto.', 5.0, 4.5, 4.0, 4.7, 'Positivo', 2, 54),
+(100, '2025-04-10 10:30:00', 7, 'Sala amplia y cocina completa. Mi compañero de cuarto y yo nos organizamos muy bien. Sin quejas.', 4.5, 4.0, 4.0, 4.4, 'Neutro',   2, 55),
+(101, '2025-05-18 09:00:00', 4, 'Buena opción para 2 estudiantes. El Metro Lindavista a 10 min es una gran ventaja para moverse.', 4.5, 4.5, 3.5, 4.3, 'Neutro',   2, 56),
+
+-- Propiedad 5: Estudio económico Metro Politécnico (+3 reseñas)
+(102, '2025-04-01 11:00:00', 5, 'Estudio privado con entrada independiente, ideal para quien quiere concentrarse. A 5 min del metro es perfecto.', 5.0, NULL, 4.5, 4.8, 'Positivo', 5, 57),
+(103, '2025-05-05 13:00:00', 4, 'Baño propio y kitchenette funcional. Sin sorpresas en el recibo porque los servicios ya están incluidos.', 4.5, NULL, 4.0, 4.4, 'Positivo', 5, 58),
+(104, '2025-06-10 10:00:00', 6, 'El precio es lo que más me convenció. Estudio pequeño pero bien aprovechado. Arrendador muy accesible.', 4.0, NULL, 4.0, 4.1, 'Neutro',   5, 59),
+
+-- Propiedad 8: Casa para 5 en San José Ticomán (+3 reseñas)
+(105, '2025-02-20 09:00:00', 9, 'Casa grande con patio, ideal para 5 compañeros. Sin depósito fue decisivo. La experiencia de vivir en grupo es increíble.', 5.0, 5.0, 5.0, 5.0, 'Positivo', 8, 60),
+(106, '2025-03-25 14:00:00', 6, 'Buena casa para grupo. Los 2 baños evitan colas en las mañanas. Lavadero muy útil para la ropa.', 4.5, 4.5, 4.5, 4.6, 'Positivo', 8, 61),
+(107, '2025-04-30 10:00:00', 5, 'A 15 min de ESCOM en camión, distancia manejable. El patio es perfecto para estudiar los fines de semana.', 4.0, 4.0, 4.5, 4.2, 'Neutro',   8, 62),
+
+-- Propiedad 10: Depto en Residencial Zacatenco (+3 reseñas)
+(108, '2025-03-15 12:00:00', 5, 'Muy conveniente para estudiantes de ESIME. Planta baja y zona familiar tranquila. Cocina bien equipada.', 4.5, NULL, 4.0, 4.3, 'Neutro',   10, 63),
+(109, '2025-04-20 09:30:00', 7, 'Departamento en excelente estado. El arrendador hace mantenimiento puntual. Ideal para 2 compañeros.', 4.5, NULL, 4.5, 4.5, 'Positivo', 10, 64),
+(110, '2025-05-25 11:00:00', 4, 'A 5 min de ESIME, imposible estar más cerca. Sala y comedor amplios para trabajar en equipo.', 5.0, NULL, 4.0, 4.6, 'Positivo', 10, 65),
+
+-- Propiedad 12: Casa para 4 en Valle del Tepeyac (+3 reseñas)
+(111, '2025-02-10 10:00:00', 8, 'Casa hermosa con jardín. Los 4 nos organizamos por semestres y nunca tuvimos problemas entre compañeros.', 5.0, 5.0, 5.0, 5.0, 'Positivo', 12, 51),
+(112, '2025-03-20 14:30:00', 6, 'La sala TV hace que los fines de semana sean muy agradables. Cocina grande, caben todos cocinando a la vez.', 4.5, 5.0, 4.5, 4.7, 'Positivo', 12, 52),
+(113, '2025-04-25 09:00:00', 5, 'A 12 min de ESCOM en transporte, muy accesible. El jardín es único en renta estudiantil. Vale el precio.', 4.5, 4.5, 5.0, 4.7, 'Positivo', 12, 53),
+
+-- Propiedad 15: Cuarto amueblado Residencial la Escalera (+3 reseñas)
+(114, '2025-03-01 11:00:00', 4, 'Habitación sencilla pero muy funcional. Sin depósito facilita mucho la llegada a la Ciudad de México.', 4.0, NULL, 3.5, 3.9, 'Neutro',   15, 54),
+(115, '2025-04-05 13:00:00', 5, 'El ambiente estudiantil de la zona es motivador. Cocina limpia y compañeros respetuosos del espacio.', 4.0, NULL, 4.0, 4.0, 'Neutro',   15, 55),
+(116, '2025-05-10 10:00:00', 3, 'Precio muy justo para la zona. El Metro Indios Verdes cerca hace fácil moverse a cualquier unidad del IPN.', 4.0, NULL, 3.5, 3.8, 'Neutro',   15, 56),
+
+-- Propiedad 18: Habitación económica La Purísima Ticomán (+3 reseñas)
+(117, '2025-03-12 09:00:00', 4, 'La habitación más económica que encontré. Básica pero limpia. El ambiente de estudiantes del IPN es lo mejor.', 3.5, NULL, 3.0, 3.5, 'Neutro',   18, 57),
+(118, '2025-04-18 11:00:00', 5, 'Muy económico para estar en la zona del politécnico. Sin lujos pero todo en orden y con buena onda.', 3.5, NULL, 3.0, 3.4, 'Neutro',   18, 58),
+(119, '2025-05-22 14:00:00', 3, 'Lo esperado para el precio. Cocina de uso libre es un gran plus. No volvería pero cumplió su función.', 3.0, NULL, 2.5, 2.9, 'Negativo', 18, 59),
+
+-- Propiedad 21: Habitación frente al IPN (+3 reseñas)
+(120, '2026-02-20 10:00:00', 6, 'La mejor habitación que he tenido. El arrendador es muy profesional y siempre disponible ante cualquier falla.', 5.0, NULL, 4.5, 4.9, 'Positivo', 21, 60),
+(121, '2026-03-05 11:00:00', 4, 'Cocina muy bien equipada, compartir no es problema cuando todos son responsables. Internet muy rápido.', 4.5, NULL, 4.0, 4.3, 'Neutro',   21, 61),
+(122, '2026-04-10 09:30:00', 5, 'Escritorio cómodo para jornadas largas de estudio. La ubicación frente al IPN no tiene competencia.', 4.5, NULL, 4.0, 4.4, 'Positivo', 21, 62),
+
+-- Propiedad 24: Departamento 2 recámaras Lindavista (+3 reseñas)
+(123, '2026-03-10 09:00:00', 5, 'Departamento muy bien distribuido para 2. El balcón es el mejor lugar para repasar antes de examen.', 4.5, 4.5, 4.5, 4.5, 'Positivo', 24, 63),
+(124, '2026-04-01 11:00:00', 4, 'Edificio con vigilancia da mucha tranquilidad. A 15 min de ESCOM y ESIME, accesible para ambas unidades.', 4.5, 4.0, 4.0, 4.3, 'Neutro',   24, 64),
+(125, '2026-05-05 10:00:00', 6, 'El precio dividido entre 2 es muy accesible para lo que ofrece. Sala cómoda para trabajar en proyectos.', 4.0, 4.0, 4.5, 4.2, 'Neutro',   24, 65),
+
+-- Propiedad 26: Departamento 3 recámaras (+3 reseñas)
+(126, '2026-04-05 10:00:00', 7, 'El mejor departamento para grupo. Cada quien en su cuarto y todos compartiendo 2 baños sin problema.', 5.0, NULL, 5.0, 4.9, 'Positivo', 26, 51),
+(127, '2026-04-20 14:00:00', 5, 'Lavadora en el piso evita salir a lavandería. Cocina completa con espacio para los 3. Muy organizado.', 4.5, NULL, 4.5, 4.5, 'Positivo', 26, 52),
+(128, '2026-05-10 09:00:00', 4, 'Precio distribuido en 3 hace que sea muy rentable. Arrendador flexible en fechas de pago. Recomendado.', 4.0, NULL, 4.0, 4.1, 'Neutro',   26, 53),
+
+-- Propiedad 30: Departamento amueblado Metro (+3 reseñas)
+(129, '2026-05-01 09:00:00', 5, 'Departamento listo para habitar desde el primer día. A 5 min del metro es una ventaja enorme para moverse.', 5.0, 4.5, 4.5, 4.8, 'Positivo', 30, 54),
+(130, '2026-05-08 11:00:00', 4, 'Las cámaras del edificio dan tranquilidad. Cocina equipada con todo lo necesario. Sin quejas en 4 meses.', 4.5, 4.0, 4.0, 4.3, 'Neutro',   30, 55),
+(131, '2026-05-15 10:00:00', 6, 'TV en la sala hace los fines de semana más llevaderos. Bien amueblado y el intercomunicador funciona perfecto.', 4.5, 5.0, 4.5, 4.6, 'Positivo', 30, 56),
+
+-- Propiedad 33: Estudio loft pareja (+3 reseñas)
+(132, '2026-05-20 09:00:00', 5, 'Los 2 escritorios son perfectos para proyectos conjuntos. Kitchenette evita salir en noches de desvelo.', 5.0, NULL, NULL, 4.8, 'Positivo', 33, 57),
+(133, '2026-05-22 14:00:00', 4, 'Entrada independiente da libertad total de horarios. Wi-Fi muy estable para clases en línea.', 4.5, NULL, NULL, 4.4, 'Positivo', 33, 58),
+(134, '2026-05-24 10:00:00', 6, 'Estudio bien aprovechado para 2 personas. La planta alta brinda privacidad necesaria para concentrarse.', 4.5, NULL, NULL, 4.5, 'Positivo', 33, 59),
+
+-- Propiedad 36: Departamento moderno servicios incluidos (+3 reseñas)
+(135, '2026-05-01 10:00:00', 5, 'Servicios incluidos sin sorpresas al final de mes. Baño remodelado y cocina moderna. Muy satisfecho.', 5.0, NULL, 5.0, 4.9, 'Positivo', 36, 60),
+(136, '2026-05-08 11:00:00', 4, 'Edificio limpio con acceso controlado. El Wi-Fi incluido es de alta velocidad. Perfecto para estudiantes.', 4.5, NULL, 4.5, 4.5, 'Positivo', 36, 61),
+(137, '2026-05-15 09:00:00', 6, 'Departamento moderno y funcional. A 2 estudiantes el precio nos resulta muy accesible. Lo recomendamos.', 5.0, NULL, 5.0, 4.8, 'Positivo', 36, 62),
+
+-- Propiedad 39: Casa 5 estudiantes todo incluido (+3 reseñas)
+(138, '2026-02-10 10:00:00', 7, 'Casa ideal para grupo de amigos del mismo semestre. Cada cuarto amueblado y los servicios sin contratiempos.', 5.0, 5.0, 5.0, 5.0, 'Positivo', 39, 63),
+(139, '2026-03-01 11:00:00', 5, 'Sin depósito fue el factor decisivo para elegirla. Convivencia grupal muy buena. La cocina es amplia.', 4.5, 5.0, 4.5, 4.7, 'Positivo', 39, 64),
+(140, '2026-04-05 09:00:00', 6, 'La sala TV es el punto de reunión del grupo. Los 2 baños evitan filas matutinas. Experiencia excelente.', 5.0, 5.0, 5.0, 4.9, 'Positivo', 39, 65),
+
+-- Propiedad 41: Habitación solo mujeres (+3 reseñas)
+(141, '2026-01-10 10:00:00', 4, 'Sentirme segura como mujer en la Ciudad de México fue mi prioridad y aquí lo logré. Muy recomendado.', 5.0, NULL, 4.5, 4.8, 'Positivo', 41, 51),
+(142, '2026-01-20 11:00:00', 5, 'Ambiente de hermandad entre las inquilinas. El acceso controlado da tranquilidad a mis papás también.', 4.5, NULL, 5.0, 4.7, 'Positivo', 41, 52),
+(143, '2026-02-05 09:00:00', 3, 'Espacio para mujeres en el que te puedes desenvolver con libertad. Reglas claras y respetadas por todas.', 5.0, NULL, 4.5, 4.8, 'Positivo', 41, 53),
+
+-- Propiedad 44: Departamento 4 recámaras (+3 reseñas)
+(144, '2025-10-20 10:00:00', 6, 'Los 4 llegamos de distintas unidades del IPN y el depto nos quedó perfecto a todos. Gran ubicación central.', 5.0, NULL, 4.5, 4.8, 'Positivo', 44, 54),
+(145, '2025-11-01 11:00:00', 5, 'Sala grande ideal para hacer tareas grupales. Los 2 baños para 4 personas funcionan muy bien.', 4.5, NULL, 4.5, 4.5, 'Positivo', 44, 55),
+(146, '2025-11-15 09:00:00', 4, 'Escritorio en cada habitación fue el factor clave para elegirlo. Arrendador muy accesible ante cualquier aviso.', 4.0, NULL, 4.5, 4.3, 'Neutro',   44, 56),
+
+-- Propiedad 7: Habitación tranquila La Laguna Ticomán (+3 reseñas)
+(147, '2025-06-10 09:00:00', 5, 'Zona muy silenciosa, perfecta para quien necesita concentrarse en épocas de exámenes. Cocina en buen estado.', 4.0, NULL, 3.5, 3.9, 'Neutro',   7, 57),
+(148, '2025-07-15 11:00:00', 6, 'Habitación con escritorio amplio. El ambiente tranquilo hace la diferencia cuando estás en semestre pesado.', 4.0, NULL, 4.0, 4.0, 'Neutro',   7, 58),
+(149, '2025-08-20 10:00:00', 4, 'Precio accesible y baño compartido limpio. A 8 min del transporte, sin problema para ir al IPN.', 4.0, NULL, 3.5, 3.8, 'Neutro',   7, 59),
+
+-- Propiedad 11: Habitación luminosa Torres Lindavista (+3 reseñas)
+(150, '2025-06-05 10:00:00', 5, 'Ventana grande que ilumina toda la habitación. Muy agradable para estudiar durante el día con luz natural.', 4.0, NULL, 3.5, 4.0, 'Neutro',   11, 60),
+(151, '2025-07-10 14:00:00', 4, 'Internet incluido y rápido, esencial para tareas y proyectos. Baño compartido siempre limpio. Recomendado.', 4.0, NULL, 3.5, 3.9, 'Neutro',   11, 61),
+(152, '2025-08-15 09:00:00', 6, 'A 7 min del Metro Politécnico es muy conveniente. Escritorio amplio y habitación funcional. Sin quejas.', 3.5, NULL, 3.5, 3.7, 'Neutro',   11, 62),
+
+-- Propiedad 20: Habitación amplia Churubusco Tepeyac (+3 reseñas)
+(153, '2025-07-01 10:00:00', 5, 'Habitación grande con cama matrimonial, un lujo para renta estudiantil. El sillón de estudio es muy cómodo.', 4.5, NULL, 4.0, 4.3, 'Neutro',   20, 63),
+(154, '2025-08-05 11:00:00', 4, 'Cocina equipada y baño compartido con solo una persona más. Ambiente estudiantil positivo en la casa.', 4.0, NULL, 4.0, 4.1, 'Neutro',   20, 64),
+(155, '2025-09-10 09:00:00', 6, 'A 10 min del Metrobús facilita moverse a cualquier unidad. Arrendador atento y respetuoso. Recomendado.', 4.5, NULL, 4.0, 4.2, 'Neutro',   20, 65);
+
+-- ============================================================
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- ============================================================
+-- RESUMEN
+-- ============================================================
+-- Nuevos usuarios:        17 (IDs 81-97)
+-- Nuevos arrendatarios:   15 (IDs 51-65)
+-- Nuevos arrendadores:     2 (IDs 31-32) — Caso 7
+-- Nuevas reseñas:         60 (IDs 96-155)
+-- ============================================================
+-- CONTEO FINAL POR CASO:
+--   Caso 1 (correo NO, identidad NO con tiempo):     6 arrendatarios (1-3, 51-53)
+--   Caso 2 (correo NO, identidad NO expirado):       6 arrendatarios (4-6, 54-56)
+--   Caso 3 (correo NO, identidad SÍ):                6 arrendatarios (7-9, 57-59)
+--   Caso 4 (correo SÍ, identidad NO):                6 arrendatarios (10-12, 60-62)
+--   Caso 5 (correo SÍ, identidad SÍ expirada):      11 arrendatarios (13-20, 63-65)
+--   Caso 6 (arrendadores correo SÍ verificado):     16 arrendadores  (ya tenía suficientes)
+--   Caso 7 (arrendadores correo NO verificado):       6 arrendadores  (21-24, 31-32)
+--   Caso 8 (nuevos arrendatarios verificados):       30 arrendatarios (ya tenía suficientes)
+--   Caso 9 (nuevos arrendadores verificados):        10 arrendadores  (ya tenía suficientes)
 -- ============================================================

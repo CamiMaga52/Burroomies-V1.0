@@ -30,7 +30,7 @@ const UsuariosInicioSesionPage = () => {
   const [cargando, setCargando] = useState(false)
   const [mostrarPassword, setMostrarPassword] = useState(false)
 
-  // Estados para recuperar contraseña (funcionalidad de ella)
+  // Estados para recuperar contraseña
   const [mostrarRecuperar, setMostrarRecuperar] = useState(false)
   const [correoRecuperar, setCorreoRecuperar] = useState('')
   const [enviandoRecuperar, setEnviandoRecuperar] = useState(false)
@@ -45,6 +45,7 @@ const UsuariosInicioSesionPage = () => {
     try {
       const data = await loginUsuario(correo, password)
 
+      // ── ARRENDADOR ──────────────────────────────────────────────
       if (data.rol === 'arrendador') {
         localStorage.setItem('userId', data.userId)
         localStorage.setItem('rol', data.rol)
@@ -70,6 +71,7 @@ const UsuariosInicioSesionPage = () => {
         return
       }
 
+      // ── ARRENDATARIO ─────────────────────────────────────────────
       if (data.rol === 'arrendatario') {
         localStorage.setItem('userId', data.userId)
         localStorage.setItem('rol', data.rol)
@@ -83,6 +85,7 @@ const UsuariosInicioSesionPage = () => {
           localStorage.setItem('arrendatarioFechaVerificacion', data.arrendatarioFechaVerificacion)
         }
 
+        // 1️⃣ Primero: verificar correo si no está verificado
         if (!data.correoVerificado) {
           await reenviarCodigo(data.correo)
           navigate('/verificar-correo-login', {
@@ -100,11 +103,34 @@ const UsuariosInicioSesionPage = () => {
 
         localStorage.setItem('correoVerificado', '1')
 
+        // 2️⃣ Si ya verificó correo y su identidad está confirmada: entrar directo
         if (data.arrendatarioVerificado) {
           navigate('/arrendatario/buscar-vivienda')
           return
         }
 
+        // 3️⃣ Identidad NO verificada → consultar si los 60 días ya expiraron
+        try {
+          const respExp = await fetch(`${import.meta.env.VITE_API_URL}/auth/verificar-expiracion`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: data.userId })
+          })
+          const expData = await respExp.json()
+
+          if (expData.expirado && expData.eliminado) {
+            // La cuenta fue eliminada en el backend → limpiar sesión y mostrar página de eliminación
+            localStorage.clear()
+            navigate('/cuenta-eliminada-verificacion')
+            return
+          }
+        } catch (expErr) {
+          // Si falla la consulta de expiración, no bloqueamos al usuario:
+          // lo mandamos a verificación pendiente de todas formas
+          console.error('Error al verificar expiración:', expErr)
+        }
+
+        // 4️⃣ No expiró → está pendiente de verificar identidad
         navigate('/arrendatario/verificacion-pendiente')
       }
 
@@ -123,7 +149,7 @@ const UsuariosInicioSesionPage = () => {
     }
   }
 
-  // ============ RECUPERAR CONTRASEÑA (funcionalidad de ella) ============
+  // ============ RECUPERAR CONTRASEÑA ============
   const handleRecuperarPassword = async (e) => {
     e.preventDefault()
     
@@ -219,23 +245,22 @@ const UsuariosInicioSesionPage = () => {
                     type="button"
                     className="login-password-toggle"
                     onClick={() => setMostrarPassword(!mostrarPassword)}
-                    title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    tabIndex={-1}
                   >
                     {mostrarPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                       </svg>
                     ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     )}
                   </button>
                 </div>
                 
-                {/* Link de recuperar contraseña - funcionalidad de ella con diseño tuyo */}
+                {/* Link de recuperar contraseña */}
                 <div style={{ textAlign: 'right', marginTop: '8px' }}>
                   <button
                     type="button"
@@ -289,14 +314,11 @@ const UsuariosInicioSesionPage = () => {
         </div>
       </div>
       
-      {/* ===== MODAL RECUPERAR CONTRASEÑA (con diseño bonito) ===== */}
+      {/* ===== MODAL RECUPERAR CONTRASEÑA ===== */}
       {mostrarRecuperar && (
         <div style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.6)',
           display: 'flex',
           alignItems: 'center',
@@ -314,13 +336,9 @@ const UsuariosInicioSesionPage = () => {
           }}>
             <div style={{ marginBottom: '20px' }}>
               <div style={{
-                width: '60px',
-                height: '60px',
-                background: '#f0eef7',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: '60px', height: '60px',
+                background: '#f0eef7', borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 margin: '0 auto 15px'
               }}>
                 <span style={{ fontSize: '30px' }}>🔐</span>
@@ -335,14 +353,9 @@ const UsuariosInicioSesionPage = () => {
 
             {mensajeRecuperar && (
               <div style={{
-                padding: '12px',
-                backgroundColor: '#d4edda',
-                color: '#155724',
-                borderRadius: '8px',
-                marginBottom: '15px',
-                textAlign: 'center',
-                fontSize: '13px',
-                fontWeight: 'bold'
+                padding: '12px', backgroundColor: '#d4edda', color: '#155724',
+                borderRadius: '8px', marginBottom: '15px',
+                textAlign: 'center', fontSize: '13px', fontWeight: 'bold'
               }}>
                 ✅ {mensajeRecuperar}
               </div>
@@ -350,13 +363,9 @@ const UsuariosInicioSesionPage = () => {
 
             {errorRecuperar && (
               <div style={{
-                padding: '12px',
-                backgroundColor: '#ffebee',
-                color: '#c62828',
-                borderRadius: '8px',
-                marginBottom: '15px',
-                textAlign: 'center',
-                fontSize: '13px'
+                padding: '12px', backgroundColor: '#ffebee', color: '#c62828',
+                borderRadius: '8px', marginBottom: '15px',
+                textAlign: 'center', fontSize: '13px'
               }}>
                 ❌ {errorRecuperar}
               </div>
@@ -371,38 +380,23 @@ const UsuariosInicioSesionPage = () => {
                   <input
                     type="email"
                     value={correoRecuperar}
-                    onChange={(e) => {
-                      setCorreoRecuperar(e.target.value)
-                      setErrorRecuperar('')
-                    }}
+                    onChange={(e) => { setCorreoRecuperar(e.target.value); setErrorRecuperar('') }}
                     placeholder="correo@ejemplo.com"
                     style={{
-                      width: '100%',
-                      padding: '12px',
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      fontSize: '14px',
-                      boxSizing: 'border-box',
-                      transition: 'border-color 0.2s'
+                      width: '100%', padding: '12px', borderRadius: '8px',
+                      border: '1px solid #ddd', fontSize: '14px', boxSizing: 'border-box'
                     }}
                     required
                   />
                 </div>
-
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button
                     type="button"
                     onClick={() => setMostrarRecuperar(false)}
                     style={{
-                      flex: 1,
-                      padding: '12px',
-                      backgroundColor: '#f5f5f5',
-                      border: '1px solid #ddd',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'background-color 0.2s'
+                      flex: 1, padding: '12px', backgroundColor: '#f5f5f5',
+                      border: '1px solid #ddd', borderRadius: '8px',
+                      cursor: 'pointer', fontSize: '14px', fontWeight: '500'
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e8e8e8'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
@@ -413,23 +407,14 @@ const UsuariosInicioSesionPage = () => {
                     type="submit"
                     disabled={enviandoRecuperar}
                     style={{
-                      flex: 1,
-                      padding: '12px',
+                      flex: 1, padding: '12px',
                       backgroundColor: enviandoRecuperar ? '#ccc' : '#1A1633',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
+                      color: 'white', border: 'none', borderRadius: '8px',
                       cursor: enviandoRecuperar ? 'not-allowed' : 'pointer',
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      transition: 'background-color 0.2s'
+                      fontSize: '14px', fontWeight: 'bold'
                     }}
-                    onMouseEnter={(e) => {
-                      if (!enviandoRecuperar) e.currentTarget.style.backgroundColor = '#2a2348'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!enviandoRecuperar) e.currentTarget.style.backgroundColor = '#1A1633'
-                    }}
+                    onMouseEnter={(e) => { if (!enviandoRecuperar) e.currentTarget.style.backgroundColor = '#2a2348' }}
+                    onMouseLeave={(e) => { if (!enviandoRecuperar) e.currentTarget.style.backgroundColor = '#1A1633' }}
                   >
                     {enviandoRecuperar ? '⏳ Enviando...' : 'Enviar enlace'}
                   </button>
