@@ -502,7 +502,7 @@ const CrearVivienda = () => {
                     name="direccionNumExt"
                     value={formData.direccionNumExt}
                     onChange={handleChange}
-                    maxLength={10}
+                    maxLength={5}
                     placeholder="Ej: 123"
                     className={inputCls('direccionNumExt')}
                   />
@@ -516,7 +516,7 @@ const CrearVivienda = () => {
                     name="direccionNumInt"
                     value={formData.direccionNumInt}
                     onChange={handleChange}
-                    maxLength={10}
+                    maxLength={5}
                     placeholder="Ej: 3B"
                     className="arr-form-input"
                   />

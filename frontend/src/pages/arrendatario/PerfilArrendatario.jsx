@@ -24,7 +24,7 @@ const PerfilArrendatario = () => {
   const [usernameDisponible, setUsernameDisponible] = useState(true)
   const [usernameVerificando, setUsernameVerificando] = useState(false)
 
-  // Errores por campo (nuevo)
+  // Errores por campo
   const [errors, setErrors] = useState({})
 
   // Estado para modales
@@ -246,6 +246,23 @@ const PerfilArrendatario = () => {
     return errs
   }
 
+  // ─── Función helper para verificar si el formulario es válido ──────────
+  const esFormularioValido = () => {
+    const nom = nombres.trim()
+    const ape = apellidoPaterno.trim()
+    const tel = telefono.trim()
+    const usr = username.trim()
+    
+    return (
+      nom.length >= 2 &&
+      ape.length >= 2 &&
+      tel.length === 10 &&
+      usr.length >= 3 &&
+      (usernameDisponible || usr === perfil?.arrendatarioUser) &&
+      !usernameVerificando
+    )
+  }
+
   const handleGuardar = async () => {
     const errs = validarFormulario()
     
@@ -366,6 +383,9 @@ const PerfilArrendatario = () => {
       </div>
     )
   }
+
+  // ─── Determinar si el botón debe estar deshabilitado ──────────────────
+  const botonDeshabilitado = guardando || !esFormularioValido()
 
   return (
   <div className="atr-page">
@@ -595,15 +615,15 @@ const PerfilArrendatario = () => {
                   </button>
                   <button 
                     onClick={handleGuardar}
-                    disabled={guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando}
+                    disabled={botonDeshabilitado}
                     style={{
                       flex: 1,
                       padding: '12px',
-                      backgroundColor: guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando ? '#ccc' : '#1a237e',
+                      backgroundColor: botonDeshabilitado ? '#ccc' : '#1a237e',
                       color: 'white',
                       border: 'none',
                       borderRadius: '5px',
-                      cursor: guardando || (!usernameDisponible && username !== perfil?.arrendatarioUser) || usernameVerificando ? 'not-allowed' : 'pointer',
+                      cursor: botonDeshabilitado ? 'not-allowed' : 'pointer',
                       fontSize: '14px',
                       fontWeight: 'bold'
                     }}

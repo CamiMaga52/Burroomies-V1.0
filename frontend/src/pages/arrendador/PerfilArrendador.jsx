@@ -204,6 +204,28 @@ const PerfilArrendador = () => {
     }
   }
 
+  // ── Helper: ¿Es válido el formulario? ──────────────────────────────────
+  const esFormularioValido = () => {
+    const nom = nombres.trim()
+    const ape = apellidoPaterno.trim()
+    const tel = telefono.trim()
+    const cal = calle.trim()
+    const ext = numExt.trim()
+    const cpv = cp.trim()
+
+    return (
+      nom.length >= 2 &&
+      ape.length >= 2 &&
+      tel.length === 10 &&
+      cal.length >= 3 &&
+      ext.length >= 1 &&
+      cpv.length === 5 &&
+      colonia.length > 0 &&
+      municipio.length > 0 &&
+      estado.length > 0
+    )
+  }
+
   // ── Validación ──────────────────────────────────────────────────────────
   const validarFormulario = () => {
     const errs = {}
@@ -243,6 +265,10 @@ const PerfilArrendador = () => {
     
     if (!cpv || cpv.length !== 5) {
       errs.cp = !cpv ? 'El código postal es obligatorio' : 'Debe tener 5 dígitos'
+    }
+    
+    if (!colonia) {
+      errs.cp = 'Busca un CP válido para autocompletar la colonia'
     }
     
     return errs
@@ -368,6 +394,9 @@ const PerfilArrendador = () => {
   }
 
   const usuario = perfil?.usuario || {}
+  
+  // ─── Determinar si el botón debe estar deshabilitado ──────────────────
+  const botonDeshabilitado = guardando || !esFormularioValido()
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -640,15 +669,15 @@ const PerfilArrendador = () => {
                 </button>
                 <button 
                   onClick={handleGuardar}
-                  disabled={guardando}
+                  disabled={botonDeshabilitado}
                   style={{
                     flex: 1,
                     padding: '12px',
-                    backgroundColor: guardando ? '#ccc' : '#1a237e',
+                    backgroundColor: botonDeshabilitado ? '#ccc' : '#1a237e',
                     color: 'white',
                     border: 'none',
                     borderRadius: '5px',
-                    cursor: guardando ? 'not-allowed' : 'pointer',
+                    cursor: botonDeshabilitado ? 'not-allowed' : 'pointer',
                     fontSize: '14px',
                     fontWeight: 'bold'
                   }}

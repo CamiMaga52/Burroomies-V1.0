@@ -28,6 +28,8 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let v = value
+    
+    // Restricciones de entrada
     if (name === 'propiedadTitulo')
       v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 43)
     if (name === 'propiedadDescripcion')
@@ -39,35 +41,98 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
       if (!isNaN(n) && n < 1) v = '1'
     }
     if (name === 'propiedadPrecio') {
-      v = value.replace(/[^0-9.]/g, '')
-      const parts = v.split('.')
-      if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('')
-      if (parts[1] && parts[1].length > 2) v = parts[0] + '.' + parts[1].slice(0, 2)
-      if (v && parseFloat(v) > 25000) v = '25000'
+      v = value.replace(/[^0-9]/g, '')
+      if (v && parseInt(v) > 25000) v = '25000'
     }
+    
     setFormData(prev => ({ ...prev, [name]: v }))
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
+    
+    // Limpiar error del campo al escribir
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
+  }
+
+  // ─── Helper: ¿Es válido el formulario? ──────────────────────────────────
+  const esFormularioValido = () => {
+    const titulo = formData.propiedadTitulo.trim()
+    const descripcion = formData.propiedadDescripcion.trim()
+    const tipo = formData.propiedadTipo
+    const lugares = parseInt(formData.propiedadLugares)
+    const precio = parseFloat(formData.propiedadPrecio)
+
+    return (
+      titulo.length >= 3 &&
+      titulo.length <= 43 &&
+      descripcion.length >= 10 &&
+      descripcion.length <= 200 &&
+      tipo &&
+      !isNaN(lugares) && lugares >= 1 && lugares <= 10 &&
+      !isNaN(precio) && precio >= 1000 && precio <= 25000
+    )
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
-    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length < 3) errs.propiedadTitulo = 'Mínimo 3 caracteres'
-    else if (formData.propiedadTitulo.trim().length > 43) errs.propiedadTitulo = 'Máximo 43 caracteres'
-    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 10) errs.propiedadDescripcion = 'Mínimo 10 caracteres'
-    else if (formData.propiedadDescripcion.trim().length > 200) errs.propiedadDescripcion = 'Máximo 200 caracteres'
-    if (!formData.propiedadTipo) errs.propiedadTipo = 'Selecciona un tipo'
-    if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) errs.propiedadLugares = 'Debe ser al menos 1'
-    else if (parseInt(formData.propiedadLugares) > 10) errs.propiedadLugares = 'Máximo 10 lugares'
-    if (!formData.propiedadPrecio || parseFloat(formData.propiedadPrecio) < 1000) errs.propiedadPrecio = 'El precio mínimo es $1,000'
-    else if (parseFloat(formData.propiedadPrecio) > 25000) errs.propiedadPrecio = 'El precio máximo es $25,000'
-    if (Object.keys(errs).length > 0) { setErrors(errs); return }
+    
+    // Título
+    if (!formData.propiedadTitulo || formData.propiedadTitulo.trim().length < 3) {
+      errs.propiedadTitulo = !formData.propiedadTitulo ? 'El título es obligatorio' : 'Mínimo 3 caracteres'
+    } else if (formData.propiedadTitulo.trim().length > 43) {
+      errs.propiedadTitulo = 'Máximo 43 caracteres'
+    }
+    
+    // Descripción
+    if (!formData.propiedadDescripcion || formData.propiedadDescripcion.trim().length < 10) {
+      errs.propiedadDescripcion = !formData.propiedadDescripcion ? 'La descripción es obligatoria' : 'Mínimo 10 caracteres'
+    } else if (formData.propiedadDescripcion.trim().length > 200) {
+      errs.propiedadDescripcion = 'Máximo 200 caracteres'
+    }
+    
+    // Tipo
+    if (!formData.propiedadTipo) {
+      errs.propiedadTipo = 'Selecciona un tipo de propiedad'
+    }
+    
+    // Lugares
+    if (!formData.propiedadLugares || parseInt(formData.propiedadLugares) < 1) {
+      errs.propiedadLugares = 'Debe ser al menos 1 lugar'
+    } else if (parseInt(formData.propiedadLugares) > 10) {
+      errs.propiedadLugares = 'Máximo 10 lugares'
+    }
+    
+    // Precio
+    if (!formData.propiedadPrecio || parseFloat(formData.propiedadPrecio) < 1000) {
+      errs.propiedadPrecio = 'El precio mínimo es $1,000 MXN'
+    } else if (parseFloat(formData.propiedadPrecio) > 25000) {
+      errs.propiedadPrecio = 'El precio máximo es $25,000 MXN'
+    }
+    
+    // ── MOSTRAR ERRORES CON SCROLL ────────────────────────────────────
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
+      setTimeout(() => {
+        const primerError = document.querySelector('.admin-form-error')
+        if (primerError) {
+          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+      return
+    }
 
-    setSaving(true); setError('')
+    // ── ENVÍO AL BACKEND ──────────────────────────────────────────────
+    setSaving(true)
+    setError('')
+    
     try {
       await updatePropiedad(propiedad.idPropiedad, {
-        propiedadTitulo: formData.propiedadTitulo,
-        propiedadDescripcion: formData.propiedadDescripcion,
+        propiedadTitulo: formData.propiedadTitulo.trim(),
+        propiedadDescripcion: formData.propiedadDescripcion.trim(),
         propiedadTipo: formData.propiedadTipo,
         propiedadLugares: parseInt(formData.propiedadLugares),
         propiedadPrecio: parseFloat(formData.propiedadPrecio),
@@ -76,8 +141,13 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
       onSuccess()
     } catch (err) {
       setError(err.response?.data?.error || 'Error al guardar')
-    } finally { setSaving(false) }
+    } finally { 
+      setSaving(false) 
+    }
   }
+
+  // ─── Botón deshabilitado ──────────────────────────────────────────────
+  const botonDeshabilitado = saving || !esFormularioValido()
 
   return (
     <>
@@ -94,8 +164,13 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
             <label className="admin-form-label">Título *</label>
             <input
               className={`admin-form-input${errors.propiedadTitulo ? ' is-error' : ''}`}
-              name="propiedadTitulo" value={formData.propiedadTitulo} onChange={handleChange} maxLength={45}
+              name="propiedadTitulo" 
+              value={formData.propiedadTitulo} 
+              onChange={handleChange} 
+              maxLength={43}
+              placeholder="Ej: Loft moderno cerca de ESCOM"
             />
+            <span className="admin-form-hint">Solo letras y espacios. Mínimo 3, máximo 43 caracteres</span>
             {errors.propiedadTitulo && <span className="admin-form-error">{errors.propiedadTitulo}</span>}
           </div>
 
@@ -103,9 +178,15 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
             <label className="admin-form-label">Descripción *</label>
             <textarea
               className={`admin-form-input${errors.propiedadDescripcion ? ' is-error' : ''}`}
-              name="propiedadDescripcion" value={formData.propiedadDescripcion} onChange={handleChange}
-              maxLength={300} rows={3} style={{ resize: 'vertical', minHeight: '80px' }}
+              name="propiedadDescripcion" 
+              value={formData.propiedadDescripcion} 
+              onChange={handleChange}
+              maxLength={200} 
+              rows={3} 
+              style={{ resize: 'vertical', minHeight: '80px' }}
+              placeholder="Describe la propiedad en al menos 10 caracteres"
             />
+            <span className="admin-form-hint">{formData.propiedadDescripcion.length}/200 caracteres (mínimo 10)</span>
             {errors.propiedadDescripcion && <span className="admin-form-error">{errors.propiedadDescripcion}</span>}
           </div>
 
@@ -114,9 +195,11 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
               <label className="admin-form-label">Tipo *</label>
               <select
                 className={`admin-form-input${errors.propiedadTipo ? ' is-error' : ''}`}
-                name="propiedadTipo" value={formData.propiedadTipo} onChange={handleChange}
+                name="propiedadTipo" 
+                value={formData.propiedadTipo} 
+                onChange={handleChange}
               >
-                <option value="">Selecciona</option>
+                <option value="">Selecciona un tipo</option>
                 {['Casa', 'Departamento', 'Habitación', 'Loft', 'Estudio'].map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}
@@ -125,7 +208,12 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Estatus *</label>
-              <select className="admin-form-input" name="propiedadEstatus" value={formData.propiedadEstatus} onChange={handleChange}>
+              <select 
+                className="admin-form-input" 
+                name="propiedadEstatus" 
+                value={formData.propiedadEstatus} 
+                onChange={handleChange}
+              >
                 <option value="Disponible">Disponible</option>
                 <option value="Sin Disponibilidad">Sin Disponibilidad</option>
                 <option value="Desactivada">Desactivada</option>
@@ -138,18 +226,31 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
               <label className="admin-form-label">Lugares *</label>
               <input
                 className={`admin-form-input${errors.propiedadLugares ? ' is-error' : ''}`}
-                type="number" name="propiedadLugares" value={formData.propiedadLugares} onChange={handleChange} min={1} max={10}
+                type="number" 
+                name="propiedadLugares" 
+                value={formData.propiedadLugares} 
+                onChange={handleChange} 
+                min={1} 
+                max={10}
+                placeholder="1-10"
               />
+              <span className="admin-form-hint">Mínimo 1, máximo 10 lugares</span>
               {errors.propiedadLugares && <span className="admin-form-error">{errors.propiedadLugares}</span>}
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Precio mensual (MXN) *</label>
               <input
                 className={`admin-form-input${errors.propiedadPrecio ? ' is-error' : ''}`}
-                type="number" name="propiedadPrecio" value={formData.propiedadPrecio} onChange={handleChange} min={1000} max={25000} step="0.01"
+                type="number" 
+                name="propiedadPrecio" 
+                value={formData.propiedadPrecio} 
+                onChange={handleChange} 
+                min={1000} 
+                max={25000}
+                placeholder="Ej: 3500"
               />
-              {errors.propiedadPrecio && <span className="admin-form-error">{errors.propiedadPrecio}</span>}
               <span className="admin-form-hint">Entre $1,000 y $25,000 MXN</span>
+              {errors.propiedadPrecio && <span className="admin-form-error">{errors.propiedadPrecio}</span>}
             </div>
           </div>
         </form>
@@ -157,7 +258,11 @@ const FormPropiedad = ({ propiedad, onClose, onSuccess }) => {
 
       <div className="admin-modal-footer">
         <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
-        <button className="btn-save" onClick={handleSubmit} disabled={saving}>
+        <button 
+          className="btn-save" 
+          onClick={handleSubmit} 
+          disabled={botonDeshabilitado}
+        >
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </div>

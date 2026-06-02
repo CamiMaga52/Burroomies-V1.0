@@ -17,10 +17,27 @@ const RestablecerPasswordPage = () => {
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState('')
   const [exito, setExito] = useState(false)
+  const [errors, setErrors] = useState({})
 
   if (!correo) {
     navigate('/usuarios/inicio-sesion')
     return null
+  }
+
+  // ─── Validación de contraseña ──────────────────────────────────────────
+  const validarPassword = (p) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,25}$/.test(p)
+  }
+
+  // ─── Helper: ¿Es válido el paso 2? ────────────────────────────────────
+  const esPaso2Valido = () => {
+    return (
+      nuevaPassword.length >= 8 &&
+      nuevaPassword.length <= 25 &&
+      validarPassword(nuevaPassword) &&
+      confirmarPassword.length >= 8 &&
+      nuevaPassword === confirmarPassword
+    )
   }
 
   const handleVerificarCodigo = async (e) => {
@@ -58,16 +75,29 @@ const RestablecerPasswordPage = () => {
   const handleRestablecerPassword = async (e) => {
     e.preventDefault()
     setError('')
+    setErrors({})
+    const errs = {}
 
-    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    
-    if (!pwRegex.test(nuevaPassword)) {
-      setError('La contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y símbolo')
-      return
+    // Validar nueva contraseña
+    if (!nuevaPassword) {
+      errs.nuevaPassword = 'La contraseña es obligatoria'
+    } else if (nuevaPassword.length < 8) {
+      errs.nuevaPassword = 'Mínimo 8 caracteres'
+    } else if (nuevaPassword.length > 25) {
+      errs.nuevaPassword = 'Máximo 25 caracteres'
+    } else if (!validarPassword(nuevaPassword)) {
+      errs.nuevaPassword = 'Debe contener mayúscula, minúscula, número y símbolo (@$!%*?&)'
     }
 
-    if (nuevaPassword !== confirmarPassword) {
-      setError('Las contraseñas no coinciden')
+    // Validar confirmación
+    if (!confirmarPassword) {
+      errs.confirmarPassword = 'Confirma tu contraseña'
+    } else if (nuevaPassword !== confirmarPassword) {
+      errs.confirmarPassword = 'Las contraseñas no coinciden'
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs)
       return
     }
 
@@ -122,6 +152,37 @@ const RestablecerPasswordPage = () => {
     }
   }
 
+  // ─── Handlers con restricciones ──────────────────────────────────────────
+  const handleCodigoChange = (e) => {
+    const valor = e.target.value.replace(/\D/g, '').slice(0, 8)
+    setCodigo(valor)
+    setError('')
+  }
+
+  const handleNuevaPasswordChange = (e) => {
+    const valor = e.target.value.slice(0, 25)
+    setNuevaPassword(valor)
+    if (errors.nuevaPassword) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors.nuevaPassword
+        return newErrors
+      })
+    }
+  }
+
+  const handleConfirmarPasswordChange = (e) => {
+    const valor = e.target.value.slice(0, 25)
+    setConfirmarPassword(valor)
+    if (errors.confirmarPassword) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors.confirmarPassword
+        return newErrors
+      })
+    }
+  }
+
   return (
     <div className="verificar-page">
       <NavbarInicio />
@@ -145,7 +206,7 @@ const RestablecerPasswordPage = () => {
                 ? 'Serás redirigido al inicio de sesión...' 
                 : paso === 1 
                   ? `Enviamos un código de 8 dígitos a ${correo}`
-                  : 'Ingresa tu nueva contraseña'
+                  : 'Ingresa tu nueva contraseña (8-25 caracteres)'
               }
             </p>
           </div>
@@ -167,14 +228,14 @@ const RestablecerPasswordPage = () => {
                     type="text"
                     className="verificar-code-input"
                     value={codigo}
-                    onChange={(e) => {
-                      const valor = e.target.value.replace(/\D/g, '').slice(0, 8)
-                      setCodigo(valor)
-                      setError('')
-                    }}
+                    onChange={handleCodigoChange}
                     placeholder="12345678"
+                    maxLength={8}
                     required
                   />
+                  <span className="verificar-hint" style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                    Solo números. Exactamente 8 dígitos
+                  </span>
                 </div>
 
                 <button
@@ -200,86 +261,120 @@ const RestablecerPasswordPage = () => {
             {!exito && paso === 2 && (
               <form onSubmit={handleRestablecerPassword}>
                 <div className="verificar-code-group">
-                  <label className="verificar-code-label">Nueva contraseña</label>
+                  <label className="verificar-code-label">Nueva contraseña *</label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={mostrarPassword ? 'text' : 'password'}
-                      className="verificar-code-input"
+                      className={`verificar-code-input${errors.nuevaPassword ? ' is-error' : ''}`}
                       value={nuevaPassword}
-                      onChange={(e) => setNuevaPassword(e.target.value)}
-                      placeholder="Mínimo 8 caracteres"
-                      style={{ letterSpacing: 'normal' }}
+                      onChange={handleNuevaPasswordChange}
+                      placeholder="Mínimo 8, máximo 25 caracteres"
+                      maxLength={25}
+                      style={{ 
+                        letterSpacing: 'normal',
+                        borderColor: errors.nuevaPassword ? '#dc3545' : undefined
+                      }}
                       required
                     />
                     <button
-                    type="button"
-                    className="login-password-toggle"
-                    onClick={() => setMostrarPassword(!mostrarPassword)}
-                    title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {mostrarPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                        <line x1="1" y1="1" x2="23" y2="23"/>
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    )}
-                  </button>
+                      type="button"
+                      className="login-password-toggle"
+                      onClick={() => setMostrarPassword(!mostrarPassword)}
+                      title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {mostrarPassword ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                          <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      )}
+                    </button>
                   </div>
+                  <span className="verificar-hint" style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                    {nuevaPassword.length}/25 caracteres
+                  </span>
+                  {errors.nuevaPassword && (
+                    <span className="verificar-error" style={{ fontSize: '0.8rem', display: 'block', marginTop: '4px' }}>
+                      {errors.nuevaPassword}
+                    </span>
+                  )}
                 </div>
 
                 <div className="verificar-code-group">
-                  <label className="verificar-code-label">Confirmar contraseña</label>
+                  <label className="verificar-code-label">Confirmar contraseña *</label>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={mostrarPassword ? 'text' : 'password'}
-                      className="verificar-code-input"
+                      className={`verificar-code-input${errors.confirmarPassword ? ' is-error' : ''}`}
                       value={confirmarPassword}
-                      onChange={(e) => setConfirmarPassword(e.target.value)}
+                      onChange={handleConfirmarPasswordChange}
                       placeholder="Repite tu nueva contraseña"
-                      style={{ letterSpacing: 'normal' }}
+                      maxLength={25}
+                      style={{ 
+                        letterSpacing: 'normal',
+                        borderColor: errors.confirmarPassword ? '#dc3545' : undefined
+                      }}
                       required
                     />
                     <button
-                    type="button"
-                    className="login-password-toggle"
-                    onClick={() => setMostrarPassword(!mostrarPassword)}
-                    title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {mostrarPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                        <line x1="1" y1="1" x2="23" y2="23"/>
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    )}
-                  </button>
+                      type="button"
+                      className="login-password-toggle"
+                      onClick={() => setMostrarPassword(!mostrarPassword)}
+                      title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {mostrarPassword ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                          <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      )}
+                    </button>
                   </div>
+                  {errors.confirmarPassword && (
+                    <span className="verificar-error" style={{ fontSize: '0.8rem', display: 'block', marginTop: '4px' }}>
+                      {errors.confirmarPassword}
+                    </span>
+                  )}
                 </div>
 
                 <div className="verificar-info" style={{ marginBottom: '1.5rem' }}>
-                  <label>Requisitos de la contraseña</label>
+                  <label>Requisitos de la contraseña:</label>
                   <ul>
-                    <li>Mínimo 8 caracteres</li>
-                    <li>Al menos una letra mayúscula</li>
-                    <li>Al menos una letra minúscula</li>
-                    <li>Al menos un número</li>
-                    <li>Al menos un símbolo (@$!%*?&)</li>
+                    <li style={{ color: nuevaPassword.length >= 8 ? '#16a34a' : '#666' }}>
+                      {nuevaPassword.length >= 8 ? '✅' : '○'} Mínimo 8 caracteres
+                    </li>
+                    <li style={{ color: nuevaPassword.length <= 25 ? '#16a34a' : '#666' }}>
+                      {nuevaPassword.length <= 25 ? '✅' : '○'} Máximo 25 caracteres
+                    </li>
+                    <li style={{ color: /[A-Z]/.test(nuevaPassword) ? '#16a34a' : '#666' }}>
+                      {/[A-Z]/.test(nuevaPassword) ? '✅' : '○'} Al menos una mayúscula
+                    </li>
+                    <li style={{ color: /[a-z]/.test(nuevaPassword) ? '#16a34a' : '#666' }}>
+                      {/[a-z]/.test(nuevaPassword) ? '✅' : '○'} Al menos una minúscula
+                    </li>
+                    <li style={{ color: /\d/.test(nuevaPassword) ? '#16a34a' : '#666' }}>
+                      {/\d/.test(nuevaPassword) ? '✅' : '○'} Al menos un número
+                    </li>
+                    <li style={{ color: /[@$!%*?&]/.test(nuevaPassword) ? '#16a34a' : '#666' }}>
+                      {/[@$!%*?&]/.test(nuevaPassword) ? '✅' : '○'} Al menos un símbolo (@$!%*?&)
+                    </li>
                   </ul>
                 </div>
 
                 <button
                   type="submit"
                   className="verificar-btn verificar-btn-primary"
-                  disabled={cargando}
+                  disabled={cargando || !esPaso2Valido()}
                 >
                   {cargando ? 'Restableciendo...' : 'Restablecer Contraseña →'}
                 </button>

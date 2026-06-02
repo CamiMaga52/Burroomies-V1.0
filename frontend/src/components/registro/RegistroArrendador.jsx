@@ -602,13 +602,13 @@ const RegistroArrendador = ({ volver }) => {
               <div className="form-grid form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Número exterior <span>*</span></label>
-                  <input className="form-input" type="text" name="numExt" value={formData.numExt} onChange={handleChange} placeholder="Ej: 123" maxLength={10} />
+                  <input className="form-input" type="text" name="numExt" value={formData.numExt} onChange={handleChange} placeholder="Ej: 123" maxLength={5} />
                   <span className="form-hint">Solo letras y números</span>
                   {errors.numExt && <div className="form-error">{errors.numExt}</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Número interior</label>
-                  <input className="form-input" type="text" name="numInt" value={formData.numInt} onChange={handleChange} placeholder="Ej: 3B (opcional)" maxLength={10} />
+                  <input className="form-input" type="text" name="numInt" value={formData.numInt} onChange={handleChange} placeholder="Ej: 3B (opcional)" maxLength={5} />
                   <span className="form-hint">Opcional. Solo letras y números</span>
                 </div>
                 <div className="form-group">

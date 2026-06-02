@@ -124,6 +124,42 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
     })
   }
 
+  // ─── Helper: ¿Es válido el formulario? ──────────────────────────────────
+  const esFormularioValido = () => {
+    const nom = formData.usuarioNom.trim()
+    const ape = formData.usuarioApePat.trim()
+    const tel = formData.usuarioTel.trim()
+    const fecha = formData.usuarioFechaNac
+    const calle = formData.direccionCalle.trim()
+    const ext = formData.direccionNumExt.trim()
+    const cpv = formData.cp.trim()
+
+    // Validaciones básicas obligatorias para todos
+    const basicoOk = (
+      nom.length >= 3 &&
+      ape.length >= 3 &&
+      tel.length === 10 &&
+      fecha &&
+      calle.length >= 3 &&
+      ext.length >= 1 &&
+      cpv.length === 5 &&
+      formData.colonia &&
+      formData.municipio &&
+      formData.estado
+    )
+
+    if (!basicoOk) return false
+
+    // Si no está verificado, CURP y RFC también son obligatorios
+    if (!isVerified) {
+      const curp = formData.usuarioCurp.trim()
+      const rfc = formData.arrendadorRFC.trim()
+      if (curp.length !== 18 || rfc.length !== 13) return false
+    }
+
+    return true
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
@@ -257,6 +293,9 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
       setSaving(false) 
     }
   }
+
+  // ─── Botón deshabilitado ──────────────────────────────────────────────
+  const botonDeshabilitado = saving || !esFormularioValido()
 
   return (
     <>
@@ -495,7 +534,11 @@ const FormArrendador = ({ arrendador, onClose, onSuccess }) => {
 
       <div className="admin-modal-footer">
         <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
-        <button className="btn-save" onClick={handleSubmit} disabled={saving}>
+        <button 
+          className="btn-save" 
+          onClick={handleSubmit} 
+          disabled={botonDeshabilitado}
+        >
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </div>

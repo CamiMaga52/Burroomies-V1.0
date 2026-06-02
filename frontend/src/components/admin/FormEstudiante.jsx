@@ -72,7 +72,44 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
     }
     
     // Limpiar error del campo al escribir
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }))
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
+  }
+
+  // ─── Helper: ¿Es válido el formulario? ──────────────────────────────────
+  const esFormularioValido = () => {
+    const nom = formData.usuarioNom.trim()
+    const ape = formData.usuarioApePat.trim()
+    const tel = formData.usuarioTel.trim()
+    const fecha = formData.usuarioFechaNac
+    const escuela = formData.escuelaId
+    const carrera = formData.carrera_idCarrera
+
+    // Validaciones básicas obligatorias para todos
+    const basicoOk = (
+      nom.length >= 3 &&
+      ape.length >= 3 &&
+      tel.length === 10 &&
+      fecha &&
+      escuela &&
+      carrera
+    )
+
+    if (!basicoOk) return false
+
+    // Si no está verificado, CURP y boleta también son obligatorios
+    if (!isVerified) {
+      const curp = formData.usuarioCurp.trim()
+      const boleta = formData.arrendatarioBoleta.trim()
+      if (curp.length !== 18 || boleta.length !== 10) return false
+    }
+
+    return true
   }
 
   const handleSubmit = async (e) => {
@@ -178,6 +215,9 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
     }
   }
 
+  // ─── Botón deshabilitado ──────────────────────────────────────────────
+  const botonDeshabilitado = saving || !esFormularioValido()
+
   return (
     <>
       <div className="admin-modal-header">
@@ -252,13 +292,14 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">CURP * (18 caracteres)</label>
+              <label className="admin-form-label">CURP {!isVerified ? '*' : ''}</label>
               <input
                 className={`admin-form-input${errors.usuarioCurp ? ' is-error' : ''}`}
                 name="usuarioCurp" value={formData.usuarioCurp} onChange={handleChange} disabled={isVerified} maxLength={18}
                 placeholder="Ej: HERS850101MDFRRN09"
               />
-              <span className="admin-form-hint">Formato: 4 letras, 6 números, 6 letras, 2 alfanuméricos</span>
+              {!isVerified && <span className="admin-form-hint">Formato: 4 letras, 6 números, 6 letras, 2 alfanuméricos</span>}
+              {isVerified && <span className="admin-form-hint">🔒 Verificado - No modificable</span>}
               {errors.usuarioCurp && <span className="admin-form-error">{errors.usuarioCurp}</span>}
             </div>
             <div className="admin-form-field">
@@ -311,14 +352,15 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
           </div>
 
           <div className="admin-form-field">
-            <label className="admin-form-label">Boleta *</label>
+            <label className="admin-form-label">Boleta {!isVerified ? '*' : ''}</label>
             <input
               className={`admin-form-input${errors.arrendatarioBoleta ? ' is-error' : ''}`}
               name="arrendatarioBoleta" value={formData.arrendatarioBoleta} onChange={handleChange}
               disabled={isVerified} maxLength={10}
               placeholder="Ej: 2024030001"
             />
-            <span className="admin-form-hint">10 dígitos, solo números</span>
+            {!isVerified && <span className="admin-form-hint">10 dígitos, solo números</span>}
+            {isVerified && <span className="admin-form-hint">🔒 Verificado - No modificable</span>}
             {errors.arrendatarioBoleta && <span className="admin-form-error">{errors.arrendatarioBoleta}</span>}
           </div>
         </form>
@@ -326,7 +368,11 @@ const FormEstudiante = ({ arrendatario, onClose, onSuccess }) => {
 
       <div className="admin-modal-footer">
         <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
-        <button className="btn-save" onClick={handleSubmit} disabled={saving}>
+        <button 
+          className="btn-save" 
+          onClick={handleSubmit} 
+          disabled={botonDeshabilitado}
+        >
           {saving ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </div>

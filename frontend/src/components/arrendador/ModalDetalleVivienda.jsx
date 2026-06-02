@@ -604,6 +604,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                         onChange={handleChange} 
                         placeholder="# Ext" 
                         className={inputCls('direccionNumExt')}
+                        maxLength={5}
                       />
                       {errors.direccionNumExt && <span className="arr-form-error">{errors.direccionNumExt}</span>}
                     </div>
@@ -616,6 +617,7 @@ const ModalDetalleVivienda = ({ propiedad, onClose, onUpdate }) => {
                       onChange={handleChange} 
                       placeholder="# Interior (opcional)" 
                       className="arr-form-input"
+                      maxLength={5}
                     />
                   </div>
                   {formData.colonia && (

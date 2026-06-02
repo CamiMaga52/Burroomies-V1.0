@@ -567,7 +567,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <input className="form-input" type="text" name="apellidoPaterno"
                     value={formData.apellidoPaterno} onChange={handleChange}
                     placeholder="Ej: Hernández" maxLength={35} />
-                  <span className="form-hint">Solo letras y espacios</span>
+                  <span className="form-hint">Solo letras</span>
                   {errors.apellidoPaterno && <div className="form-error">{errors.apellidoPaterno}</div>}
                 </div>
                 <div className="form-group">
@@ -575,7 +575,7 @@ const RegistroEstudiante = ({ volver }) => {
                   <input className="form-input" type="text" name="apellidoMaterno"
                     value={formData.apellidoMaterno} onChange={handleChange}
                     placeholder="Ej: López" maxLength={35} />
-                  <span className="form-hint">(Opcional) Solo letras y espacios</span>
+                  <span className="form-hint">(Opcional) Solo letras</span>
                   {errors.apellidoMaterno && <div className="form-error">{errors.apellidoMaterno}</div>}
                 </div>
               </div>

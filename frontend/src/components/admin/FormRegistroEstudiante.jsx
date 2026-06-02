@@ -50,7 +50,6 @@ const ErrorModal = ({ mensaje, onCerrar }) => (
   </div>
 )
 
-// ─── Indicador de unicidad ──────────────────────────────────────────────────
 const IndicadorUnicidad = ({ estado, campo }) => {
   const mensajes = {
     username: 'Nombre de usuario',
@@ -83,7 +82,6 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
   const [validando, setValidando] = useState({})
   const [mostrarPassword, setMostrarPassword] = useState(false)
   
-  // Estado para indicadores visuales de unicidad
   const [unicidad, setUnicidad] = useState({
     username: null, correo: null, curp: null, boleta: null
   })
@@ -162,25 +160,17 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     const { name, value } = e.target
     let v = value
     
-    // Username: letras, números y guión bajo, sin espacios, 3-20 chars
     if (name === 'username') v = value.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20)
-    // Solo letras y espacios — nombres
     if (name === 'nombres') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '').slice(0, 60)
-    // Solo letras — apellidos (sin espacios)
     if (name === 'apellidoPaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 25)
     if (name === 'apellidoMaterno') v = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ]/g, '').slice(0, 25)
-    // Correo: sin espacios, máximo 35
     if (name === 'correo') v = value.replace(/\s/g, '').slice(0, 35)
-    // Teléfono: solo números, exactamente 10
     if (name === 'telefono') v = value.replace(/[^0-9]/g, '').slice(0, 10)
-    // CURP: letras y números en mayúsculas, exactamente 18
     if (name === 'curp') v = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 18)
-    // Boleta: solo números, exactamente 10
     if (name === 'boleta') v = value.replace(/[^0-9]/g, '').slice(0, 10)
     
     setFormData(prev => ({ ...prev, [name]: v }))
     
-    // Limpiar errores al escribir
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev }
@@ -189,7 +179,6 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
       })
     }
     
-    // Resetear indicador de unicidad al modificar
     if (['username', 'correo', 'curp', 'boleta'].includes(name)) {
       setUnicidad(prev => ({ ...prev, [name]: null }))
     }
@@ -206,20 +195,51 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     return edad
   }
 
+  // ─── Helper: ¿Es válido el formulario? ──────────────────────────────────
+  const esFormularioValido = () => {
+    const username = formData.username.trim()
+    const nom = formData.nombres.trim()
+    const ape = formData.apellidoPaterno.trim()
+    const correo = formData.correo.trim()
+    const tel = formData.telefono.trim()
+    const curp = formData.curp.trim()
+    const fecha = formData.fechaNacimiento
+    const escuela = formData.escuela
+    const carrera = formData.carreraId
+    const boleta = formData.boleta.trim()
+    const pass = formData.password
+    const confirm = formData.confirmPassword
+
+    const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) && validarDominio(correo)
+
+    return (
+      username.length >= 3 && /^[a-zA-Z0-9_]+$/.test(username) &&
+      nom.length >= 3 &&
+      ape.length >= 3 &&
+      correoValido &&
+      tel.length === 10 &&
+      curp.length === 18 && /^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/.test(curp) &&
+      fecha && calcularEdad(fecha) >= 17 &&
+      escuela && carrera &&
+      boleta.length === 10 &&
+      validarPassword(pass) && pass === confirm &&
+      unicidad.username !== 'taken' && !validando.username &&
+      unicidad.correo !== 'taken' && !validando.correo &&
+      unicidad.curp !== 'taken' && !validando.curp &&
+      unicidad.boleta !== 'taken' && !validando.boleta
+    )
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const errs = {}
     
-    // Username — 3 a 20 chars, solo letras/números/guión bajo
     if (!formData.username || formData.username.length < 3) {
       errs.username = !formData.username ? 'El nombre de usuario es obligatorio' : 'Mínimo 3 caracteres'
-    } else if (formData.username.length > 20) {
-      errs.username = 'Máximo 20 caracteres'
     } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
       errs.username = 'Solo letras, números y guión bajo (_)'
     }
     
-    // Nombres — mínimo 3 letras
     if (!formData.nombres || formData.nombres.trim().length < 3) {
       errs.nombres = !formData.nombres ? 'Los nombres son obligatorios' : 'Mínimo 3 caracteres'
     }
@@ -228,59 +248,49 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
       errs.apellidoPaterno = !formData.apellidoPaterno ? 'El apellido paterno es obligatorio' : 'Mínimo 3 caracteres'
     }
     
-    // Apellido materno es OPCIONAL
     if (formData.apellidoMaterno && formData.apellidoMaterno.trim().length < 3) {
       errs.apellidoMaterno = 'Mínimo 3 caracteres'
     }
     
-    // Correo — formato y dominio
     if (!formData.correo) {
       errs.correo = 'El correo electrónico es obligatorio'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
       errs.correo = 'Formato de correo inválido'
     } else if (!validarDominio(formData.correo)) {
-      errs.correo = 'Dominio no permitido. Usa Gmail, Hotmail, Outlook, Yahoo o IPN'
+      errs.correo = 'Dominio no permitido'
     }
     
-    // Teléfono — exactamente 10 dígitos
     if (!formData.telefono) {
       errs.telefono = 'El teléfono es obligatorio'
     } else if (formData.telefono.length !== 10) {
       errs.telefono = 'Debe tener exactamente 10 dígitos'
     }
     
-    // CURP — exactamente 18 con estructura válida
     if (!formData.curp) {
       errs.curp = 'El CURP es obligatorio'
     } else if (!/^[A-Z]{4}[0-9]{6}[A-Z]{6}[A-Z0-9]{2}$/.test(formData.curp)) {
-      errs.curp = 'CURP inválido (4 letras, 6 números, 6 letras, 2 alfanuméricos)'
+      errs.curp = 'CURP inválido'
     }
     
-    // Fecha de nacimiento — entre 17 y 100 años
     if (!formData.fechaNacimiento) {
       errs.fechaNacimiento = 'La fecha de nacimiento es obligatoria'
     } else if (calcularEdad(formData.fechaNacimiento) < 17) {
       errs.fechaNacimiento = 'El estudiante debe tener al menos 17 años'
-    } else if (calcularEdad(formData.fechaNacimiento) > 100) {
-      errs.fechaNacimiento = 'Fecha de nacimiento no válida'
     }
     
-    // Datos académicos
     if (!formData.escuela) errs.escuela = 'Selecciona una escuela'
     if (!formData.carreraId) errs.carreraId = 'Selecciona una carrera'
     
-    // Boleta — exactamente 10 dígitos
     if (!formData.boleta) {
       errs.boleta = 'La boleta es obligatoria'
     } else if (formData.boleta.length !== 10) {
       errs.boleta = 'La boleta debe tener exactamente 10 dígitos'
     }
     
-    // Contraseña
     if (!formData.password) {
       errs.password = 'La contraseña es obligatoria'
     } else if (!validarPassword(formData.password)) {
-      errs.password = 'Mínimo 8 caracteres, máximo 25, mayúscula, minúscula, número y símbolo (@$!%*?&)'
+      errs.password = 'Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo (@$!%*?&)'
     }
     
     if (!formData.confirmPassword) {
@@ -289,14 +299,11 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
       errs.confirmPassword = 'Las contraseñas no coinciden'
     }
     
-    // ── MOSTRAR ERRORES CON SCROLL ──────────────────────
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       setTimeout(() => {
         const primerError = document.querySelector('.admin-form-error')
-        if (primerError) {
-          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
+        if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
       return
     }
@@ -309,12 +316,9 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     ])
     
     if (checks.includes(false)) {
-      // Scroll al error de unicidad
       setTimeout(() => {
         const primerError = document.querySelector('.admin-form-error')
-        if (primerError) {
-          primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
+        if (primerError) primerError.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 100)
       return
     }
@@ -342,6 +346,8 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
     }
   }
 
+  const botonDeshabilitado = enviando || !esFormularioValido()
+
   return (
     <>
       {modalError && <ErrorModal mensaje={modalError} onCerrar={() => setModalError(null)} />}
@@ -359,19 +365,15 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
             <label className="admin-form-label">Nombre de usuario *</label>
             <input
               className={`admin-form-input${errors.username || unicidad.username === 'taken' ? ' is-error' : ''}`}
-              name="username" 
-              value={formData.username} 
-              onChange={handleChange} 
-              onBlur={handleBlur} 
-              maxLength={20}
+              name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} maxLength={20}
               placeholder="Ej: juan_perez"
             />
             {validando.username && <span className="admin-form-hint">⏳ Verificando disponibilidad...</span>}
             {errors.username && <span className="admin-form-error">{errors.username}</span>}
             {!errors.username && !validando.username && unicidad.username !== 'taken' && (
-              <span className="admin-form-hint">3-20 caracteres. Solo letras, números y _ (sin espacios)</span>
+              <span className="admin-form-hint">3-20 caracteres. Solo letras, números y _</span>
             )}
-            {unicidad.username === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Nombre de usuario disponible</span>}
+            {unicidad.username === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Disponible</span>}
           </div>
 
           <p className="admin-form-section">Datos Personales</p>
@@ -379,27 +381,15 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
           <div className="grid-2">
             <div className="admin-form-field">
               <label className="admin-form-label">Nombres *</label>
-              <input
-                className={`admin-form-input${errors.nombres ? ' is-error' : ''}`}
-                name="nombres" 
-                value={formData.nombres} 
-                onChange={handleChange} 
-                maxLength={60}
-                placeholder="Ej: Juan Carlos"
-              />
+              <input className={`admin-form-input${errors.nombres ? ' is-error' : ''}`}
+                name="nombres" value={formData.nombres} onChange={handleChange} maxLength={60} placeholder="Ej: Juan Carlos" />
               <span className="admin-form-hint">Solo letras y espacios. Mínimo 3 caracteres</span>
               {errors.nombres && <span className="admin-form-error">{errors.nombres}</span>}
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Ap. Paterno *</label>
-              <input
-                className={`admin-form-input${errors.apellidoPaterno ? ' is-error' : ''}`}
-                name="apellidoPaterno" 
-                value={formData.apellidoPaterno} 
-                onChange={handleChange} 
-                maxLength={25}
-                placeholder="Ej: Hernández"
-              />
+              <input className={`admin-form-input${errors.apellidoPaterno ? ' is-error' : ''}`}
+                name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} maxLength={25} placeholder="Ej: Hernández" />
               <span className="admin-form-hint">Solo letras. Mínimo 3 caracteres</span>
               {errors.apellidoPaterno && <span className="admin-form-error">{errors.apellidoPaterno}</span>}
             </div>
@@ -407,14 +397,8 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
 
           <div className="admin-form-field">
             <label className="admin-form-label">Ap. Materno (opcional)</label>
-            <input
-              className={`admin-form-input${errors.apellidoMaterno ? ' is-error' : ''}`}
-              name="apellidoMaterno" 
-              value={formData.apellidoMaterno} 
-              onChange={handleChange} 
-              maxLength={25}
-              placeholder="Ej: López"
-            />
+            <input className={`admin-form-input${errors.apellidoMaterno ? ' is-error' : ''}`}
+              name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} maxLength={25} placeholder="Ej: López" />
             <span className="admin-form-hint">Opcional. Solo letras</span>
             {errors.apellidoMaterno && <span className="admin-form-error">{errors.apellidoMaterno}</span>}
           </div>
@@ -422,69 +406,42 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
           <div className="grid-2">
             <div className="admin-form-field">
               <label className="admin-form-label">Correo electrónico *</label>
-              <input
-                className={`admin-form-input${errors.correo || unicidad.correo === 'taken' ? ' is-error' : ''}`}
-                type="email" 
-                name="correo" 
-                value={formData.correo} 
-                onChange={handleChange} 
-                onBlur={handleBlur} 
-                maxLength={60}
-                placeholder="Ej: juan@gmail.com"
-              />
-              {validando.correo && <span className="admin-form-hint">⏳ Verificando disponibilidad...</span>}
+              <input className={`admin-form-input${errors.correo || unicidad.correo === 'taken' ? ' is-error' : ''}`}
+                type="email" name="correo" value={formData.correo} onChange={handleChange} onBlur={handleBlur} maxLength={60} placeholder="Ej: juan@gmail.com" />
+              {validando.correo && <span className="admin-form-hint">⏳ Verificando...</span>}
               {errors.correo && <span className="admin-form-error">{errors.correo}</span>}
               {!errors.correo && !validando.correo && unicidad.correo !== 'taken' && (
                 <span className="admin-form-hint">Gmail, Hotmail, Outlook, Yahoo o IPN</span>
               )}
-              {unicidad.correo === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Correo disponible</span>}
+              {unicidad.correo === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Disponible</span>}
             </div>
             <div className="admin-form-field">
-              <label className="admin-form-label">Teléfono * (10 dígitos)</label>
-              <input
-                className={`admin-form-input${errors.telefono ? ' is-error' : ''}`}
-                type="tel" 
-                name="telefono" 
-                value={formData.telefono} 
-                onChange={handleChange} 
-                maxLength={10}
-                placeholder="Ej: 5512345678"
-              />
-              <span className="admin-form-hint">Solo números. Exactamente 10 dígitos</span>
+              <label className="admin-form-label">Teléfono *</label>
+              <input className={`admin-form-input${errors.telefono ? ' is-error' : ''}`}
+                type="tel" name="telefono" value={formData.telefono} onChange={handleChange} maxLength={10} placeholder="Ej: 5512345678" />
+              <span className="admin-form-hint">10 dígitos, solo números</span>
               {errors.telefono && <span className="admin-form-error">{errors.telefono}</span>}
             </div>
           </div>
 
           <div className="grid-2">
             <div className="admin-form-field">
-              <label className="admin-form-label">CURP * (18 caracteres)</label>
-              <input
-                className={`admin-form-input${errors.curp || unicidad.curp === 'taken' ? ' is-error' : ''}`}
-                name="curp" 
-                value={formData.curp} 
-                onChange={handleChange} 
-                onBlur={handleBlur} 
-                maxLength={18}
-                placeholder="Ej: HERS850101MDFRRN09"
-              />
-              {validando.curp && <span className="admin-form-hint">⏳ Verificando disponibilidad...</span>}
+              <label className="admin-form-label">CURP *</label>
+              <input className={`admin-form-input${errors.curp || unicidad.curp === 'taken' ? ' is-error' : ''}`}
+                name="curp" value={formData.curp} onChange={handleChange} onBlur={handleBlur} maxLength={18} placeholder="Ej: HERS850101MDFRRN09" />
+              {validando.curp && <span className="admin-form-hint">⏳ Verificando...</span>}
               {errors.curp && <span className="admin-form-error">{errors.curp}</span>}
               {!errors.curp && !validando.curp && unicidad.curp !== 'taken' && (
-                <span className="admin-form-hint">Formato: 4 letras, 6 números, 6 letras, 2 alfanuméricos</span>
+                <span className="admin-form-hint">18 caracteres</span>
               )}
-              {unicidad.curp === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ CURP disponible</span>}
+              {unicidad.curp === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Disponible</span>}
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Fecha de Nacimiento *</label>
-              <input
-                className={`admin-form-input${errors.fechaNacimiento ? ' is-error' : ''}`}
-                type="date" 
-                name="fechaNacimiento" 
-                value={formData.fechaNacimiento} 
-                onChange={handleChange}
+              <input className={`admin-form-input${errors.fechaNacimiento ? ' is-error' : ''}`}
+                type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange}
                 max={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 17); return d.toISOString().split('T')[0] })()}
-                min={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 100); return d.toISOString().split('T')[0] })()}
-              />
+                min={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 100); return d.toISOString().split('T')[0] })()} />
               <span className="admin-form-hint">Debe tener al menos 17 años</span>
               {errors.fechaNacimiento && <span className="admin-form-error">{errors.fechaNacimiento}</span>}
             </div>
@@ -495,35 +452,22 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
           <div className="grid-2">
             <div className="admin-form-field">
               <label className="admin-form-label">Escuela *</label>
-              <select
-                className={`admin-form-input${errors.escuela ? ' is-error' : ''}`}
-                name="escuela" 
-                value={formData.escuela} 
-                onChange={handleChange}
-              >
+              <select className={`admin-form-input${errors.escuela ? ' is-error' : ''}`}
+                name="escuela" value={formData.escuela} onChange={handleChange}>
                 <option value="">Selecciona una escuela</option>
                 {unidades.map(u => (
-                  <option key={u.idUnidadAcademica} value={u.idUnidadAcademica}>
-                    {u.unidadAcademicaNombre} ({u.unidadAcademicaClave})
-                  </option>
+                  <option key={u.idUnidadAcademica} value={u.idUnidadAcademica}>{u.unidadAcademicaNombre} ({u.unidadAcademicaClave})</option>
                 ))}
               </select>
               {errors.escuela && <span className="admin-form-error">{errors.escuela}</span>}
             </div>
             <div className="admin-form-field">
               <label className="admin-form-label">Carrera *</label>
-              <select
-                className={`admin-form-input${errors.carreraId ? ' is-error' : ''}`}
-                name="carreraId" 
-                value={formData.carreraId} 
-                onChange={handleChange}
-                disabled={!formData.escuela || loading}
-              >
-                <option value="">{loading ? 'Cargando carreras...' : 'Selecciona una carrera'}</option>
+              <select className={`admin-form-input${errors.carreraId ? ' is-error' : ''}`}
+                name="carreraId" value={formData.carreraId} onChange={handleChange} disabled={!formData.escuela || loading}>
+                <option value="">{loading ? 'Cargando...' : 'Selecciona una carrera'}</option>
                 {carreras.map(c => (
-                  <option key={c.idCarrera} value={c.idCarrera}>
-                    {c.carreraNombre} ({c.carreraClave})
-                  </option>
+                  <option key={c.idCarrera} value={c.idCarrera}>{c.carreraNombre} ({c.carreraClave})</option>
                 ))}
               </select>
               {errors.carreraId && <span className="admin-form-error">{errors.carreraId}</span>}
@@ -532,21 +476,14 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
 
           <div className="admin-form-field">
             <label className="admin-form-label">Boleta *</label>
-            <input
-              className={`admin-form-input${errors.boleta || unicidad.boleta === 'taken' ? ' is-error' : ''}`}
-              name="boleta" 
-              value={formData.boleta} 
-              onChange={handleChange} 
-              onBlur={handleBlur} 
-              maxLength={10}
-              placeholder="Ej: 2024030001"
-            />
-            {validando.boleta && <span className="admin-form-hint">⏳ Verificando disponibilidad...</span>}
+            <input className={`admin-form-input${errors.boleta || unicidad.boleta === 'taken' ? ' is-error' : ''}`}
+              name="boleta" value={formData.boleta} onChange={handleChange} onBlur={handleBlur} maxLength={10} placeholder="Ej: 2024030001" />
+            {validando.boleta && <span className="admin-form-hint">⏳ Verificando...</span>}
             {errors.boleta && <span className="admin-form-error">{errors.boleta}</span>}
             {!errors.boleta && !validando.boleta && unicidad.boleta !== 'taken' && (
               <span className="admin-form-hint">10 dígitos, solo números</span>
             )}
-            {unicidad.boleta === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Boleta disponible</span>}
+            {unicidad.boleta === 'ok' && <span className="admin-form-hint" style={{ color: '#16a34a' }}>✓ Disponible</span>}
           </div>
 
           <p className="admin-form-section">Contraseña</p>
@@ -555,46 +492,26 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
             <div className="admin-form-field">
               <label className="admin-form-label">Contraseña *</label>
               <div style={{ position: 'relative' }}>
-                <input
-                  className={`admin-form-input${errors.password ? ' is-error' : ''}`}
-                  type={mostrarPassword ? 'text' : 'password'}
-                  name="password" 
-                  value={formData.password} 
-                  onChange={handleChange} 
-                  maxLength={25}
-                  style={{ paddingRight: '2.5rem' }}
-                  placeholder="Mínimo 8 caracteres"
-                />
-                <button
-                  type="button"
-                  className="login-password-toggle"
+                <input className={`admin-form-input${errors.password ? ' is-error' : ''}`}
+                  type={mostrarPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange}
+                  maxLength={25} style={{ paddingRight: '2.5rem' }} placeholder="Mínimo 8 caracteres" />
+                <button type="button" className="login-password-toggle"
                   onClick={() => setMostrarPassword(!mostrarPassword)}
-                  title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                >
+                  title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
                   {mostrarPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
               {errors.password && <span className="admin-form-error">{errors.password}</span>}
             </div>
             <div className="admin-form-field">
-              <label className="admin-form-label">Confirmar contraseña *</label>
+              <label className="admin-form-label">Confirmar *</label>
               <div style={{ position: 'relative' }}>
-                <input
-                  className={`admin-form-input${errors.confirmPassword ? ' is-error' : ''}`}
-                  type={mostrarPassword ? 'text' : 'password'}
-                  name="confirmPassword" 
-                  value={formData.confirmPassword} 
-                  onChange={handleChange} 
-                  maxLength={25}
-                  style={{ paddingRight: '2.5rem' }}
-                  placeholder="Repite la contraseña"
-                />
-                <button
-                  type="button"
-                  className="login-password-toggle"
+                <input className={`admin-form-input${errors.confirmPassword ? ' is-error' : ''}`}
+                  type={mostrarPassword ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
+                  maxLength={25} style={{ paddingRight: '2.5rem' }} placeholder="Repite la contraseña" />
+                <button type="button" className="login-password-toggle"
                   onClick={() => setMostrarPassword(!mostrarPassword)}
-                  title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                >
+                  title={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
                   {mostrarPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
               </div>
@@ -607,7 +524,7 @@ const FormRegistroEstudiante = ({ onClose, onSuccess }) => {
 
       <div className="admin-modal-footer">
         <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
-        <button className="btn-save" onClick={handleSubmit} disabled={enviando}>
+        <button className="btn-save" onClick={handleSubmit} disabled={botonDeshabilitado}>
           {enviando ? 'Registrando...' : 'Registrar Estudiante'}
         </button>
       </div>
